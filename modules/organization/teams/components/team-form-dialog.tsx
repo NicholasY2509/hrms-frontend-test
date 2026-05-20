@@ -17,6 +17,7 @@ import { teamSchema, TeamFormValues } from "../schemas"
 import { Team } from "../types"
 import { useCreateTeam, useUpdateTeam } from "../hooks/use-team-mutation"
 import { EmployeePicker } from "@/modules/employee/employee/components/employee-picker"
+import { WorkLocationPicker } from "../../work-location/components/work-location-picker"
 
 interface TeamFormDialogProps {
   isOpen: boolean
@@ -129,7 +130,7 @@ export function TeamFormDialog({
                 <WorkLocationPicker
                   value={field.value}
                   onChange={(val) =>
-                    field.onChange(val === "all" ? 0 : Number(val))
+                    field.onChange(val === 0 ? 0 : Number(val))
                   }
                   aria-invalid={fieldState.invalid}
                 />
