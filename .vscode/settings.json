@@ -1,0 +1,6 @@
+{
+    "editor.cursorBlinking": "phase",
+    "editor.smoothScrolling": true,
+    "editor.cursorSmoothCaretAnimation": "on",
+    "workbench.list.smoothScrolling": true
+}

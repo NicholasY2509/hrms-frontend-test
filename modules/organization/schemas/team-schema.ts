@@ -1,0 +1,9 @@
+import * as z from 'zod';
+
+export const teamSchema = z.object({
+  name: z.string().min(1, 'Nama tim wajib diisi'),
+  team_head_id: z.number().nullable().optional(),
+  work_location_id: z.number().min(1, 'Lokasi kerja wajib dipilih'),
+});
+
+export type TeamFormValues = z.infer<typeof teamSchema>;
