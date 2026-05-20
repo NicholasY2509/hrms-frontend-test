@@ -31,7 +31,7 @@ export function OvertimeBreakdownContent({ item, showTotal = true }: OvertimeBre
 
         const steps = [];
         let totalMultiplier = 0;
-        const type = (item.overtime_type as string || '').toUpperCase();
+        const type = (item.type || (typeof item.overtime_type === 'string' ? item.overtime_type : item.overtime_type?.name) || '').toUpperCase();
 
         if (type === 'UMUM' || type === 'REGULER') {
             const cappedHours = Math.min(Math.ceil(totalHoursRaw), 4);

@@ -12,6 +12,15 @@ interface OvertimeEmployeeCardProps {
 }
 
 export function OvertimeEmployeeCard({ item }: OvertimeEmployeeCardProps) {
+    const overtimeTypeDisplay = React.useMemo(() => {
+        return item.type || (typeof item.overtime_type === 'string' ? item.overtime_type : item.overtime_type?.name) || '-';
+    }, [item.type, item.overtime_type]);
+
+    const isDac = React.useMemo(() => {
+        const rawType = item.type || (typeof item.overtime_type === 'string' ? item.overtime_type : item.overtime_type?.name) || '';
+        return rawType.toUpperCase() === 'DAC';
+    }, [item.type, item.overtime_type]);
+
     return (
         <Card className="overflow-hidden border-none pt-0 shadow-sm ring-1 ring-muted">
             <CardHeader className="bg-muted/30 py-4">
@@ -26,15 +35,15 @@ export function OvertimeEmployeeCard({ item }: OvertimeEmployeeCardProps) {
                         <HugeiconsIcon icon={UserIcon} className="h-10 w-10" />
                     </div>
                     <div className="space-y-1">
-                        <h3 className="text-xl font-bold text-foreground">{item.employee.full_name}</h3>
+                        <h3 className="text-xl font-bold text-foreground">{item.employee.full_name || item.employee.name}</h3>
                         <div className="flex flex-wrap gap-x-4 gap-y-1">
                             <p className="text-sm text-muted-foreground flex items-center gap-1.5">
                                 <span className="font-semibold text-primary/70">NIK:</span> {item.employee.nik || '-'}
                             </p>
                             <p className="text-sm text-muted-foreground flex items-center gap-1.5">
                                 <HugeiconsIcon icon={Tag01Icon} className="h-3.5 w-3.5" />
-                                {typeof item.overtime_type === 'string' ? item.overtime_type : item.overtime_type?.name}
-                                {(item.overtime_type === 'DAC' || (typeof item.overtime_type !== 'string' && item.overtime_type?.name === 'DAC')) && item.dac_type && ` (${item.dac_type})`}
+                                {overtimeTypeDisplay}
+                                {isDac && item.dac_type && ` (${item.dac_type})`}
                             </p>
                         </div>
                     </div>

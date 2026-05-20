@@ -33,7 +33,12 @@ export function OvertimeDacCategorizationCard({ item }: OvertimeDacCategorizatio
         await updateOvertimeType({ overtime_type_id: selectedTypeId });
     };
 
-    if (item.overtime_type !== 'DAC') return null;
+    const isDac = React.useMemo(() => {
+        const t = item.type || (typeof item.overtime_type === 'string' ? item.overtime_type : item.overtime_type?.name) || '';
+        return t.toUpperCase() === 'DAC';
+    }, [item.type, item.overtime_type]);
+
+    if (!isDac) return null;
 
     return (
         <Card className="overflow-hidden border-none pt-0 shadow-sm ring-1 ring-muted">

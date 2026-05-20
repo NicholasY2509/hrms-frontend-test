@@ -24,6 +24,19 @@ export function OvertimeNarrativeCard({ item }: OvertimeNarrativeCardProps) {
     const [tooltipOpen, setTooltipOpen] = React.useState(false);
     const [dialogOpen, setDialogOpen] = React.useState(false);
 
+    const attachments = React.useMemo<string[]>(() => {
+        if (item.attachment_urls && item.attachment_urls.length > 0) {
+            return item.attachment_urls;
+        }
+        if ((item as any).attachments && Array.isArray((item as any).attachments)) {
+            return (item as any).attachments.map((att: any) => {
+                if (typeof att === 'string') return att;
+                return att.file_url || att.url || att.path || '';
+            }).filter(Boolean);
+        }
+        return [];
+    }, [item.attachment_urls, (item as any).attachments]);
+
     return (
         <Card className="overflow-hidden border-none pt-0 shadow-sm ring-1 ring-muted">
             <CardHeader className="bg-muted/30 py-4">
@@ -46,7 +59,7 @@ export function OvertimeNarrativeCard({ item }: OvertimeNarrativeCardProps) {
                     <div className="grid grid-cols-[180px_10px_1fr] gap-y-2 text-sm">
                         <span className="font-medium text-muted-foreground">Nama Lengkap</span>
                         <span className="text-muted-foreground">:</span>
-                        <span className="font-bold uppercase">{item.employee.full_name}</span>
+                        <span className="font-bold uppercase">{item.employee.full_name || item.employee.name}</span>
 
                         <span className="font-medium text-muted-foreground">NIK</span>
                         <span className="text-muted-foreground">:</span>
@@ -98,14 +111,14 @@ export function OvertimeNarrativeCard({ item }: OvertimeNarrativeCardProps) {
                 {/* Signature Line */}
                 <div className="pt-6">
                     <p className="text-sm">Hormat saya,</p>
-                    <p className="font-bold text-sm uppercase underline underline-offset-4">{item.employee.full_name}</p>
+                    <p className="font-bold text-sm uppercase underline underline-offset-4">{item.employee.full_name || item.employee.name}</p>
                 </div>
 
-                {item.attachment_urls && item.attachment_urls.length > 0 && (
+                {attachments && attachments.length > 0 && (
                     <div className="space-y-3 pt-4 border-t border-dashed">
                         <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Lampiran Dokumen pendukung</p>
                         <div className="grid gap-3">
-                            {item.attachment_urls.map((url, idx) => (
+                            {attachments.map((url, idx) => (
                                 <a
                                     key={idx}
                                     href={url}

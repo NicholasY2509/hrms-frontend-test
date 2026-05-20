@@ -26,7 +26,7 @@ export const OvertimeBreakdownDialog = React.forwardRef<
     HTMLButtonElement,
     OvertimeBreakdownDialogProps
 >(({ item, trigger, open, onOpenChange, ...props }, ref) => {
-    const type = (item.overtime_type as string || '').toUpperCase();
+    const type = (item.type || (typeof item.overtime_type === 'string' ? item.overtime_type : item.overtime_type?.name) || '').toUpperCase();
     if (type === 'DAC') return null;
 
     return (
