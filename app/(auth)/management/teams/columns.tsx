@@ -23,6 +23,15 @@ export const getTeamColumns = (
     cell: ({ row }) => <span className="font-medium">{row.original.name}</span>,
   },
   {
+    accessorKey: "work_location.name",
+    header: "Lokasi Kerja",
+    cell: ({ row }) => (
+      <span className="text-sm text-muted-foreground">
+        {row.original.work_location?.name}
+      </span>
+    ),
+  },
+  {
     accessorKey: "head",
     header: "Kepala Tim",
     cell: ({ row }) => {
