@@ -1,39 +1,51 @@
-"use client";
+"use client"
 
-import * as React from "react";
-import { HugeiconsIcon } from "@hugeicons/react";
-import { Search01Icon, Download01Icon, Database02Icon } from "@hugeicons/core-free-icons";
-import { DataTable } from "@/components/data-table/data-table";
-import { PageHeader } from "@/components/layout/page-header";
-import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
-import { useDebounce } from "@/hooks/use-debounce";
-import { useAttendanceList } from "@/modules/attendance/attendances/hooks/use-attendance";
-import { getAttendanceColumns } from "../columns";
-import { AttendanceModel } from "@/modules/attendance/attendances/types";
-import { AttendanceStatusPicker } from "@/modules/attendance/shared/components/attendance-status-picker";
-import { EmployeePicker } from "@/modules/employee/employee/components/employee-picker";
-import { DatePicker } from "@/components/ui/date-picker";
-import { format } from "date-fns";
-import { FilterCard, FilterGrid } from "@/components/layout/filter-card";
-import { ExportAttendanceDialog } from "@/modules/attendance/attendances/components/export-attendance-dialog";
-import { Button } from "@/components/ui/button";
-import { CalculateAttendanceDialog } from "@/modules/attendance/attendances/components/calculate-attendance-dialog";
-import { AttendanceDetailDialog } from "@/modules/attendance/attendances/components/attendance-detail-dialog";
+import * as React from "react"
+import { HugeiconsIcon } from "@hugeicons/react"
+import {
+  Search01Icon,
+  Download01Icon,
+  Database02Icon,
+} from "@hugeicons/core-free-icons"
+import { DataTable } from "@/components/data-table/data-table"
+import { PageHeader } from "@/components/layout/page-header"
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+} from "@/components/ui/input-group"
+import { useDebounce } from "@/hooks/use-debounce"
+import { useAttendanceList } from "@/modules/attendance/attendances/hooks/use-attendance"
+import { getAttendanceColumns } from "../columns"
+import { AttendanceModel } from "@/modules/attendance/attendances/types"
+import { AttendanceStatusPicker } from "@/modules/attendance/shared/components/attendance-status-picker"
+import { EmployeePicker } from "@/modules/employee/employee/components/employee-picker"
+import { DatePicker } from "@/components/ui/date-picker"
+import { format } from "date-fns"
+import { FilterCard, FilterGrid } from "@/components/layout/filter-card"
+import { ExportAttendanceDialog } from "@/modules/attendance/attendances/components/export-attendance-dialog"
+import { Button } from "@/components/ui/button"
+import { CalculateAttendanceDialog } from "@/modules/attendance/attendances/components/calculate-attendance-dialog"
+import { AttendanceDetailDialog } from "@/modules/attendance/attendances/components/attendance-detail-dialog"
+import { DepartmentPicker } from "@/modules/organization/department/components/department-picker"
 
 export function AttendanceManagementClient() {
-  const [search, setSearch] = React.useState("");
-  const [page, setPage] = React.useState(1);
-  const [perPage, setPerPage] = React.useState("15");
-  const [statusId, setStatusId] = React.useState<number | null>(null);
-  const [employeeId, setEmployeeId] = React.useState<number | null>(null);
-  const [startDate, setStartDate] = React.useState<Date | undefined>(undefined);
-  const [endDate, setEndDate] = React.useState<Date | undefined>(undefined);
-  const [isExportDialogOpen, setIsExportDialogOpen] = React.useState(false);
-  const [isCalculateDialogOpen, setIsCalculateDialogOpen] = React.useState(false);
-  const [isDetailDialogOpen, setIsDetailDialogOpen] = React.useState(false);
-  const [selectedAttendance, setSelectedAttendance] = React.useState<AttendanceModel | null>(null);
+  const [search, setSearch] = React.useState("")
+  const [page, setPage] = React.useState(1)
+  const [perPage, setPerPage] = React.useState("15")
+  const [statusId, setStatusId] = React.useState<number | null>(null)
+  const [employeeId, setEmployeeId] = React.useState<number | null>(null)
+  const [departmentId, setDepartmentId] = React.useState<number | null>(null)
+  const [startDate, setStartDate] = React.useState<Date | undefined>(undefined)
+  const [endDate, setEndDate] = React.useState<Date | undefined>(undefined)
+  const [isExportDialogOpen, setIsExportDialogOpen] = React.useState(false)
+  const [isCalculateDialogOpen, setIsCalculateDialogOpen] =
+    React.useState(false)
+  const [isDetailDialogOpen, setIsDetailDialogOpen] = React.useState(false)
+  const [selectedAttendance, setSelectedAttendance] =
+    React.useState<AttendanceModel | null>(null)
 
-  const debouncedSearch = useDebounce(search, 500);
+  const debouncedSearch = useDebounce(search, 500)
 
   const { items, meta, isLoading } = useAttendanceList({
     search: debouncedSearch,
@@ -41,35 +53,38 @@ export function AttendanceManagementClient() {
     per_page: Number(perPage),
     attendance_status_id: statusId || undefined,
     employee_id: employeeId || undefined,
+    department_id: departmentId || undefined,
     start_date: startDate ? format(startDate, "yyyy-MM-dd") : undefined,
     end_date: endDate ? format(endDate, "yyyy-MM-dd") : undefined,
-  });
+  })
 
   const handleResetFilters = () => {
-    setSearch("");
-    setStatusId(null);
-    setEmployeeId(null);
-    setStartDate(undefined);
-    setEndDate(undefined);
-    setPage(1);
-  };
+    setSearch("")
+    setStatusId(null)
+    setEmployeeId(null)
+    setDepartmentId(null)
+    setStartDate(undefined)
+    setEndDate(undefined)
+    setPage(1)
+  }
 
   const hasActiveFilters =
     search !== "" ||
     statusId !== null ||
     employeeId !== null ||
+    departmentId !== null ||
     startDate !== undefined ||
-    endDate !== undefined;
+    endDate !== undefined
 
   const handleView = (item: AttendanceModel) => {
-    setSelectedAttendance(item);
-    setIsDetailDialogOpen(true);
-  };
+    setSelectedAttendance(item)
+    setIsDetailDialogOpen(true)
+  }
 
-  const columns = React.useMemo(() => getAttendanceColumns(handleView), []);
+  const columns = React.useMemo(() => getAttendanceColumns(handleView), [])
 
   return (
-    <div className="space-y-6 w-full min-w-0">
+    <div className="w-full min-w-0 space-y-6">
       <PageHeader
         title="Manajemen Kehadiran"
         description="Pantau dan kelola data kehadiran karyawan harian."
@@ -100,7 +115,7 @@ export function AttendanceManagementClient() {
         perPage={perPage}
         onPerPageChange={setPerPage}
       >
-        <FilterGrid cols={5}>
+        <FilterGrid cols={4}>
           <InputGroup className="">
             <InputGroupAddon>
               <HugeiconsIcon
@@ -120,6 +135,12 @@ export function AttendanceManagementClient() {
             value={employeeId}
             onChange={(val) => setEmployeeId(val)}
             placeholder="Filter Karyawan"
+          />
+
+          <DepartmentPicker
+            value={departmentId}
+            onChange={(val) => setDepartmentId(val)}
+            placeholder="Filter Departemen"
           />
 
           <AttendanceStatusPicker
@@ -149,9 +170,9 @@ export function AttendanceManagementClient() {
         pagination={
           meta
             ? {
-              ...meta,
-              onPageChange: (p) => setPage(p),
-            }
+                ...meta,
+                onPageChange: (p) => setPage(p),
+              }
             : undefined
         }
       />
@@ -169,5 +190,5 @@ export function AttendanceManagementClient() {
         attendance={selectedAttendance}
       />
     </div>
-  );
+  )
 }

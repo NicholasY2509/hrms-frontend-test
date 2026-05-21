@@ -6,5 +6,10 @@ export const ATTENDANCE_RECORD_ENDPOINTS = {
     EMPLOYEE: {
       HISTORY: "/v1/attendance/portal/employee",
     },
+
+    MANAGEMENT: {
+      UPDATE_STATUS: (id: number) =>
+        `/v1/attendance/portal/management/attendances/${id}/status`,
+    },
   },
-} as const;
+} as const
