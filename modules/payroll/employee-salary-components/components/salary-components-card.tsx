@@ -1,171 +1,255 @@
-'use client';
+"use client"
 
-import * as React from 'react';
-import { useForm, Controller } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { HugeiconsIcon } from '@hugeicons/react';
-import { Briefcase01Icon, PlusSignIcon, Delete01Icon, Loading03Icon, Calendar01Icon, Tag01Icon } from '@hugeicons/core-free-icons';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Field, FieldLabel, FieldError } from '@/components/ui/field';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import * as React from "react"
+import { useForm, Controller } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { HugeiconsIcon } from "@hugeicons/react"
+import {
+  Briefcase01Icon,
+  PlusSignIcon,
+  Delete01Icon,
+  Loading03Icon,
+  Calendar01Icon,
+  Tag01Icon,
+} from "@hugeicons/core-free-icons"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import { Field, FieldLabel, FieldError } from "@/components/ui/field"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog"
 
-import { useSalaryComponents } from '../../salary-components/hooks';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { format } from 'date-fns';
-import { id as idLocale } from 'date-fns/locale';
-import { Badge } from '@/components/ui/badge';
-import { Checkbox } from '@/components/ui/checkbox';
-import { DetailTabContainer } from '@/modules/employee/employee/components/detail/tabs/detail-tab-container';
-import { ConfirmModal } from '@/components/ui/confirm-modal';
-import { useAssignEmployeeSalaryComponent, useEmployeeSalaryComponents, useRemoveEmployeeSalaryComponent } from '../hooks/use-emplyoee-salary-component';
-import { EmployeeSalaryComponentFormValues } from '../types';
-import { employeeSalaryComponentSchema } from '../schemas/employee-salary-component-schema';
+import { useSalaryComponents } from "../../salary-components/hooks"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
+import { format } from "date-fns"
+import { id as idLocale } from "date-fns/locale"
+import { Badge } from "@/components/ui/badge"
+import { Checkbox } from "@/components/ui/checkbox"
+import { DetailTabContainer } from "@/modules/employee/employee/components/detail/tabs/detail-tab-container"
+import { ConfirmModal } from "@/components/ui/confirm-modal"
+import {
+  useAssignEmployeeSalaryComponent,
+  useEmployeeSalaryComponents,
+  useRemoveEmployeeSalaryComponent,
+} from "../hooks/use-emplyoee-salary-component"
+import { EmployeeSalaryComponentFormValues } from "../types"
+import { employeeSalaryComponentSchema } from "../schemas/employee-salary-component-schema"
 
 interface SalaryComponentsCardProps {
-  employeeId: number;
+  employeeId: number
 }
 
-export function SalaryComponentsCard({ employeeId }: SalaryComponentsCardProps) {
-  const { items, isLoading, mutate } = useEmployeeSalaryComponents(employeeId);
-  const { items: allComponents } = useSalaryComponents({ is_active: true });
+export function SalaryComponentsCard({
+  employeeId,
+}: SalaryComponentsCardProps) {
+  const { items, isLoading, mutate } = useEmployeeSalaryComponents(employeeId)
+  const { items: allComponents } = useSalaryComponents({ is_active: true })
 
-  const { assignComponent, isLoading: isAssigning } = useAssignEmployeeSalaryComponent({
-    onSuccess: () => mutate()
-  });
+  const { assignComponent, isLoading: isAssigning } =
+    useAssignEmployeeSalaryComponent({
+      onSuccess: () => mutate(),
+    })
 
-  const { removeComponent, isLoading: isRemoving } = useRemoveEmployeeSalaryComponent({
-    onSuccess: () => mutate()
-  });
-  const [isDialogOpen, setIsDialogOpen] = React.useState(false);
-  const [isConfirmOpen, setIsConfirmOpen] = React.useState(false);
-  const [deletingId, setDeletingId] = React.useState<number | null>(null);
+  const { removeComponent, isLoading: isRemoving } =
+    useRemoveEmployeeSalaryComponent({
+      onSuccess: () => mutate(),
+    })
+  const [isDialogOpen, setIsDialogOpen] = React.useState(false)
+  const [isConfirmOpen, setIsConfirmOpen] = React.useState(false)
+  const [deletingId, setDeletingId] = React.useState<number | null>(null)
 
-  const { control, handleSubmit, reset, watch, setValue } = useForm<EmployeeSalaryComponentFormValues>({
-    resolver: zodResolver(employeeSalaryComponentSchema) as any,
-    defaultValues: {
-      employee_id: employeeId,
-      salary_component_id: 0,
-      amount: 0,
-      effective_date: new Date().toISOString().split('T')[0],
-      is_calculated: false,
-    },
-  });
+  const { control, handleSubmit, reset, watch, setValue } =
+    useForm<EmployeeSalaryComponentFormValues>({
+      resolver: zodResolver(employeeSalaryComponentSchema) as any,
+      defaultValues: {
+        employee_id: employeeId,
+        salary_component_id: 0,
+        amount: 0,
+        effective_date: new Date().toISOString().split("T")[0],
+        is_calculated: false,
+      },
+    })
 
-  const selectedComponentId = watch('salary_component_id');
+  const selectedComponentId = watch("salary_component_id")
 
   React.useEffect(() => {
     if (selectedComponentId) {
-      const comp = allComponents.find(c => c.id === Number(selectedComponentId));
+      const comp = allComponents.find(
+        (c) => c.id === Number(selectedComponentId)
+      )
       if (comp) {
-        setValue('amount', comp.default_amount);
+        setValue("amount", comp.default_amount)
       }
     }
-  }, [selectedComponentId, allComponents, setValue]);
+  }, [selectedComponentId, allComponents, setValue])
 
   const onSubmit = async (data: EmployeeSalaryComponentFormValues) => {
     try {
-      await assignComponent(data);
-      setIsDialogOpen(false);
-      reset();
+      await assignComponent(data)
+      setIsDialogOpen(false)
+      reset()
     } catch (error) {
       // Error handled by hook
     }
-  };
+  }
 
   const handleDelete = async () => {
-    if (!deletingId) return;
+    if (!deletingId) return
     try {
-      await removeComponent({ id: deletingId, employeeId });
-      setIsConfirmOpen(false);
-      setDeletingId(null);
+      await removeComponent({ id: deletingId, employeeId })
+      setIsConfirmOpen(false)
+      setDeletingId(null)
     } catch (error) {
       // Error handled by hook
     }
-  };
+  }
 
-  const currencyFormatter = new Intl.NumberFormat('id-ID', {
-    style: 'currency',
-    currency: 'IDR',
+  const currencyFormatter = new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
     minimumFractionDigits: 0,
-  });
+  })
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="p-2 bg-primary/10 rounded-lg">
-            <HugeiconsIcon icon={Briefcase01Icon} className="w-5 h-5 text-primary" />
+          <div className="rounded-lg bg-primary/10 p-2">
+            <HugeiconsIcon
+              icon={Briefcase01Icon}
+              className="h-5 w-5 text-primary"
+            />
           </div>
           <div className="flex flex-col">
-            <span className="text-lg font-bold tracking-tight">Komponen Gaji Khusus (Overrides)</span>
-            <span className="text-xs font-medium text-muted-foreground">Komponen gaji tambahan atau potongan khusus untuk karyawan ini</span>
+            <span className="text-lg font-bold tracking-tight">
+              Komponen Gaji Khusus (Overrides)
+            </span>
+            <span className="text-xs font-medium text-muted-foreground">
+              Komponen gaji tambahan atau potongan khusus untuk karyawan ini
+            </span>
           </div>
         </div>
-        <Button size="sm" className="gap-2 rounded-lg" onClick={() => setIsDialogOpen(true)}>
-          <HugeiconsIcon icon={PlusSignIcon} className="w-4 h-4" />
+        <Button
+          size="sm"
+          className="gap-2 rounded-lg"
+          onClick={() => setIsDialogOpen(true)}
+        >
+          <HugeiconsIcon icon={PlusSignIcon} className="h-4 w-4" />
           Tambah Komponen
         </Button>
       </div>
 
-      <div className="rounded-2xl border overflow-hidden">
+      <div className="overflow-hidden rounded-2xl border">
         <Table>
           <TableHeader className="bg-muted/50">
             <TableRow>
-              <TableHead className="text-[10px] font-bold uppercase tracking-wider">Komponen</TableHead>
-              <TableHead className="text-[10px] font-bold uppercase tracking-wider">Kategori</TableHead>
-              <TableHead className="text-[10px] font-bold uppercase tracking-wider">Nominal</TableHead>
-              <TableHead className="text-[10px] font-bold uppercase tracking-wider">Tgl Efektif</TableHead>
-              <TableHead className="text-[10px] font-bold uppercase tracking-wider text-right">Aksi</TableHead>
+              <TableHead className="text-[10px] font-bold tracking-wider uppercase">
+                Komponen
+              </TableHead>
+              <TableHead className="text-[10px] font-bold tracking-wider uppercase">
+                Kategori
+              </TableHead>
+              <TableHead className="text-[10px] font-bold tracking-wider uppercase">
+                Nominal
+              </TableHead>
+              <TableHead className="text-[10px] font-bold tracking-wider uppercase">
+                Tgl Efektif
+              </TableHead>
+              <TableHead className="text-right text-[10px] font-bold tracking-wider uppercase">
+                Aksi
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {items.map((item) => (
-              <TableRow key={item.id} className="hover:bg-muted/30 transition-colors group">
+              <TableRow
+                key={item.id}
+                className="group transition-colors hover:bg-muted/30"
+              >
                 <TableCell>
                   <div className="flex flex-col">
-                    <span className="font-bold text-sm leading-tight">{item.salary_component?.name}</span>
-                    <span className="text-[10px] font-mono text-muted-foreground uppercase">{item.salary_component?.code}</span>
+                    <span className="text-sm leading-tight font-bold">
+                      {item.salary_component?.name}
+                    </span>
+                    <span className="font-mono text-[10px] text-muted-foreground uppercase">
+                      {item.salary_component?.code}
+                    </span>
                   </div>
                 </TableCell>
                 <TableCell>
-                  <Badge variant={item.salary_component?.category === 'allowance' ? 'success' : item.salary_component?.category === 'deduction' ? 'destructive' : 'outline'} className="text-[10px] uppercase font-bold tracking-wider">
+                  <Badge
+                    variant={
+                      item.salary_component?.category === "allowance"
+                        ? "success"
+                        : item.salary_component?.category === "deduction"
+                          ? "destructive"
+                          : "outline"
+                    }
+                    className="text-[10px] font-bold tracking-wider uppercase"
+                  >
                     {item.salary_component?.category}
                   </Badge>
                 </TableCell>
                 <TableCell>
                   {item.is_calculated ? (
                     <Badge variant="secondary" className="gap-1.5 py-0.5">
-                      <HugeiconsIcon icon={Tag01Icon} className="w-3 h-3" />
+                      <HugeiconsIcon icon={Tag01Icon} className="h-3 w-3" />
                       Calculated
                     </Badge>
                   ) : (
-                    <span className="text-sm font-semibold">{currencyFormatter.format(item.amount)}</span>
+                    <span className="text-sm font-semibold">
+                      {currencyFormatter.format(item.amount)}
+                    </span>
                   )}
                 </TableCell>
                 <TableCell className="text-xs font-medium text-muted-foreground">
-                  {format(new Date(item.effective_date), 'dd MMM yyyy', { locale: idLocale })}
+                  {format(new Date(item.effective_date), "dd MMM yyyy", {
+                    locale: idLocale,
+                  })}
                 </TableCell>
                 <TableCell className="text-right">
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-8 w-8 rounded-lg text-rose-600 hover:text-rose-700 hover:bg-rose-50 opacity-0 group-hover:opacity-100 transition-opacity"
+                    className="h-8 w-8 rounded-lg text-rose-600 opacity-0 transition-opacity group-hover:opacity-100 hover:bg-rose-50 hover:text-rose-700"
                     onClick={() => {
-                      setDeletingId(item.id);
-                      setIsConfirmOpen(true);
+                      setDeletingId(item.id)
+                      setIsConfirmOpen(true)
                     }}
                     disabled={isRemoving}
                   >
-                    <HugeiconsIcon icon={Delete01Icon} className="w-3.5 h-3.5" />
+                    <HugeiconsIcon
+                      icon={Delete01Icon}
+                      className="h-3.5 w-3.5"
+                    />
                   </Button>
                 </TableCell>
               </TableRow>
             ))}
             {items.length === 0 && (
               <TableRow>
-                <TableCell colSpan={5} className="h-24 text-center text-muted-foreground">
+                <TableCell
+                  colSpan={5}
+                  className="h-24 text-center text-muted-foreground"
+                >
                   Belum ada komponen gaji khusus (overrides) untuk karyawan ini.
                 </TableCell>
               </TableRow>
@@ -185,13 +269,18 @@ export function SalaryComponentsCard({ employeeId }: SalaryComponentsCardProps) 
               control={control}
               render={({ field, fieldState }) => (
                 <Field>
-                  <FieldLabel htmlFor={field.name} required>Pilih Komponen</FieldLabel>
-                  <Select onValueChange={field.onChange} value={field.value.toString()}>
+                  <FieldLabel htmlFor={field.name} required>
+                    Pilih Komponen
+                  </FieldLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    value={field.value.toString()}
+                  >
                     <SelectTrigger id={field.name}>
                       <SelectValue placeholder="Pilih Komponen" />
                     </SelectTrigger>
                     <SelectContent>
-                      {allComponents.map(comp => (
+                      {allComponents.map((comp) => (
                         <SelectItem key={comp.id} value={comp.id.toString()}>
                           {comp.name} ({comp.code})
                         </SelectItem>
@@ -208,10 +297,20 @@ export function SalaryComponentsCard({ employeeId }: SalaryComponentsCardProps) 
               control={control}
               render={({ field, fieldState }) => (
                 <Field>
-                  <FieldLabel htmlFor={field.name} required>Nominal</FieldLabel>
+                  <FieldLabel htmlFor={field.name} required>
+                    Nominal
+                  </FieldLabel>
                   <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-bold text-muted-foreground">Rp</span>
-                    <Input {...field} type="number" id={field.name} className="pl-9" placeholder="0" />
+                    <span className="absolute top-1/2 left-3 -translate-y-1/2 text-xs font-bold text-muted-foreground">
+                      Rp
+                    </span>
+                    <Input
+                      {...field}
+                      type="number"
+                      id={field.name}
+                      className="pl-9"
+                      placeholder="0"
+                    />
                   </div>
                   <FieldError errors={[fieldState.error]} />
                 </Field>
@@ -223,7 +322,9 @@ export function SalaryComponentsCard({ employeeId }: SalaryComponentsCardProps) 
               control={control}
               render={({ field, fieldState }) => (
                 <Field>
-                  <FieldLabel htmlFor={field.name} required>Tanggal Efektif</FieldLabel>
+                  <FieldLabel htmlFor={field.name} required>
+                    Tanggal Efektif
+                  </FieldLabel>
                   <Input {...field} type="date" id={field.name} />
                   <FieldError errors={[fieldState.error]} />
                 </Field>
@@ -242,7 +343,7 @@ export function SalaryComponentsCard({ employeeId }: SalaryComponentsCardProps) 
                   />
                   <label
                     htmlFor="is_calculated"
-                    className="text-xs font-bold leading-none text-muted-foreground cursor-pointer"
+                    className="cursor-pointer text-xs leading-none font-bold text-muted-foreground"
                   >
                     Gunakan Rumus Kalkulasi (Jika ada)
                   </label>
@@ -251,15 +352,23 @@ export function SalaryComponentsCard({ employeeId }: SalaryComponentsCardProps) 
             />
 
             <DialogFooter className="pt-4">
-              <Button type="button" variant="ghost" onClick={() => setIsDialogOpen(false)} disabled={isAssigning}>
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={() => setIsDialogOpen(false)}
+                disabled={isAssigning}
+              >
                 Batal
               </Button>
               <Button type="submit" className="gap-2" disabled={isAssigning}>
                 {isAssigning ? (
-                  <HugeiconsIcon icon={Loading03Icon} className="w-4 h-4 animate-spin" />
+                  <HugeiconsIcon
+                    icon={Loading03Icon}
+                    className="h-4 w-4 animate-spin"
+                  />
                 ) : (
                   <>
-                    <HugeiconsIcon icon={PlusSignIcon} className="w-4 h-4" />
+                    <HugeiconsIcon icon={PlusSignIcon} className="h-4 w-4" />
                     Simpan Komponen
                   </>
                 )}
@@ -280,6 +389,5 @@ export function SalaryComponentsCard({ employeeId }: SalaryComponentsCardProps) 
         isLoading={isRemoving}
       />
     </div>
-  );
+  )
 }
-
