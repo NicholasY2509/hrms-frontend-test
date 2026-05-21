@@ -12,7 +12,10 @@ import {
 } from "@/components/ui/sidebar"
 import { usePathname } from "next/navigation"
 import { TeamSwitcher } from "./team-switcher"
-import { useSidebarRoles, useSidebarNavigation } from "@/hooks/use-sidebar-navigation"
+import {
+  useSidebarRoles,
+  useSidebarNavigation,
+} from "@/hooks/use-sidebar-navigation"
 import { useHasMounted } from "@/hooks/use-has-mounted"
 
 export function AppSidebar({
@@ -22,7 +25,8 @@ export function AppSidebar({
   const hasMounted = useHasMounted()
   const pathname = usePathname()
   const { isMobile, setOpenMobile } = useSidebar()
-  const { activeRoleId, filteredRoles, handleRoleChange } = useSidebarRoles(initialRoleId)
+  const { activeRoleId, filteredRoles, handleRoleChange } =
+    useSidebarRoles(initialRoleId)
   const { navMainWithActive } = useSidebarNavigation(activeRoleId)
 
   React.useEffect(() => {
@@ -35,12 +39,15 @@ export function AppSidebar({
     return (
       <Sidebar variant="inset" collapsible="icon" {...props}>
         <SidebarHeader>
-          <div className="h-12 w-full animate-pulse bg-muted/20 rounded-lg" />
+          <div className="h-12 w-full animate-pulse rounded-lg bg-muted/20" />
         </SidebarHeader>
         <SidebarContent className="p-2">
           <div className="space-y-2">
             {[1, 2, 3, 4, 5].map((i) => (
-              <div key={i} className="h-8 w-full animate-pulse bg-muted/10 rounded-md" />
+              <div
+                key={i}
+                className="h-8 w-full animate-pulse rounded-md bg-muted/10"
+              />
             ))}
           </div>
         </SidebarContent>
@@ -61,10 +68,7 @@ export function AppSidebar({
       <SidebarContent className="pb-10">
         {navMainWithActive.map((group: any, index: number) => (
           <React.Fragment key={group.label || index}>
-            <NavMain
-              items={group.items}
-              label={group.label}
-            />
+            <NavMain items={group.items} label={group.label} />
             {index < navMainWithActive.length - 1 && <SidebarSeparator />}
           </React.Fragment>
         ))}
