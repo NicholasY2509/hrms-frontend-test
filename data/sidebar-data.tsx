@@ -31,7 +31,7 @@ import {
   DocumentAttachmentIcon,
   MapPinIcon,
   OfficeIcon,
-  Sun
+  Sun,
 } from "@hugeicons/core-free-icons"
 
 export const sidebarData = {
@@ -54,15 +54,15 @@ export const sidebarData = {
       description: "Manajemen",
       logo: <HugeiconsIcon icon={OfficeIcon} strokeWidth={2} />,
       id: "manager",
-      allowedRoles: ["Manager", "Admin HRD"],
+      allowedRoles: ["Department Head", "Admin HRD"],
     },
     {
       name: "Administrator",
       description: "Kontrol Sistem",
       logo: <HugeiconsIcon icon={Settings05Icon} strokeWidth={2} />,
       id: "admin",
-      allowedRoles: ["IT"],
-    }
+      allowedRoles: ["IT", "Admin HRD"],
+    },
   ],
 
   navByRole: {
@@ -91,6 +91,11 @@ export const sidebarData = {
             icon: <HugeiconsIcon icon={Clock01Icon} strokeWidth={2} />,
           },
           {
+            title: "Pengajuan Pertukaran Shift",
+            url: "/employee/shift-exchange",
+            icon: <HugeiconsIcon icon={ArrowLeftRightIcon} strokeWidth={2} />,
+          },
+          {
             title: "Surat Peringatan",
             url: "/employee/warning-letter",
             icon: <HugeiconsIcon icon={Warning} strokeWidth={2} />,
@@ -105,8 +110,8 @@ export const sidebarData = {
           //   url: "/employee/shift-exchange",
           //   icon: <HugeiconsIcon icon={ArrowLeftRightIcon} strokeWidth={2} />,
           // }
-        ]
-      }
+        ],
+      },
     ],
     manager: [
       {
@@ -126,10 +131,12 @@ export const sidebarData = {
           {
             title: "History Laporan",
             url: "/management/reports",
-            icon: <HugeiconsIcon icon={DocumentAttachmentIcon} strokeWidth={2} />,
+            icon: (
+              <HugeiconsIcon icon={DocumentAttachmentIcon} strokeWidth={2} />
+            ),
             roles: ["manager", "Admin HRD"],
-          }
-        ]
+          },
+        ],
       },
       {
         label: "Karyawan",
@@ -163,14 +170,16 @@ export const sidebarData = {
           {
             title: "Surat Keterangan Kerja",
             url: "/management/certificate-of-employment",
-            icon: <HugeiconsIcon icon={DocumentValidationIcon} strokeWidth={2} />,
+            icon: (
+              <HugeiconsIcon icon={DocumentValidationIcon} strokeWidth={2} />
+            ),
           },
           {
             title: "Pengunduran Diri",
             url: "/management/resignation",
             icon: <HugeiconsIcon icon={DoorIcon} strokeWidth={2} />,
-          }
-        ]
+          },
+        ],
       },
       {
         label: "Susunan",
@@ -195,37 +204,37 @@ export const sidebarData = {
             title: "Lokasi Kerja",
             url: "/management/work-locations",
             icon: <HugeiconsIcon icon={MapPinIcon} strokeWidth={2} />,
-          }
-        ]
+          },
+        ],
       },
       {
         label: "Lembur",
         roles: ["admin", "manager"],
         items: [
           {
-            title: 'Pengajuan lembur',
-            url: '/management/overtime',
+            title: "Pengajuan lembur",
+            url: "/management/overtime",
             icon: <HugeiconsIcon icon={Clock01Icon} strokeWidth={2} />,
           },
           {
-            title: 'Jadwal Lembur Pegawai',
-            url: '/management/overtime-schedules',
+            title: "Jadwal Lembur Pegawai",
+            url: "/management/overtime-schedules",
             icon: <HugeiconsIcon icon={Clock01Icon} strokeWidth={2} />,
           },
           {
             title: "Tipe Lembur DAC",
             url: "/management/overtime-types",
             icon: <HugeiconsIcon icon={ComponentIcon} strokeWidth={2} />,
-          }
-        ]
+          },
+        ],
       },
       {
         label: "Izin & Cuti",
         roles: ["admin", "manager"],
         items: [
           {
-            title: 'Pengajuan Izin',
-            url: '/management/unpaid-leave',
+            title: "Pengajuan Izin",
+            url: "/management/unpaid-leave",
             icon: <HugeiconsIcon icon={Document} strokeWidth={2} />,
           },
           {
@@ -247,8 +256,8 @@ export const sidebarData = {
             title: "Pengembalian Hak Cuti",
             url: "/management/annual-leaves-returns",
             icon: <HugeiconsIcon icon={Reload} strokeWidth={2} />,
-          }
-        ]
+          },
+        ],
       },
       {
         label: "Absensi",
@@ -282,24 +291,24 @@ export const sidebarData = {
           {
             title: "Data User Mesin Absensi",
             url: "/management/zkteco-users",
-            icon: <HugeiconsIcon icon={User03Icon} strokeWidth={2} />
+            icon: <HugeiconsIcon icon={User03Icon} strokeWidth={2} />,
           },
           {
             title: "Log Absensi Mesin",
             url: "/management/attendance-machine-log",
-            icon: <HugeiconsIcon icon={Clock02Icon} strokeWidth={2} />
+            icon: <HugeiconsIcon icon={Clock02Icon} strokeWidth={2} />,
           },
           {
             title: "Log Absensi Mobile",
             url: "/management/attendance-mobile-log",
-            icon: <HugeiconsIcon icon={SmartPhone01Icon} strokeWidth={2} />
+            icon: <HugeiconsIcon icon={SmartPhone01Icon} strokeWidth={2} />,
           },
           {
             title: "Data Mesin Absensi",
             url: "/management/fingerprint-machines",
-            icon: <HugeiconsIcon icon={BiometricDeviceIcon} strokeWidth={2} />
+            icon: <HugeiconsIcon icon={BiometricDeviceIcon} strokeWidth={2} />,
           },
-        ]
+        ],
       },
       {
         label: "Payroll",
@@ -335,7 +344,7 @@ export const sidebarData = {
             items: [
               {
                 title: "Tipe Kategori Pajak",
-                url: "/management/tax/tax-category-types"
+                url: "/management/tax/tax-category-types",
               },
               {
                 title: "Kategori Pajak",
@@ -356,11 +365,11 @@ export const sidebarData = {
               {
                 title: "PTKP",
                 url: "/management/tax/ptkp",
-              }
-            ]
-          }
-        ]
-      }
+              },
+            ],
+          },
+        ],
+      },
     ],
     admin: [
       {
@@ -371,23 +380,38 @@ export const sidebarData = {
             url: "#",
             icon: <HugeiconsIcon icon={LayoutBottomIcon} strokeWidth={2} />,
             items: [
-              { title: "Kebijakan", url: "/configuration/approval-workflow/policies" },
-              { title: "Grup Persetujuan", url: "/configuration/approval-workflow/groups" },
-              { title: "Tipe Tahapan", url: "/configuration/approval-workflow/step-types" },
+              {
+                title: "Kebijakan",
+                url: "/configuration/approval-workflow/policies",
+              },
+              {
+                title: "Grup Persetujuan",
+                url: "/configuration/approval-workflow/groups",
+              },
+              {
+                title: "Tipe Tahapan",
+                url: "/configuration/approval-workflow/step-types",
+              },
             ],
           },
           {
             title: "Approval Limit Settings",
             url: "/configuration/approval-settings",
-            icon: <HugeiconsIcon icon={Settings05Icon} strokeWidth={2} />
+            icon: <HugeiconsIcon icon={Settings05Icon} strokeWidth={2} />,
           },
           {
             title: "Konfigurasi Absensi",
             url: "#",
             icon: <HugeiconsIcon icon={Settings05Icon} strokeWidth={2} />,
             items: [
-              { title: "Pengaturan Umum", url: "/configuration/attendance/settings" },
-              { title: "Pengaturan Kalkulasi", url: "/configuration/attendance/calculation-settings" },
+              {
+                title: "Pengaturan Umum",
+                url: "/configuration/attendance/settings",
+              },
+              {
+                title: "Pengaturan Kalkulasi",
+                url: "/configuration/attendance/calculation-settings",
+              },
             ],
           },
           {
@@ -395,17 +419,19 @@ export const sidebarData = {
             url: "#",
             icon: <HugeiconsIcon icon={Banknote} strokeWidth={2} />,
             items: [
-              { title: "Komponen Gaji", url: "/configuration/payroll/salary-components" },
+              {
+                title: "Komponen Gaji",
+                url: "/configuration/payroll/salary-components",
+              },
             ],
           },
           {
             title: "Audit Log",
             url: "/configuration/audit-logs",
-            icon: <HugeiconsIcon icon={DocumentCodeIcon} strokeWidth={2} />
-          }
-
-        ]
-      }
-    ]
-  }
+            icon: <HugeiconsIcon icon={DocumentCodeIcon} strokeWidth={2} />,
+          },
+        ],
+      },
+    ],
+  },
 }

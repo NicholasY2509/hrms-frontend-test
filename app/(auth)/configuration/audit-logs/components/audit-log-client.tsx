@@ -1,54 +1,64 @@
-"use client";
+"use client"
 
-import { useState } from "react";
-import { useAuditLogList } from "@/modules/audit/hooks/use-audit-log";
-import { DataTable } from "@/components/data-table/data-table";
-import { DataTableSkeleton } from "@/components/data-table/data-table-skeleton";
-import { PageHeader } from "@/components/layout/page-header";
-import { PageError } from "@/components/layout/page-error";
-import { getColumns } from "../columns";
-import { AuditLog, AuditLogFilters } from "@/modules/audit/types";
-import { AuditLogDetail } from "@/modules/audit/components/audit-log-detail";
-import { FilterCard, FilterGrid } from "@/components/layout/filter-card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { DatePicker } from "@/components/ui/date-picker";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { useDebounce } from "@/hooks/use-debounce";
-import { format } from "date-fns";
+import { useState } from "react"
+import { useAuditLogList } from "@/modules/audit/hooks/use-audit-log"
+import { DataTable } from "@/components/data-table/data-table"
+import { DataTableSkeleton } from "@/components/data-table/data-table-skeleton"
+import { PageHeader } from "@/components/layout/page-header"
+import { PageError } from "@/components/layout/page-error"
+import { getColumns } from "../columns"
+import { AuditLog, AuditLogFilters } from "@/modules/audit/types"
+import { AuditLogDetail } from "@/modules/audit/components/audit-log-detail"
+import { FilterCard, FilterGrid } from "@/components/layout/filter-card"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import { DatePicker } from "@/components/ui/date-picker"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { useDebounce } from "@/hooks/use-debounce"
+import { format } from "date-fns"
 
 export function AuditLogClient() {
   const [filters, setFilters] = useState<AuditLogFilters>({
     per_page: 15,
     page: 1,
-  });
+  })
 
-  const [selectedLog, setSelectedLog] = useState<AuditLog | null>(null);
-  const [isDetailOpen, setIsDetailOpen] = useState(false);
+  const [selectedLog, setSelectedLog] = useState<AuditLog | null>(null)
+  const [isDetailOpen, setIsDetailOpen] = useState(false)
 
-  const debouncedFilters = useDebounce(filters, 500);
+  const debouncedFilters = useDebounce(filters, 500)
 
-  const { items, meta, isLoading, isError } = useAuditLogList(debouncedFilters);
+  const { items, meta, isLoading, isError } = useAuditLogList(debouncedFilters)
 
   const handleView = (log: AuditLog) => {
-    setSelectedLog(log);
-    setIsDetailOpen(true);
-  };
+    setSelectedLog(log)
+    setIsDetailOpen(true)
+  }
 
   const updateFilter = (key: keyof AuditLogFilters, value: any) => {
-    setFilters((prev) => ({ ...prev, [key]: value, page: 1 }));
-  };
+    setFilters((prev) => ({
+      ...prev,
+      [key]: value,
+      page: key === "page" ? value : 1,
+    }))
+  }
 
   const resetFilters = () => {
     setFilters({
       per_page: 15,
       page: 1,
-    });
-  };
+    })
+  }
 
-  if (isError) return <PageError />;
+  if (isError) return <PageError />
 
-  const columns = getColumns(handleView);
+  const columns = getColumns(handleView)
 
   return (
     <div className="space-y-6">
@@ -76,7 +86,9 @@ export function AuditLogClient() {
             <Label>Event</Label>
             <Select
               value={filters.event || "all"}
-              onValueChange={(v) => updateFilter("event", v === "all" ? undefined : v)}
+              onValueChange={(v) =>
+                updateFilter("event", v === "all" ? undefined : v)
+              }
             >
               <SelectTrigger>
                 <SelectValue placeholder="All Events" />
@@ -92,8 +104,15 @@ export function AuditLogClient() {
           <div className="space-y-2">
             <Label>Start Date</Label>
             <DatePicker
-              value={filters.start_date ? new Date(filters.start_date) : undefined}
-              onChange={(date) => updateFilter("start_date", date ? format(date, "yyyy-MM-dd") : undefined)}
+              value={
+                filters.start_date ? new Date(filters.start_date) : undefined
+              }
+              onChange={(date) =>
+                updateFilter(
+                  "start_date",
+                  date ? format(date, "yyyy-MM-dd") : undefined
+                )
+              }
               placeholder="Start Date"
             />
           </div>
@@ -101,7 +120,12 @@ export function AuditLogClient() {
             <Label>End Date</Label>
             <DatePicker
               value={filters.end_date ? new Date(filters.end_date) : undefined}
-              onChange={(date) => updateFilter("end_date", date ? format(date, "yyyy-MM-dd") : undefined)}
+              onChange={(date) =>
+                updateFilter(
+                  "end_date",
+                  date ? format(date, "yyyy-MM-dd") : undefined
+                )
+              }
               placeholder="End Date"
             />
           </div>
@@ -117,9 +141,9 @@ export function AuditLogClient() {
           pagination={
             meta
               ? {
-                ...meta,
-                onPageChange: (p) => updateFilter("page", p),
-              }
+                  ...meta,
+                  onPageChange: (p) => updateFilter("page", p),
+                }
               : undefined
           }
         />
@@ -131,5 +155,5 @@ export function AuditLogClient() {
         onClose={() => setIsDetailOpen(false)}
       />
     </div>
-  );
+  )
 }
