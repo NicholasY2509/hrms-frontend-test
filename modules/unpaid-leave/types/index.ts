@@ -41,6 +41,7 @@ export interface UnpaidLeave {
   end_date: string
   total_days: number
   note?: string | null
+  attachment_url: string
   attachments?: string[]
   confirmed_at?: string | null
   settled_at?: string | null
