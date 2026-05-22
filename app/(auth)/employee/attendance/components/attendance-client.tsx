@@ -22,7 +22,6 @@ import {
 import { cn } from "@/lib/utils"
 
 export function AttendanceClient() {
-  // Initialize to start of this month until today
   const [dateRange, setDateRange] = React.useState<DateRange | undefined>({
     from: startOfMonth(new Date()),
     to: new Date(),

@@ -38,10 +38,6 @@ interface DetailSheetProps {
 export function DetailSheet({ record, isOpen, onClose }: DetailSheetProps) {
   if (!record) return null
 
-  const baseUrl = (
-    process.env.NEXT_PUBLIC_API_URL || "http://localhost:8001/api"
-  ).replace(/\/api$/, "")
-
   const getSpColorClass = (status: string) => {
     const s = status.toLowerCase()
     if (s.includes("hadir"))
