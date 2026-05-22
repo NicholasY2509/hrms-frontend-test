@@ -1,4 +1,4 @@
-'use client';
+"use client"
 
 import {
   ColumnDef,
@@ -6,7 +6,7 @@ import {
   getCoreRowModel,
   useReactTable,
   getPaginationRowModel,
-} from '@tanstack/react-table';
+} from "@tanstack/react-table"
 
 import {
   Table,
@@ -15,18 +15,18 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
-import { Skeleton } from '@/components/ui/skeleton';
-import { PaginationMeta } from '@/types';
-import { DataTablePagination } from './data-table-pagination';
+} from "@/components/ui/table"
+import { Skeleton } from "@/components/ui/skeleton"
+import { PaginationMeta } from "@/types"
+import { DataTablePagination } from "./data-table-pagination"
 
 interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
-  data: TData[];
-  isLoading?: boolean;
+  columns: ColumnDef<TData, TValue>[]
+  data: TData[]
+  isLoading?: boolean
   pagination?: PaginationMeta & {
-    onPageChange: (page: number) => void;
-  };
+    onPageChange: (page: number) => void
+  }
 }
 
 export function DataTable<TData, TValue>({
@@ -42,28 +42,34 @@ export function DataTable<TData, TValue>({
     getPaginationRowModel: getPaginationRowModel(),
     manualPagination: true,
     getRowId: (row: any) => row.id?.toString(),
-  });
+  })
 
-  const rows = table.getRowModel()?.rows || [];
+  const rows = table.getRowModel()?.rows || []
 
   return (
-    <div className="space-y-4 w-full min-w-0 grid grid-cols-1">
-      <div className="rounded-xl border bg-card overflow-hidden">
+    <div className="grid w-full min-w-0 grid-cols-1 space-y-4">
+      <div className="overflow-hidden rounded-xl border bg-card">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id} className="hover:bg-transparent border-b">
+              <TableRow
+                key={headerGroup.id}
+                className="border-b hover:bg-transparent"
+              >
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHead key={header.id} className="h-12 px-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    <TableHead
+                      key={header.id}
+                      className="h-12 px-4 text-xs font-semibold tracking-wider text-muted-foreground uppercase"
+                    >
                       {header.isPlaceholder
                         ? null
                         : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
                     </TableHead>
-                  );
+                  )
                 })}
               </TableRow>
             ))}
@@ -71,7 +77,10 @@ export function DataTable<TData, TValue>({
           <TableBody>
             {isLoading ? (
               Array.from({ length: 15 }).map((_, i) => (
-                <TableRow key={i} className="border-b last:border-0 hover:bg-transparent">
+                <TableRow
+                  key={i}
+                  className="border-b last:border-0 hover:bg-transparent"
+                >
                   {columns.map((_, j) => (
                     <TableCell key={j} className="px-4 py-4">
                       <Skeleton className="h-4 w-full" />
@@ -83,8 +92,8 @@ export function DataTable<TData, TValue>({
               rows.map((row) => (
                 <TableRow
                   key={row.id}
-                  data-state={row.getIsSelected() && 'selected'}
-                  className="group hover:bg-muted/50 transition-colors border-b last:border-0"
+                  data-state={row.getIsSelected() && "selected"}
+                  className="group border-b transition-colors last:border-0 hover:bg-muted/50"
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id} className="px-4 py-3 align-middle">
@@ -116,5 +125,5 @@ export function DataTable<TData, TValue>({
         />
       )}
     </div>
-  );
+  )
 }

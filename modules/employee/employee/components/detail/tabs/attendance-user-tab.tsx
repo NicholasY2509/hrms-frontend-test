@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { useForm, Controller } from "react-hook-form"
+import { useForm, Controller, useWatch } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import {
   SmartPhone01Icon,
@@ -43,6 +43,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { ZktecoUserPicker } from "@/modules/attendance/zkteco/components/zkteco-user-picker"
 
 interface AttendanceUserTabProps {
   employeeId: string | number
@@ -76,6 +77,11 @@ export function AttendanceUserTab({ employeeId }: AttendanceUserTabProps) {
       uid: 0,
       zkteco_machine_id: undefined,
     },
+  })
+
+  const watchMachineId = useWatch({
+    control,
+    name: "zkteco_machine_id",
   })
 
   const handleAdd = () => {
@@ -228,15 +234,10 @@ export function AttendanceUserTab({ employeeId }: AttendanceUserTabProps) {
               render={({ field, fieldState }) => (
                 <Field>
                   <FieldLabel required>UID User (ZKTeco)</FieldLabel>
-                  <Input
-                    {...field}
-                    onChange={(e) =>
-                      field.onChange(
-                        e.target.value ? Number(e.target.value) : undefined
-                      )
-                    }
-                    placeholder="Masukkan UID dari mesin"
-                    type="number"
+                  <ZktecoUserPicker
+                    value={field.value}
+                    onChange={(val) => field.onChange(val)}
+                    machineId={watchMachineId || undefined}
                   />
                   <FieldError errors={[fieldState.error]} />
                 </Field>

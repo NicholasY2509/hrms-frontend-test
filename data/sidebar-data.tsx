@@ -269,9 +269,14 @@ export const sidebarData = {
             icon: <HugeiconsIcon icon={User03Icon} strokeWidth={2} />,
           },
           {
-            title: "Jadwal Kerja Karyawan",
+            title: "Jam Kerja Karyawan",
             url: "/management/attendance-working-hour",
             icon: <HugeiconsIcon icon={Calendar01Icon} strokeWidth={2} />,
+          },
+          {
+            title: "Pertukaran Jam Kerja",
+            url: "/management/shift-exchange",
+            icon: <HugeiconsIcon icon={ArrowLeftRightIcon} strokeWidth={2} />,
           },
           {
             title: "Data Jam Kerja",

@@ -8,5 +8,10 @@ export const SHIFT_EXCHANGE_ENDPOINTS = {
       WORKING_HOUR:
         "/v1/shiftexchange/v1/portal/employee/shift-exchanges/working-hour",
     },
+    MANAGEMENT: {
+      LIST: "/v1/shiftexchange/v1/portal/management/shift-exchanges",
+      DETAIL: (id: string | number) =>
+        `/v1/shiftexchange/v1/portal/management/shift-exchanges/${id}`,
+    },
   },
 } as const

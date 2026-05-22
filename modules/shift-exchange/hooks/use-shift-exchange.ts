@@ -54,3 +54,32 @@ export function useShiftExchangeWorkingHour(
     isError,
   }
 }
+
+export function useManagementShiftExchangeList(params?: Record<string, any>) {
+  const { data, error, isLoading, refetch } = useQuery({
+    queryKey: [SHIFT_EXCHANGE_ENDPOINTS.PORTAL.MANAGEMENT.LIST, params],
+    queryFn: () => shiftExchangeService.getManagementList(params),
+  })
+
+  return {
+    items: data?.data || [],
+    meta: data?.meta,
+    isLoading,
+    isError: error,
+    mutate: refetch,
+  }
+}
+
+export function useManagementShiftExchangeDetail(id: number) {
+  const { data, error, isLoading, refetch } = useQuery({
+    queryKey: [SHIFT_EXCHANGE_ENDPOINTS.PORTAL.MANAGEMENT.DETAIL(id)],
+    queryFn: () => shiftExchangeService.getManagementDetail(id!),
+  })
+
+  return {
+    item: data?.data,
+    isLoading,
+    isError: error,
+    mutate: refetch,
+  }
+}

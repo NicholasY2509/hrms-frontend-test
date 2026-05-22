@@ -51,4 +51,19 @@ export const shiftExchangeService = {
     >(SHIFT_EXCHANGE_ENDPOINTS.PORTAL.EMPLOYEE.WORKING_HOUR, { params })
     return response.data
   },
+
+  getManagementList: async (params?: Record<string, any>) => {
+    const response = await apiClient.get<PaginatedResponse<ShiftExchange>>(
+      SHIFT_EXCHANGE_ENDPOINTS.PORTAL.MANAGEMENT.LIST,
+      { params }
+    )
+    return response.data
+  },
+
+  getManagementDetail: async (id: string | number) => {
+    const response = await apiClient.get<ApiResponse<ShiftExchange>>(
+      SHIFT_EXCHANGE_ENDPOINTS.PORTAL.MANAGEMENT.DETAIL(id)
+    )
+    return response.data
+  },
 }

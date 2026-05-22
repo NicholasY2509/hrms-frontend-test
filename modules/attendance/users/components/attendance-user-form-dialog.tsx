@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { useForm, Controller, SubmitHandler } from "react-hook-form"
+import { useForm, Controller, SubmitHandler, useWatch } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import {
   Dialog,
@@ -28,6 +28,7 @@ import {
 } from "../schemas/attendance-user.schema"
 import { AttendanceUserModel } from "../types"
 import { useZktecoMachines } from "../../zkteco/hooks/use-zkteco"
+import { ZktecoUserPicker } from "../../zkteco/components/zkteco-user-picker"
 
 interface AttendanceUserFormDialogProps {
   open: boolean
@@ -58,6 +59,11 @@ export function AttendanceUserFormDialog({
       uid: "",
       zkteco_machine_id: 0,
     },
+  })
+
+  const watchMachineId = useWatch({
+    control,
+    name: "zkteco_machine_id",
   })
 
   React.useEffect(() => {
@@ -154,7 +160,11 @@ export function AttendanceUserFormDialog({
               render={({ field }) => (
                 <Field>
                   <FieldLabel required>UID (ID Mesin)</FieldLabel>
-                  <Input {...field} placeholder="Contoh: 1047" />
+                  <ZktecoUserPicker
+                    value={field.value}
+                    onChange={(val) => field.onChange(val)}
+                    machineId={watchMachineId || undefined}
+                  />
                   <FieldError errors={[errors.uid?.message]} />
                 </Field>
               )}
