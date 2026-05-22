@@ -11,5 +11,5 @@ export interface ShiftExchange {
   reason: string
   status: string
   created_at: string
-  approval_request?: any
+  approvals?: any
 }
