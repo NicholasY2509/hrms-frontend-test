@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { PageHeader } from "@/components/layout/page-header"
 import { DataTable } from "@/components/data-table/data-table"
 import { useUrlFilters } from "@/hooks/use-url-filters"
@@ -22,12 +22,27 @@ export function PositionHierarchyMatrixClient() {
     search: "",
   })
 
-  const debouncedSearch = useDebounce(filters.search as string, 500)
+  const [localSearch, setLocalSearch] = useState(filters.search as string)
+  const debouncedLocalSearch = useDebounce(localSearch, 500)
+
+  // Sync debounced local search with URL filter
+  useEffect(() => {
+    if (debouncedLocalSearch !== filters.search) {
+      setFilter("search", debouncedLocalSearch)
+    }
+  }, [debouncedLocalSearch, setFilter, filters.search])
+
+  // If URL changes externally (e.g. reset), update local state
+  useEffect(() => {
+    if (filters.search !== debouncedLocalSearch) {
+      setLocalSearch(filters.search as string)
+    }
+  }, [filters.search])
 
   const { items, meta, isLoading } = usePositionHierarchyMatrices({
     page: filters.page,
     per_page: filters.per_page,
-    search: debouncedSearch,
+    search: filters.search as string,
   })
 
   const [dialogState, setDialogState] = useState<{
@@ -71,8 +86,8 @@ export function PositionHierarchyMatrixClient() {
         perPage={String(filters.per_page)}
         onPerPageChange={(v) => setFilter("per_page", v)}
         search={{
-          value: filters.search as string,
-          onChange: (v) => setFilter("search", v),
+          value: localSearch,
+          onChange: setLocalSearch,
           placeholder: "Search mappings...",
         }}
       />
