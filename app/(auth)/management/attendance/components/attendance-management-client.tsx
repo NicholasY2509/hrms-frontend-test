@@ -96,12 +96,14 @@ export function AttendanceManagementClient() {
 
   React.useEffect(() => {
     setSelectedAttendanceMap((prev) => {
+      let hasChanges = false
       const newMap = { ...prev }
 
       // Add currently visible selected items
       items?.forEach((item) => {
-        if (rowSelection[item.id]) {
+        if (rowSelection[item.id] && !newMap[item.id]) {
           newMap[item.id] = item
+          hasChanges = true
         }
       })
 
@@ -109,10 +111,11 @@ export function AttendanceManagementClient() {
       Object.keys(newMap).forEach((id) => {
         if (!rowSelection[id]) {
           delete newMap[id]
+          hasChanges = true
         }
       })
 
-      return newMap
+      return hasChanges ? newMap : prev
     })
   }, [rowSelection, items])
 
