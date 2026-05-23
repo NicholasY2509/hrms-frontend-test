@@ -1,4 +1,4 @@
-import React, { useMemo } from "react"
+import React, { useMemo, useState, useEffect, useCallback, useRef } from "react"
 import { useRouter, usePathname, useSearchParams } from "next/navigation"
 
 export function useUrlFilters<T extends Record<string, any>>(
@@ -8,16 +8,28 @@ export function useUrlFilters<T extends Record<string, any>>(
   const pathname = usePathname()
   const searchParams = useSearchParams()
 
-  // Read current filters from URL, falling back to defaults
+  const [optimisticParams, setOptimisticParams] =
+    useState<URLSearchParams | null>(null)
+
+  const currentParamsRef = useRef<URLSearchParams>(
+    new URLSearchParams(searchParams.toString())
+  )
+
+  useEffect(() => {
+    currentParamsRef.current = new URLSearchParams(searchParams.toString())
+    setOptimisticParams(null)
+  }, [searchParams])
+
+  const activeParams = optimisticParams || searchParams
+
   const filters = useMemo(() => {
     const currentFilters: Partial<T> = {}
 
     for (const key in defaultFilters) {
       const defaultValue = defaultFilters[key]
-      const paramValue = searchParams.get(key)
+      const paramValue = activeParams.get(key)
 
       if (paramValue !== null) {
-        // Basic type inference based on the default value
         if (typeof defaultValue === "number") {
           currentFilters[key] = Number(paramValue) as any
         } else if (typeof defaultValue === "boolean") {
@@ -31,20 +43,11 @@ export function useUrlFilters<T extends Record<string, any>>(
     }
 
     return currentFilters as T
-  }, [searchParams, defaultFilters])
+  }, [activeParams, defaultFilters])
 
-  const currentParamsRef = React.useRef<URLSearchParams>(
-    new URLSearchParams(searchParams.toString())
-  )
-
-  // Keep ref in sync with actual URL when it changes
-  React.useEffect(() => {
-    currentParamsRef.current = new URLSearchParams(searchParams.toString())
-  }, [searchParams])
-
-  const setFilter = React.useCallback(
+  const setFilter = useCallback(
     (key: keyof T, value: any) => {
-      const params = currentParamsRef.current
+      const params = new URLSearchParams(currentParamsRef.current.toString())
 
       if (value === null || value === undefined || value === "") {
         params.delete(key as string)
@@ -52,19 +55,25 @@ export function useUrlFilters<T extends Record<string, any>>(
         params.set(key as string, String(value))
       }
 
-      // Always reset page to 1 if a filter other than page changes
       if (key !== "page" && params.has("page")) {
         params.set("page", "1")
       }
 
-      router.replace(`${pathname}?${params.toString()}`, { scroll: false })
+      currentParamsRef.current = params
+      setOptimisticParams(params)
+
+      const newUrl = `${pathname}?${params.toString()}`
+      // Instantly update the URL bar
+      window.history.replaceState(null, "", newUrl)
+      // Trigger Next.js background fetch
+      router.replace(newUrl, { scroll: false })
     },
     [pathname, router]
   )
 
-  const setFilters = React.useCallback(
+  const setFilters = useCallback(
     (updates: Partial<T>) => {
-      const params = currentParamsRef.current
+      const params = new URLSearchParams(currentParamsRef.current.toString())
 
       let isPageUpdated = false
 
@@ -83,31 +92,41 @@ export function useUrlFilters<T extends Record<string, any>>(
         params.set("page", "1")
       }
 
-      router.replace(`${pathname}?${params.toString()}`, { scroll: false })
+      currentParamsRef.current = params
+      setOptimisticParams(params)
+
+      const newUrl = `${pathname}?${params.toString()}`
+      window.history.replaceState(null, "", newUrl)
+      router.replace(newUrl, { scroll: false })
     },
     [pathname, router]
   )
 
-  const resetFilters = React.useCallback(() => {
-    const params = currentParamsRef.current
+  const resetFilters = useCallback(() => {
+    const params = new URLSearchParams(currentParamsRef.current.toString())
     for (const key in defaultFilters) {
       params.delete(key)
     }
-    router.replace(`${pathname}?${params.toString()}`, { scroll: false })
+
+    currentParamsRef.current = params
+    setOptimisticParams(params)
+
+    const newUrl = `${pathname}?${params.toString()}`
+    window.history.replaceState(null, "", newUrl)
+    router.replace(newUrl, { scroll: false })
   }, [pathname, router, defaultFilters])
 
   const hasActiveFilters = useMemo(() => {
     for (const key in defaultFilters) {
-      // Ignore pagination parameters when checking for active filters
       if (key === "page" || key === "per_page") continue
 
-      const paramValue = searchParams.get(key)
+      const paramValue = activeParams.get(key)
       if (paramValue !== null && paramValue !== String(defaultFilters[key])) {
         return true
       }
     }
     return false
-  }, [searchParams, defaultFilters])
+  }, [activeParams, defaultFilters])
 
   return { filters, setFilter, setFilters, resetFilters, hasActiveFilters }
 }
