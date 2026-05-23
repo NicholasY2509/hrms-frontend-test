@@ -12,6 +12,8 @@ export const SHIFT_EXCHANGE_ENDPOINTS = {
       LIST: "/v1/shiftexchange/v1/portal/management/shift-exchanges",
       DETAIL: (id: string | number) =>
         `/v1/shiftexchange/v1/portal/management/shift-exchanges/${id}`,
+      SETTLE: (id: string | number) =>
+        `/v1/shiftexchange/v1/portal/management/shift-exchanges/${id}/settle`,
     },
   },
 } as const

@@ -121,7 +121,7 @@ export const getShiftExchangeColumns = (
     header: "Aksi",
     cell: ({ row }) => (
       <Button variant="ghost" size="icon" onClick={() => onView(row.original)}>
-        <HugeiconsIcon icon={ProfileIcon} size={14} className="mr-2" />
+        <HugeiconsIcon icon={ProfileIcon} size={14} className="" />
       </Button>
     ),
   },

@@ -1,4 +1,5 @@
-import { useQuery } from "@tanstack/react-query"
+import { toast } from "sonner"
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { shiftExchangeService } from "../services/shift-exchange-service"
 import { SHIFT_EXCHANGE_ENDPOINTS } from "../endpoints"
 
@@ -81,5 +82,32 @@ export function useManagementShiftExchangeDetail(id: number) {
     isLoading,
     isError: error,
     mutate: refetch,
+  }
+}
+
+export function useSettleShiftExchange(
+  id: number,
+  options?: { onSuccess?: () => void }
+) {
+  const queryClient = useQueryClient()
+  const mutation = useMutation({
+    mutationFn: () => shiftExchangeService.settle(id),
+    onSuccess: () => {
+      toast.success("Tukar shift berhasil di-settle")
+      queryClient.invalidateQueries({
+        queryKey: [SHIFT_EXCHANGE_ENDPOINTS.PORTAL.MANAGEMENT.LIST],
+      })
+      options?.onSuccess?.()
+    },
+    onError: (error: any) => {
+      toast.error(
+        error?.response?.data?.message || "Gagal melakukan settle tukar shift"
+      )
+    },
+  })
+
+  return {
+    settleShiftExchange: mutation.mutateAsync,
+    isLoading: mutation.isPending,
   }
 }

@@ -90,10 +90,33 @@ export function AttendanceManagementClient() {
 
   const columns = React.useMemo(() => getAttendanceColumns(handleView), [])
 
-  const selectedAttendances = React.useMemo(() => {
-    if (!items) return []
-    return items.filter((item) => rowSelection[item.id])
-  }, [items, rowSelection])
+  const [selectedAttendanceMap, setSelectedAttendanceMap] = React.useState<
+    Record<string, AttendanceModel>
+  >({})
+
+  React.useEffect(() => {
+    setSelectedAttendanceMap((prev) => {
+      const newMap = { ...prev }
+
+      // Add currently visible selected items
+      items?.forEach((item) => {
+        if (rowSelection[item.id]) {
+          newMap[item.id] = item
+        }
+      })
+
+      // Remove deselected items
+      Object.keys(newMap).forEach((id) => {
+        if (!rowSelection[id]) {
+          delete newMap[id]
+        }
+      })
+
+      return newMap
+    })
+  }, [rowSelection, items])
+
+  const selectedAttendances = Object.values(selectedAttendanceMap)
 
   return (
     <div className="w-full min-w-0 space-y-6">

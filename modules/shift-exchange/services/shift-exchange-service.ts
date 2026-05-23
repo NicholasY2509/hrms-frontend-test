@@ -66,4 +66,11 @@ export const shiftExchangeService = {
     )
     return response.data
   },
+
+  settle: async (id: string | number) => {
+    const response = await apiClient.post<ApiResponse<ShiftExchange>>(
+      SHIFT_EXCHANGE_ENDPOINTS.PORTAL.MANAGEMENT.SETTLE(id)
+    )
+    return response.data
+  },
 }

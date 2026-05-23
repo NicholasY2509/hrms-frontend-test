@@ -12,6 +12,7 @@ import {
   UserGroupIcon,
   File01Icon,
   ArrowRight01Icon,
+  CheckmarkCircle01Icon,
 } from "@hugeicons/core-free-icons"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -20,9 +21,9 @@ import { useManagementShiftExchangeDetail } from "@/modules/shift-exchange/hooks
 import { SHIFT_EXCHANGE_ENDPOINTS } from "@/modules/shift-exchange/endpoints"
 import { useAuth } from "@/modules/auth/hooks/use-auth"
 import { ApprovalHistory } from "@/modules/approval/components/approval-history"
-import { format } from "date-fns"
-import { id } from "date-fns/locale"
+import { formatDate } from "@/lib/utils"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { ShiftExchangeSettleDialog } from "@/modules/shift-exchange/components/detail/shift-exchange-settle-dialog"
 
 export function ShiftExchangeDetailClient() {
   const params = useParams()
@@ -75,7 +76,7 @@ export function ShiftExchangeDetailClient() {
           className="h-10 w-10 animate-spin text-primary"
         />
         <p className="animate-pulse font-medium text-muted-foreground">
-          Memuat rincian pengajuan...
+          Memuat rincian tukar shift...
         </p>
       </div>
     )
@@ -130,13 +131,32 @@ export function ShiftExchangeDetailClient() {
             <p className="mt-1 text-sm font-medium text-muted-foreground">
               ID: {item.id} • Tanggal Pengajuan:{" "}
               <span className="font-bold text-foreground">
-                {format(new Date(item.created_at), "dd MMM yyyy", {
-                  locale: id,
-                })}
+                {formatDate(item.created_at, "dd MMM yyyy")}
               </span>
             </p>
           </div>
         </div>
+        {(item.status?.toLowerCase() === "approved" ||
+          item.status?.toLowerCase() === "settled") && (
+          <ShiftExchangeSettleDialog
+            item={item}
+            onSuccess={() => mutate()}
+            trigger={
+              <Button
+                disabled={item.status?.toLowerCase() === "settled"}
+                className="flex flex-row items-center gap-2"
+              >
+                <HugeiconsIcon
+                  icon={CheckmarkCircle01Icon}
+                  className="h-4 w-4"
+                />{" "}
+                {item.status?.toLowerCase() === "settled"
+                  ? "Telah Disettle"
+                  : "Settle"}
+              </Button>
+            }
+          />
+        )}
       </div>
 
       <div className="grid gap-6 md:grid-cols-3">
@@ -225,9 +245,7 @@ export function ShiftExchangeDetailClient() {
                       Pertukaran
                     </p>
                     <p className="text-lg font-semibold">
-                      {format(new Date(item.date), "EEEE, dd MMMM yyyy", {
-                        locale: id,
-                      })}
+                      {formatDate(item.date, "EEEE, dd MMMM yyyy")}
                     </p>
                   </div>
                   <div>
