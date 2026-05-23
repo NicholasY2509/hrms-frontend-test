@@ -47,8 +47,9 @@ export function DataTable<TData, TValue>({
     getPaginationRowModel: getPaginationRowModel(),
     manualPagination: true,
     getRowId: (row: any) => row.id?.toString(),
+    enableRowSelection: true,
     state: {
-      rowSelection,
+      ...(rowSelection !== undefined ? { rowSelection } : {}),
     },
     onRowSelectionChange,
   })
@@ -101,7 +102,7 @@ export function DataTable<TData, TValue>({
               rows.map((row) => (
                 <TableRow
                   key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
+                  data-state={row.getIsSelected?.() ? "selected" : undefined}
                   className="group border-b transition-colors last:border-0 hover:bg-muted/50"
                 >
                   {row.getVisibleCells().map((cell) => (
