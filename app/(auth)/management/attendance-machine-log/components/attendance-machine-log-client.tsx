@@ -19,57 +19,46 @@ import {
 } from "@/components/ui/select"
 import { DatePicker } from "@/components/ui/date-picker"
 import { format } from "date-fns"
+import { useUrlFilters } from "@/hooks/use-url-filters"
 import { useDebounce } from "@/hooks/use-debounce"
 import {
   useZktecoAttendances,
   useZktecoMachines,
 } from "@/modules/attendance/zkteco/hooks/use-zkteco"
 import { columns } from "../columns"
-import { FilterCard, FilterGrid } from "@/components/layout/filter-card"
+import { ManagementFilter } from "@/components/layout/management-filter"
 import { Button } from "@/components/ui/button"
 import { ZktecoAttendanceSyncDialog } from "@/modules/attendance/zkteco/components/zkteco-attendance-sync-dialog"
 
 export function AttendanceMachineLogClient() {
-  const [search, setSearch] = React.useState("")
-  const [page, setPage] = React.useState(1)
-  const [perPage, setPerPage] = React.useState("15")
+  const { filters, setFilter, resetFilters, hasActiveFilters } = useUrlFilters({
+    page: 1,
+    per_page: 15,
+    search: "",
+    machine_id: "all",
+    start_date: undefined as string | undefined,
+    end_date: undefined as string | undefined,
+  })
+
   const [isSyncDialogOpen, setIsSyncDialogOpen] = React.useState(false)
 
-  const [startDate, setStartDate] = React.useState<Date | undefined>(undefined)
-  const [endDate, setEndDate] = React.useState<Date | undefined>(undefined)
-  const [machineId, setMachineId] = React.useState<string>("")
-
-  const debouncedSearch = useDebounce(search, 500)
+  const debouncedSearch = useDebounce(filters.search, 500)
 
   const { items, meta, isLoading } = useZktecoAttendances({
     search: debouncedSearch,
-    start_date: startDate ? format(startDate, "yyyy-MM-dd") : undefined,
-    end_date: endDate ? format(endDate, "yyyy-MM-dd") : undefined,
+    start_date: filters.start_date,
+    end_date: filters.end_date,
     zkteco_machine_id:
-      machineId === "all" || !machineId ? undefined : Number(machineId),
-    page,
-    per_page: Number(perPage),
+      filters.machine_id === "all" || !filters.machine_id ? undefined : Number(filters.machine_id),
+    page: filters.page,
+    per_page: Number(filters.per_page),
   })
 
   const { machines, isLoadingMachines } = useZktecoMachines()
 
-  const handleResetFilters = () => {
-    setSearch("")
-    setStartDate(undefined)
-    setEndDate(undefined)
-    setMachineId("")
-    setPage(1)
-  }
-
   const handleSync = () => {
     setIsSyncDialogOpen(true)
   }
-
-  const hasActiveFilters =
-    search !== "" ||
-    !!startDate ||
-    !!endDate ||
-    (machineId !== "" && machineId !== "all")
 
   return (
     <div className="w-full min-w-0 space-y-6">
@@ -85,59 +74,33 @@ export function AttendanceMachineLogClient() {
         </Button>
       </div>
 
-      <FilterCard
-        onReset={handleResetFilters}
+      <ManagementFilter
+        onReset={resetFilters}
         hasActiveFilters={hasActiveFilters}
-        perPage={perPage}
-        onPerPageChange={setPerPage}
+        perPage={String(filters.per_page)}
+        onPerPageChange={(v) => setFilter("per_page", v)}
+        search={{ value: filters.search, onChange: (v) => setFilter("search", v), placeholder: "Cari UID atau nama..." }}
+        startDate={{ value: filters.start_date ? new Date(filters.start_date) : undefined, onChange: (d) => setFilter("start_date", d ? format(d, "yyyy-MM-dd") : undefined), placeholder: "Tanggal Mulai" }}
+        endDate={{ value: filters.end_date ? new Date(filters.end_date) : undefined, onChange: (d) => setFilter("end_date", d ? format(d, "yyyy-MM-dd") : undefined), placeholder: "Tanggal Selesai" }}
       >
-        <FilterGrid cols={4}>
-          <InputGroup>
-            <InputGroupAddon>
-              <HugeiconsIcon
-                icon={Search01Icon}
-                className="text-muted-foreground"
-                size={14}
-              />
-            </InputGroupAddon>
-            <InputGroupInput
-              placeholder="Cari UID atau nama..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-          </InputGroup>
-
-          <Select
-            value={machineId || "all"}
-            onValueChange={(v) => setMachineId(v === "all" ? "" : v)}
-            disabled={isLoadingMachines}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Semua Mesin" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Semua Mesin</SelectItem>
-              {machines.map((machine: any) => (
-                <SelectItem key={machine.id} value={String(machine.id)}>
-                  {machine.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-
-          <DatePicker
-            value={startDate}
-            onChange={setStartDate}
-            placeholder="Tanggal Mulai"
-          />
-
-          <DatePicker
-            value={endDate}
-            onChange={setEndDate}
-            placeholder="Tanggal Selesai"
-          />
-        </FilterGrid>
-      </FilterCard>
+        <Select
+          value={String(filters.machine_id)}
+          onValueChange={(v) => setFilter("machine_id", v)}
+          disabled={isLoadingMachines}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Semua Mesin" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Semua Mesin</SelectItem>
+            {machines.map((machine: any) => (
+              <SelectItem key={machine.id} value={String(machine.id)}>
+                {machine.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </ManagementFilter>
 
       <DataTable
         columns={columns}
@@ -147,7 +110,7 @@ export function AttendanceMachineLogClient() {
           meta
             ? {
                 ...meta,
-                onPageChange: (p) => setPage(p),
+                onPageChange: (p) => setFilter("page", p),
               }
             : undefined
         }

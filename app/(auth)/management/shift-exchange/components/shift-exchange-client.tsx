@@ -6,8 +6,8 @@ import { PageHeader } from "@/components/layout/page-header"
 import { useManagementShiftExchangeList } from "@/modules/shift-exchange/hooks/use-shift-exchange"
 import { getShiftExchangeColumns } from "../columns"
 import { ShiftExchange } from "@/modules/shift-exchange/types"
-import { useRouter, useSearchParams, usePathname } from "next/navigation"
-import { FilterCard, FilterGrid } from "@/components/layout/filter-card"
+import { useRouter } from "next/navigation"
+import { ManagementFilter } from "@/components/layout/management-filter"
 import {
   Select,
   SelectContent,
@@ -16,90 +16,39 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { DatePicker } from "@/components/ui/date-picker"
-import { format, parse } from "date-fns"
+import { format } from "date-fns"
+import { useUrlFilters } from "@/hooks/use-url-filters"
 
 export default function ShiftExchangeClient() {
   const router = useRouter()
-  const pathname = usePathname()
-  const searchParams = useSearchParams()
-
-  const getParam = (key: string, defaultValue: string = "") =>
-    searchParams.get(key) || defaultValue
-
-  // Filters State
-  const [page, setPage] = React.useState(Number(getParam("page", "1")))
-  const [perPage, setPerPage] = React.useState(getParam("per_page", "15"))
-  const [isSettled, setIsSettled] = React.useState<string>(
-    getParam("is_settled", "all")
-  )
-
-  const [startDate, setStartDate] = React.useState<Date | undefined>(() => {
-    const start = searchParams.get("start_date")
-    return start ? parse(start, "yyyy-MM-dd", new Date()) : undefined
+  const { filters, setFilter, resetFilters, hasActiveFilters } = useUrlFilters({
+    page: 1,
+    per_page: 15,
+    is_settled: "all",
+    start_date: undefined as string | undefined,
+    end_date: undefined as string | undefined,
   })
-  const [endDate, setEndDate] = React.useState<Date | undefined>(() => {
-    const end = searchParams.get("end_date")
-    return end ? parse(end, "yyyy-MM-dd", new Date()) : undefined
-  })
-
-  const updateQuery = React.useCallback(
-    (updates: Record<string, string | number | null | undefined>) => {
-      const params = new URLSearchParams(searchParams.toString())
-
-      Object.entries(updates).forEach(([key, value]) => {
-        if (
-          value === null ||
-          value === undefined ||
-          value === "" ||
-          value === "all"
-        ) {
-          params.delete(key)
-        } else {
-          params.set(key, String(value))
-        }
-      })
-
-      if (!updates.hasOwnProperty("page")) {
-        params.set("page", "1")
-        setPage(1)
-      }
-
-      router.replace(`${pathname}?${params.toString()}`, { scroll: false })
-    },
-    [pathname, router, searchParams]
-  )
 
   const activeFilters = React.useMemo(
     () => ({
-      is_settled: isSettled === "all" ? undefined : isSettled,
-      start_date: startDate ? format(startDate, "yyyy-MM-dd") : undefined,
-      end_date: endDate ? format(endDate, "yyyy-MM-dd") : undefined,
+      is_settled: filters.is_settled === "all" ? undefined : filters.is_settled,
+      start_date: filters.start_date,
+      end_date: filters.end_date,
     }),
-    [isSettled, startDate, endDate]
+    [filters]
   )
 
   const { items, meta, isLoading } = useManagementShiftExchangeList({
     ...activeFilters,
-    page,
-    per_page: Number(perPage),
+    page: filters.page,
+    per_page: Number(filters.per_page),
   })
 
   const handleView = (item: ShiftExchange) => {
     router.push(`/management/shift-exchange/${item.id}`)
   }
 
-  const handleResetFilters = () => {
-    setPage(1)
-    setIsSettled("all")
-    setStartDate(undefined)
-    setEndDate(undefined)
-    router.replace(pathname, { scroll: false })
-  }
-
   const columns = React.useMemo(() => getShiftExchangeColumns(handleView), [])
-
-  const hasActiveFilters =
-    isSettled !== "all" || startDate !== undefined || endDate !== undefined
 
   return (
     <div className="space-y-6">
@@ -108,56 +57,36 @@ export default function ShiftExchangeClient() {
         description="Tinjau dan kelola permohonan tukar shift karyawan."
       />
 
-      <FilterCard
-        onReset={handleResetFilters}
+      <ManagementFilter
+        onReset={resetFilters}
         hasActiveFilters={hasActiveFilters}
-        perPage={perPage}
-        onPerPageChange={(v) => {
-          setPerPage(v)
-          updateQuery({ per_page: v })
+        perPage={String(filters.per_page)}
+        onPerPageChange={(v) => setFilter("per_page", v)}
+        startDate={{
+          value: filters.start_date ? new Date(filters.start_date) : undefined,
+          onChange: (date) => setFilter("start_date", date ? format(date, "yyyy-MM-dd") : undefined),
+          placeholder: "Tanggal Mulai"
+        }}
+        endDate={{
+          value: filters.end_date ? new Date(filters.end_date) : undefined,
+          onChange: (date) => setFilter("end_date", date ? format(date, "yyyy-MM-dd") : undefined),
+          placeholder: "Tanggal Selesai"
         }}
       >
-        <FilterGrid cols={3}>
-          <Select
-            value={isSettled}
-            onValueChange={(v) => {
-              setIsSettled(v)
-              updateQuery({ is_settled: v })
-            }}
-          >
-            <SelectTrigger className="h-9 bg-background">
-              <SelectValue placeholder="Semua Status Settle" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Semua Status Settle</SelectItem>
-              <SelectItem value="1">Settled</SelectItem>
-              <SelectItem value="0">Unsettled</SelectItem>
-            </SelectContent>
-          </Select>
-
-          <DatePicker
-            value={startDate}
-            onChange={(date) => {
-              setStartDate(date)
-              updateQuery({
-                start_date: date ? format(date, "yyyy-MM-dd") : undefined,
-              })
-            }}
-            placeholder="Tanggal Mulai"
-          />
-
-          <DatePicker
-            value={endDate}
-            onChange={(date) => {
-              setEndDate(date)
-              updateQuery({
-                end_date: date ? format(date, "yyyy-MM-dd") : undefined,
-              })
-            }}
-            placeholder="Tanggal Selesai"
-          />
-        </FilterGrid>
-      </FilterCard>
+        <Select
+          value={String(filters.is_settled)}
+          onValueChange={(v) => setFilter("is_settled", v)}
+        >
+          <SelectTrigger className="h-9 bg-background">
+            <SelectValue placeholder="Semua Status Settle" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Semua Status Settle</SelectItem>
+            <SelectItem value="1">Settled</SelectItem>
+            <SelectItem value="0">Unsettled</SelectItem>
+          </SelectContent>
+        </Select>
+      </ManagementFilter>
 
       <DataTable
         columns={columns}
@@ -167,10 +96,7 @@ export default function ShiftExchangeClient() {
           meta
             ? {
                 ...meta,
-                onPageChange: (p) => {
-                  setPage(p)
-                  updateQuery({ page: p })
-                },
+                onPageChange: (p) => setFilter("page", p),
               }
             : undefined
         }

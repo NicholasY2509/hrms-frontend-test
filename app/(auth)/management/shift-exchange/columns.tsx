@@ -101,10 +101,10 @@ export const getShiftExchangeColumns = (
         | "warning" = "default"
 
       if (status.toLowerCase().includes("pending")) variant = "warning"
+      else if (status.toLowerCase().includes("settled")) variant = "default"
       else if (
         status.toLowerCase().includes("approved") ||
-        status.toLowerCase().includes("success") ||
-        status.toLowerCase() === "settled"
+        status.toLowerCase().includes("success")
       )
         variant = "success"
       else if (

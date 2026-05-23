@@ -22,26 +22,34 @@ import { AttendanceStatusPicker } from "@/modules/attendance/shared/components/a
 import { EmployeePicker } from "@/modules/employee/employee/components/employee-picker"
 import { DatePicker } from "@/components/ui/date-picker"
 import { format } from "date-fns"
+import { ManagementFilter } from "@/components/layout/management-filter"
+import { useUrlFilters } from "@/hooks/use-url-filters"
 import { FilterCard, FilterGrid } from "@/components/layout/filter-card"
 import { ExportAttendanceDialog } from "@/modules/attendance/attendances/components/export-attendance-dialog"
 import { Button } from "@/components/ui/button"
 import { CalculateAttendanceDialog } from "@/modules/attendance/attendances/components/calculate-attendance-dialog"
 import { AttendanceDetailDialog } from "@/modules/attendance/attendances/components/attendance-detail-dialog"
 import { DepartmentPicker } from "@/modules/organization/department/components/department-picker"
+import { TeamPicker } from "@/modules/organization/teams/components/team-picker"
 
 import { BatchUpdateAttendanceStatusDialog } from "@/modules/attendance/attendances/components/batch-update-attendance-status-dialog"
 import { TaskEdit01Icon } from "@hugeicons/core-free-icons"
 import { RowSelectionState } from "@tanstack/react-table"
 
 export function AttendanceManagementClient() {
-  const [search, setSearch] = React.useState("")
-  const [page, setPage] = React.useState(1)
-  const [perPage, setPerPage] = React.useState("15")
-  const [statusId, setStatusId] = React.useState<number | null>(null)
-  const [employeeId, setEmployeeId] = React.useState<number | null>(null)
-  const [departmentId, setDepartmentId] = React.useState<number | null>(null)
-  const [startDate, setStartDate] = React.useState<Date | undefined>(undefined)
-  const [endDate, setEndDate] = React.useState<Date | undefined>(undefined)
+  const { filters, setFilter, setFilters, resetFilters, hasActiveFilters } =
+    useUrlFilters({
+      page: 1,
+      per_page: 15,
+      search: "",
+      status_id: null as number | null,
+      employee_id: null as number | null,
+      department_id: null as number | null,
+      team_id: null as number | null,
+      start_date: undefined as string | undefined,
+      end_date: undefined as string | undefined,
+    })
+
   const [isExportDialogOpen, setIsExportDialogOpen] = React.useState(false)
   const [isCalculateDialogOpen, setIsCalculateDialogOpen] =
     React.useState(false)
@@ -52,36 +60,23 @@ export function AttendanceManagementClient() {
     React.useState<AttendanceModel | null>(null)
   const [rowSelection, setRowSelection] = React.useState<RowSelectionState>({})
 
-  const debouncedSearch = useDebounce(search, 500)
+  const debouncedSearch = useDebounce(filters.search, 500)
 
   const { items, meta, isLoading } = useAttendanceList({
     search: debouncedSearch,
-    page,
-    per_page: Number(perPage),
-    attendance_status_id: statusId || undefined,
-    employee_id: employeeId || undefined,
-    department_id: departmentId || undefined,
-    start_date: startDate ? format(startDate, "yyyy-MM-dd") : undefined,
-    end_date: endDate ? format(endDate, "yyyy-MM-dd") : undefined,
+    page: filters.page,
+    per_page: Number(filters.per_page),
+    attendance_status_id: filters.status_id
+      ? Number(filters.status_id)
+      : undefined,
+    team_id: filters.team_id ? Number(filters.team_id) : undefined,
+    employee_id: filters.employee_id ? Number(filters.employee_id) : undefined,
+    department_id: filters.department_id
+      ? Number(filters.department_id)
+      : undefined,
+    start_date: filters.start_date,
+    end_date: filters.end_date,
   })
-
-  const handleResetFilters = () => {
-    setSearch("")
-    setStatusId(null)
-    setEmployeeId(null)
-    setDepartmentId(null)
-    setStartDate(undefined)
-    setEndDate(undefined)
-    setPage(1)
-  }
-
-  const hasActiveFilters =
-    search !== "" ||
-    statusId !== null ||
-    employeeId !== null ||
-    departmentId !== null ||
-    startDate !== undefined ||
-    endDate !== undefined
 
   const handleView = (item: AttendanceModel) => {
     setSelectedAttendance(item)
@@ -157,59 +152,46 @@ export function AttendanceManagementClient() {
         </div>
       </PageHeader>
 
-      <FilterCard
-        onReset={handleResetFilters}
+      <ManagementFilter
+        setPage={(p) => setFilter("page", p)}
+        onReset={resetFilters}
         hasActiveFilters={hasActiveFilters}
-        perPage={perPage}
-        onPerPageChange={setPerPage}
+        perPage={String(filters.per_page)}
+        onPerPageChange={(v) => setFilter("per_page", v)}
+        search={{
+          value: filters.search,
+          onChange: (v) => setFilter("search", v),
+          placeholder: "Cari karyawan...",
+        }}
+        employee={{
+          value: filters.employee_id ? Number(filters.employee_id) : null,
+          onChange: (v) => setFilter("employee_id", v),
+        }}
+        department={{
+          value: filters.department_id ? Number(filters.department_id) : null,
+          onChange: (v) => setFilter("department_id", v),
+        }}
+        attendanceStatus={{
+          value: filters.status_id ? Number(filters.status_id) : null,
+          onChange: (v) => setFilter("status_id", v),
+        }}
+        startDate={{
+          value: filters.start_date ? new Date(filters.start_date) : undefined,
+          onChange: (d) =>
+            setFilter("start_date", d ? format(d, "yyyy-MM-dd") : undefined),
+        }}
+        endDate={{
+          value: filters.end_date ? new Date(filters.end_date) : undefined,
+          onChange: (d) =>
+            setFilter("end_date", d ? format(d, "yyyy-MM-dd") : undefined),
+        }}
       >
-        <FilterGrid cols={4}>
-          <InputGroup className="">
-            <InputGroupAddon>
-              <HugeiconsIcon
-                icon={Search01Icon}
-                className="text-muted-foreground"
-                size={14}
-              />
-            </InputGroupAddon>
-            <InputGroupInput
-              placeholder="Cari karyawan..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-          </InputGroup>
-
-          <EmployeePicker
-            value={employeeId}
-            onChange={(val) => setEmployeeId(val)}
-            placeholder="Filter Karyawan"
-          />
-
-          <DepartmentPicker
-            value={departmentId}
-            onChange={(val) => setDepartmentId(val)}
-            placeholder="Filter Departemen"
-          />
-
-          <AttendanceStatusPicker
-            value={statusId}
-            onChange={(val) => setStatusId(val)}
-            placeholder="Filter Status"
-          />
-
-          <DatePicker
-            value={startDate}
-            onChange={setStartDate}
-            placeholder="Tanggal Mulai"
-          />
-
-          <DatePicker
-            value={endDate}
-            onChange={setEndDate}
-            placeholder="Tanggal Selesai"
-          />
-        </FilterGrid>
-      </FilterCard>
+        <TeamPicker
+          value={filters.team_id ? Number(filters.team_id) : null}
+          onChange={(v) => setFilter("team_id", v)}
+          placeholder="Semua Tim"
+        />
+      </ManagementFilter>
 
       <DataTable
         columns={columns}
@@ -221,7 +203,7 @@ export function AttendanceManagementClient() {
           meta
             ? {
                 ...meta,
-                onPageChange: (p) => setPage(p),
+                onPageChange: (p) => setFilter("page", p),
               }
             : undefined
         }

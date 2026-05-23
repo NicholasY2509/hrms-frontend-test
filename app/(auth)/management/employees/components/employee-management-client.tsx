@@ -20,9 +20,9 @@ import { WorkPositionPicker } from '@/modules/organization/work-position/compone
 import { getEmployeeColumns } from '../columns';
 import { Employee } from '@/modules/employee/employee/types';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
-import { FilterCard, FilterGrid } from "@/components/layout/filter-card";
+import { ManagementFilter } from "@/components/layout/management-filter"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useCallback } from 'react';
+import { useUrlFilters } from '@/hooks/use-url-filters';
 
 import { ExportEmployeeDialog } from '@/modules/employee/employee/components/export-employee-dialog';
 import { Button } from '@/components/ui/button';
@@ -32,82 +32,42 @@ export function EmployeeManagementClient() {
     const pathname = usePathname();
     const searchParams = useSearchParams();
 
-    const getParam = (key: string, defaultValue: string = '') => searchParams.get(key) || defaultValue;
+    const { filters, setFilter, resetFilters, hasActiveFilters } = useUrlFilters({
+        page: 1,
+        per_page: 15,
+        search: '',
+        department_id: null as number | null,
+        team_id: null as number | null,
+        location_id: null as number | null,
+        position_id: null as number | null,
+        work_status_id: 'all',
+        employee_status_id: 'all',
+    });
 
-    const [search, setSearch] = React.useState(getParam('search'));
-    const [page, setPage] = React.useState(Number(getParam('page', '1')));
-    const [perPage, setPerPage] = React.useState(getParam('per_page', '15'));
-    const [departmentId, setDepartmentId] = React.useState<number | null>(searchParams.get('department_id') ? Number(searchParams.get('department_id')) : null);
-    const [teamId, setTeamId] = React.useState<number | null>(searchParams.get('team_id') ? Number(searchParams.get('team_id')) : null);
-    const [locationId, setLocationId] = React.useState<number | null>(searchParams.get('location_id') ? Number(searchParams.get('location_id')) : null);
-    const [positionId, setPositionId] = React.useState<number | null>(searchParams.get('position_id') ? Number(searchParams.get('position_id')) : null);
-    const [workStatusId, setWorkStatusId] = React.useState<string>(getParam('work_status_id', 'all'));
-    const [employeeStatusId, setEmployeeStatusId] = React.useState<string>(getParam('employee_status_id', 'all'));
-
-    const debouncedSearch = useDebounce(search, 500);
-
-    const updateQuery = useCallback((updates: Record<string, string | number | null | undefined>) => {
-        const params = new URLSearchParams(searchParams.toString());
-
-        Object.entries(updates).forEach(([key, value]) => {
-            if (value === null || value === undefined || value === '' || value === 'all') {
-                params.delete(key);
-            } else {
-                params.set(key, String(value));
-            }
-        });
-
-        if (!updates.hasOwnProperty('page')) {
-            params.set('page', '1');
-            setPage(1);
-        }
-
-        router.replace(`${pathname}?${params.toString()}`, { scroll: false });
-    }, [pathname, router, searchParams]);
+    const debouncedSearch = useDebounce(filters.search, 500);
 
     const activeFilters = React.useMemo(() => ({
         search: debouncedSearch,
-        department_id: departmentId || undefined,
-        team_id: teamId || undefined,
-        work_location_id: locationId || undefined,
-        work_position_id: positionId || undefined,
-        work_employee_status_id: workStatusId === 'all' ? undefined : workStatusId,
-        employee_status_id: employeeStatusId === 'all' ? undefined : employeeStatusId,
-    }), [debouncedSearch, departmentId, teamId, locationId, positionId, workStatusId, employeeStatusId]);
-
-    // Update URL when debounced search changes
-    React.useEffect(() => {
-        if (debouncedSearch !== getParam('search')) {
-            updateQuery({ search: debouncedSearch });
-        }
-    }, [debouncedSearch, updateQuery]);
+        department_id: filters.department_id ? Number(filters.department_id) : undefined,
+        team_id: filters.team_id ? Number(filters.team_id) : undefined,
+        work_location_id: filters.location_id ? Number(filters.location_id) : undefined,
+        work_position_id: filters.position_id ? Number(filters.position_id) : undefined,
+        work_employee_status_id: filters.work_status_id === 'all' ? undefined : filters.work_status_id,
+        employee_status_id: filters.employee_status_id === 'all' ? undefined : filters.employee_status_id,
+    }), [debouncedSearch, filters]);
 
     // Fetch Employees with all filters
     const { employees, summary, meta, isLoading } = useManagementEmployees({
         ...activeFilters,
-        page,
-        per_page: Number(perPage),
+        page: filters.page,
+        per_page: Number(filters.per_page),
     });
 
     const handleView = (item: Employee) => {
         router.push(`/management/employees/${item.id}`);
     };
 
-    const handleResetFilters = () => {
-        setSearch('');
-        setDepartmentId(null);
-        setTeamId(null);
-        setLocationId(null);
-        setPositionId(null);
-        setWorkStatusId('all');
-        setEmployeeStatusId('all');
-        setPage(1);
-        router.replace(pathname, { scroll: false });
-    };
-
     const columns = React.useMemo(() => getEmployeeColumns(handleView), []);
-
-    const hasActiveFilters = search !== '' || departmentId !== null || teamId !== null || locationId !== null || positionId !== null || workStatusId !== 'all' || employeeStatusId !== 'all';
 
     return (
         <div className="space-y-6 w-full min-w-0">
@@ -170,79 +130,49 @@ export function EmployeeManagementClient() {
                 )}
             </div>
 
-            <FilterCard
-                onReset={handleResetFilters}
+            <ManagementFilter
+                onReset={resetFilters}
                 hasActiveFilters={hasActiveFilters}
-                perPage={perPage}
-                onPerPageChange={(v) => {
-                    setPerPage(v);
-                    updateQuery({ per_page: v });
+                perPage={String(filters.per_page)}
+                onPerPageChange={(v) => setFilter('per_page', v)}
+                search={{
+                    value: filters.search,
+                    onChange: (v) => setFilter('search', v),
+                    placeholder: "Cari nama atau NIK..."
+                }}
+                department={{
+                    value: filters.department_id ? Number(filters.department_id) : null,
+                    onChange: (v) => setFilter('department_id', v),
+                    placeholder: "Semua Departemen"
+                }}
+                workPosition={{
+                    value: filters.position_id ? Number(filters.position_id) : null,
+                    onChange: (v) => setFilter('position_id', v),
+                    placeholder: "Semua Jabatan"
+                }}
+                workLocation={{
+                    value: filters.location_id ? Number(filters.location_id) : null,
+                    onChange: (v) => setFilter('location_id', v),
+                    placeholder: "Semua Lokasi"
+                }}
+                team={{
+                    value: filters.team_id ? Number(filters.team_id) : null,
+                    onChange: (v) => setFilter('team_id', v),
+                    placeholder: "Semua Tim"
                 }}
             >
-                <FilterGrid cols={4}>
-                    <InputGroup className="bg-background">
-                        <InputGroupAddon>
-                            <HugeiconsIcon icon={Search01Icon} className="text-muted-foreground" size={14} />
-                        </InputGroupAddon>
-                        <InputGroupInput
-                            placeholder="Cari nama atau NIK..."
-                            value={search}
-                            onChange={(e) => setSearch(e.target.value)}
-                        />
-                    </InputGroup>
-
-                    <DepartmentPicker
-                        value={departmentId}
-                        onChange={(v) => {
-                            setDepartmentId(v);
-                            updateQuery({ department_id: v });
-                        }}
-                        placeholder="Semua Departemen"
-                    />
-
-                    <WorkPositionPicker
-                        value={positionId}
-                        onChange={(v) => {
-                            setPositionId(v);
-                            updateQuery({ position_id: v });
-                        }}
-                        placeholder="Semua Jabatan"
-                    />
-
-                    <WorkLocationPicker
-                        value={locationId}
-                        onChange={(v) => {
-                            setLocationId(v);
-                            updateQuery({ location_id: v });
-                        }}
-                        placeholder="Semua Lokasi"
-                    />
-
-                    <TeamPicker
-                        value={teamId}
-                        onChange={(v) => {
-                            setTeamId(v);
-                            updateQuery({ team_id: v });
-                        }}
-                        placeholder="Semua Tim"
-                    />
-
-                    <Select value={workStatusId?.toString()} onValueChange={(v) => {
-                        setWorkStatusId(v);
-                        updateQuery({ work_status_id: v });
-                    }}>
-                        <SelectTrigger className="h-7 text-xs bg-background">
-                            <SelectValue placeholder="Semua Status Karyawan" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="all">Semua Status Karyawan</SelectItem>
-                            <SelectItem value='1'>Aktif</SelectItem>
-                            <SelectItem value='3'>Tidak Aktif</SelectItem>
-                            <SelectItem value='2'>Resign</SelectItem>
-                        </SelectContent>
-                    </Select>
-                </FilterGrid>
-            </FilterCard>
+                <Select value={String(filters.work_status_id)} onValueChange={(v) => setFilter('work_status_id', v)}>
+                    <SelectTrigger className="h-7 text-xs bg-background">
+                        <SelectValue placeholder="Semua Status Karyawan" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="all">Semua Status Karyawan</SelectItem>
+                        <SelectItem value='1'>Aktif</SelectItem>
+                        <SelectItem value='3'>Tidak Aktif</SelectItem>
+                        <SelectItem value='2'>Resign</SelectItem>
+                    </SelectContent>
+                </Select>
+            </ManagementFilter>
 
             <DataTable
                 columns={columns}
@@ -252,10 +182,7 @@ export function EmployeeManagementClient() {
                     meta
                         ? {
                             ...meta,
-                            onPageChange: (p) => {
-                                setPage(p);
-                                updateQuery({ page: p });
-                            },
+                            onPageChange: (p) => setFilter('page', p),
                         }
                         : undefined
                 }

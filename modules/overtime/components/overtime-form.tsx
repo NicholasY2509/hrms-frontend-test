@@ -235,6 +235,14 @@ export function OvertimeForm() {
                       onChange={(date) =>
                         field.onChange(date ? format(date, "yyyy-MM-dd") : "")
                       }
+                      disabled={[
+                        { after: new Date() },
+                        {
+                          before: new Date(
+                            new Date().setDate(new Date().getDate() - 3)
+                          ),
+                        },
+                      ]}
                     />
                     <FieldError errors={[fieldState.error]} />
                   </Field>
@@ -318,6 +326,14 @@ export function OvertimeForm() {
                               date ? format(date, "yyyy-MM-dd'T'HH:mm") : ""
                             )
                           }
+                          disabled={[
+                            { after: new Date() },
+                            {
+                              before: new Date(
+                                new Date().setDate(new Date().getDate() - 3)
+                              ),
+                            },
+                          ]}
                         />
                         <FieldError errors={[fieldState.error]} />
                       </Field>
@@ -347,6 +363,14 @@ export function OvertimeForm() {
                               date ? format(date, "yyyy-MM-dd'T'HH:mm") : ""
                             )
                           }
+                          disabled={[
+                            { after: new Date() },
+                            {
+                              before: new Date(
+                                new Date().setDate(new Date().getDate() - 3)
+                              ),
+                            },
+                          ]}
                         />
                         <FieldError errors={[fieldState.error]} />
                       </Field>

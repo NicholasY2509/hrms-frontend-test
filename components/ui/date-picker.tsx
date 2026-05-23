@@ -14,12 +14,14 @@ import { HugeiconsIcon } from "@hugeicons/react"
 import { Calendar01Icon, ChevronDown } from "@hugeicons/core-free-icons"
 import { cn } from "@/lib/utils"
 
+import { Matcher } from "react-day-picker"
+
 export interface DatePickerProps {
   value?: Date
   onChange?: (date: Date | undefined) => void
   placeholder?: string
   className?: string
-  disabled?: boolean
+  disabled?: boolean | Matcher | Matcher[]
 }
 
 export function DatePicker({
@@ -43,7 +45,7 @@ export function DatePicker({
       <PopoverTrigger asChild>
         <Button
           variant="outline"
-          disabled={disabled}
+          disabled={disabled === true}
           className={cn(
             "w-full justify-between px-3 text-left font-normal",
             !value && "text-muted-foreground",

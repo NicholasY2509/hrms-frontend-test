@@ -16,8 +16,7 @@ import {
 import { useDebounce } from "@/hooks/use-debounce";
 import { useWorkingHourList } from "@/modules/attendance/working-hours/hooks/use-working-hours";
 import { getColumns } from "../columns";
-import { FilterCard, FilterGrid } from "@/components/layout/filter-card";
-import { EmployeePicker } from "@/modules/employee/employee/components/employee-picker";
+import { ManagementFilter } from "@/components/layout/management-filter";
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { ImportWorkingHourDialog } from "@/modules/attendance/working-hours/components/import-working-hour-dialog";
@@ -25,14 +24,18 @@ import { AttendanceWorkingHourEditDialog } from "@/modules/attendance/working-ho
 import { WorkingHourModel } from "@/modules/attendance/working-hours/types";
 import { useActivityStore } from "@/hooks/use-activity-store";
 import { DatePicker } from "@/components/ui/date-picker";
+import { useUrlFilters } from "@/hooks/use-url-filters";
 
 export function AttendanceWorkingHourClient() {
-  const [search, setSearch] = React.useState("");
-  const [page, setPage] = React.useState(1);
-  const [perPage, setPerPage] = React.useState("15");
-  const [employeeId, setEmployeeId] = React.useState<number | null>(null);
-  const [startDate, setStartDate] = React.useState<Date | undefined>(undefined);
-  const [endDate, setEndDate] = React.useState<Date | undefined>(undefined);
+  const { filters, setFilter, resetFilters, hasActiveFilters } = useUrlFilters({
+    page: 1,
+    per_page: 15,
+    search: "",
+    employee_id: null as number | null,
+    start_date: undefined as string | undefined,
+    end_date: undefined as string | undefined,
+  });
+
   const [isImportOpen, setIsImportOpen] = React.useState(false);
   const [isEditOpen, setIsEditOpen] = React.useState(false);
   const [selectedItem, setSelectedItem] = React.useState<WorkingHourModel | null>(null);
@@ -40,15 +43,15 @@ export function AttendanceWorkingHourClient() {
 
   const activities = useActivityStore((state) => state.activities);
 
-  const debouncedSearch = useDebounce(search, 500);
+  const debouncedSearch = useDebounce(filters.search, 500);
 
   const { items, meta, isLoading, mutate } = useWorkingHourList({
     search: debouncedSearch,
-    page,
-    per_page: Number(perPage),
-    employee_id: employeeId || undefined,
-    start_date: startDate ? format(startDate, "yyyy-MM-dd") : undefined,
-    end_date: endDate ? format(endDate, "yyyy-MM-dd") : undefined,
+    page: filters.page,
+    per_page: Number(filters.per_page),
+    employee_id: filters.employee_id ? Number(filters.employee_id) : undefined,
+    start_date: filters.start_date,
+    end_date: filters.end_date,
   });
 
   const handleEdit = (item: WorkingHourModel) => {
@@ -65,20 +68,6 @@ export function AttendanceWorkingHourClient() {
       setActiveTaskId(null);
     }
   }, [activeTaskId, activities, mutate]);
-
-  const handleResetFilters = () => {
-    setSearch("");
-    setEmployeeId(null);
-    setStartDate(undefined);
-    setEndDate(undefined);
-    setPage(1);
-  };
-
-  const hasActiveFilters =
-    search !== "" ||
-    employeeId !== null ||
-    startDate !== undefined ||
-    endDate !== undefined;
 
   return (
     <div className="space-y-6 w-full min-w-0">
@@ -108,47 +97,16 @@ export function AttendanceWorkingHourClient() {
         onSuccess={mutate}
       />
 
-      <FilterCard
-        onReset={handleResetFilters}
+      <ManagementFilter
+        onReset={resetFilters}
         hasActiveFilters={hasActiveFilters}
-        perPage={perPage}
-        onPerPageChange={setPerPage}
-      >
-        <FilterGrid cols={4}>
-          <InputGroup className="">
-            <InputGroupAddon>
-              <HugeiconsIcon
-                icon={Search01Icon}
-                className="text-muted-foreground"
-                size={14}
-              />
-            </InputGroupAddon>
-            <InputGroupInput
-              placeholder="Cari karyawan..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-          </InputGroup>
-
-          <EmployeePicker
-            value={employeeId}
-            onChange={(val) => setEmployeeId(val)}
-            placeholder="Filter Karyawan"
-          />
-
-          <DatePicker
-            value={startDate}
-            onChange={setStartDate}
-            placeholder="Tanggal Mulai"
-          />
-
-          <DatePicker
-            value={endDate}
-            onChange={setEndDate}
-            placeholder="Tanggal Selesai"
-          />
-        </FilterGrid>
-      </FilterCard>
+        perPage={String(filters.per_page)}
+        onPerPageChange={(v) => setFilter('per_page', v)}
+        search={{ value: filters.search, onChange: (v) => setFilter('search', v), placeholder: "Cari karyawan..." }}
+        employee={{ value: filters.employee_id ? Number(filters.employee_id) : null, onChange: (v) => setFilter('employee_id', v), placeholder: "Filter Karyawan" }}
+        startDate={{ value: filters.start_date ? new Date(filters.start_date) : undefined, onChange: (d) => setFilter('start_date', d ? format(d, 'yyyy-MM-dd') : undefined), placeholder: "Tanggal Mulai" }}
+        endDate={{ value: filters.end_date ? new Date(filters.end_date) : undefined, onChange: (d) => setFilter('end_date', d ? format(d, 'yyyy-MM-dd') : undefined), placeholder: "Tanggal Selesai" }}
+      />
 
       <DataTable
         columns={columns}
@@ -158,7 +116,7 @@ export function AttendanceWorkingHourClient() {
           meta
             ? {
               ...meta,
-              onPageChange: (p) => setPage(p),
+              onPageChange: (p) => setFilter('page', p),
             }
             : undefined
         }
