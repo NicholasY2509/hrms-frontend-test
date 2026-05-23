@@ -46,8 +46,21 @@ export const attendanceService = {
     attendance_id: number
   }) => {
     const response = await apiClient.put(
-      ATTENDANCE_RECORD_ENDPOINTS.PORTAL.MANAGEMENT.UPDATE_STATUS(data.attendance_id),
+      ATTENDANCE_RECORD_ENDPOINTS.PORTAL.MANAGEMENT.UPDATE_STATUS(
+        data.attendance_id
+      ),
       { attendance_status_id: data.attendance_status_id }
+    )
+    return response.data
+  },
+
+  batchUpdateAttendanceStatus: async (data: {
+    attendance_ids: number[]
+    attendance_status_id: number
+  }) => {
+    const response = await apiClient.put(
+      ATTENDANCE_RECORD_ENDPOINTS.PORTAL.MANAGEMENT.BATCH_UPDATE_STATUS,
+      data
     )
     return response.data
   },

@@ -141,3 +141,36 @@ export function useUpdateAttendanceStatus(options?: {
     isLoading: mutation.isPending,
   }
 }
+
+export function useBatchUpdateAttendanceStatus(options?: {
+  onSuccess?: () => void
+}) {
+  const queryClient = useQueryClient()
+
+  const mutation = useMutation({
+    mutationFn: (values: {
+      attendance_ids: number[]
+      attendance_status_id: number
+    }) => {
+      return attendanceService.batchUpdateAttendanceStatus(values)
+    },
+    onSuccess: (data: any) => {
+      toast.success("Status kehadiran massal berhasil diubah")
+      queryClient.invalidateQueries({
+        queryKey: [ATTENDANCE_RECORD_ENDPOINTS.LIST],
+      })
+      options?.onSuccess?.()
+    },
+    onError: (error: any) => {
+      toast.error(
+        error?.response?.data?.message ||
+          "Gagal mengubah status kehadiran massal"
+      )
+    },
+  })
+
+  return {
+    batchUpdateAttendanceStatus: mutation.mutateAsync,
+    isLoading: mutation.isPending,
+  }
+}

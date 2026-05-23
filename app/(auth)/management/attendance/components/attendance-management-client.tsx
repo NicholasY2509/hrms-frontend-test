@@ -29,6 +29,10 @@ import { CalculateAttendanceDialog } from "@/modules/attendance/attendances/comp
 import { AttendanceDetailDialog } from "@/modules/attendance/attendances/components/attendance-detail-dialog"
 import { DepartmentPicker } from "@/modules/organization/department/components/department-picker"
 
+import { BatchUpdateAttendanceStatusDialog } from "@/modules/attendance/attendances/components/batch-update-attendance-status-dialog"
+import { TaskEdit01Icon } from "@hugeicons/core-free-icons"
+import { RowSelectionState } from "@tanstack/react-table"
+
 export function AttendanceManagementClient() {
   const [search, setSearch] = React.useState("")
   const [page, setPage] = React.useState(1)
@@ -42,8 +46,11 @@ export function AttendanceManagementClient() {
   const [isCalculateDialogOpen, setIsCalculateDialogOpen] =
     React.useState(false)
   const [isDetailDialogOpen, setIsDetailDialogOpen] = React.useState(false)
+  const [isBatchUpdateDialogOpen, setIsBatchUpdateDialogOpen] =
+    React.useState(false)
   const [selectedAttendance, setSelectedAttendance] =
     React.useState<AttendanceModel | null>(null)
+  const [rowSelection, setRowSelection] = React.useState<RowSelectionState>({})
 
   const debouncedSearch = useDebounce(search, 500)
 
@@ -83,6 +90,11 @@ export function AttendanceManagementClient() {
 
   const columns = React.useMemo(() => getAttendanceColumns(handleView), [])
 
+  const selectedAttendances = React.useMemo(() => {
+    if (!items) return []
+    return items.filter((item) => rowSelection[item.id])
+  }, [items, rowSelection])
+
   return (
     <div className="w-full min-w-0 space-y-6">
       <PageHeader
@@ -90,6 +102,16 @@ export function AttendanceManagementClient() {
         description="Pantau dan kelola data kehadiran karyawan harian."
       >
         <div className="flex items-center gap-3">
+          {Object.keys(rowSelection).length > 0 && (
+            <Button
+              variant="secondary"
+              className="gap-2"
+              onClick={() => setIsBatchUpdateDialogOpen(true)}
+            >
+              <HugeiconsIcon icon={TaskEdit01Icon} size={16} />
+              Ubah Status ({Object.keys(rowSelection).length})
+            </Button>
+          )}
           <Button
             variant="outline"
             className="gap-2"
@@ -167,6 +189,8 @@ export function AttendanceManagementClient() {
         columns={columns}
         data={items}
         isLoading={isLoading}
+        rowSelection={rowSelection}
+        onRowSelectionChange={setRowSelection}
         pagination={
           meta
             ? {
@@ -188,6 +212,12 @@ export function AttendanceManagementClient() {
         open={isDetailDialogOpen}
         onOpenChange={setIsDetailDialogOpen}
         attendance={selectedAttendance}
+      />
+      <BatchUpdateAttendanceStatusDialog
+        open={isBatchUpdateDialogOpen}
+        onOpenChange={setIsBatchUpdateDialogOpen}
+        selectedAttendances={selectedAttendances}
+        onSuccess={() => setRowSelection({})}
       />
     </div>
   )

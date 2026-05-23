@@ -78,14 +78,14 @@ export const getColumns = (
     accessorKey: "description",
     header: "Keterangan",
     cell: ({ row }) => (
-      <span className="line-clamp-1 max-w-[300px] text-sm text-muted-foreground">
+      <div className="max-w-[300px] text-xs wrap-break-word whitespace-normal text-muted-foreground">
         {row.getValue("description")}
-      </span>
+      </div>
     ),
   },
   {
     id: "deduction",
-    header: "Detail Potongan",
+    header: "Detail",
     cell: ({ row }) => {
       const details = row.original.deduction_details
       return (

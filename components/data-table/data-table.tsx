@@ -19,6 +19,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton"
 import { PaginationMeta } from "@/types"
 import { DataTablePagination } from "./data-table-pagination"
+import { RowSelectionState, OnChangeFn } from "@tanstack/react-table"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -27,6 +28,8 @@ interface DataTableProps<TData, TValue> {
   pagination?: PaginationMeta & {
     onPageChange: (page: number) => void
   }
+  rowSelection?: RowSelectionState
+  onRowSelectionChange?: OnChangeFn<RowSelectionState>
 }
 
 export function DataTable<TData, TValue>({
@@ -34,6 +37,8 @@ export function DataTable<TData, TValue>({
   data,
   isLoading,
   pagination,
+  rowSelection,
+  onRowSelectionChange,
 }: DataTableProps<TData, TValue>) {
   const table = useReactTable({
     data,
@@ -42,6 +47,10 @@ export function DataTable<TData, TValue>({
     getPaginationRowModel: getPaginationRowModel(),
     manualPagination: true,
     getRowId: (row: any) => row.id?.toString(),
+    state: {
+      rowSelection,
+    },
+    onRowSelectionChange,
   })
 
   const rows = table.getRowModel()?.rows || []
