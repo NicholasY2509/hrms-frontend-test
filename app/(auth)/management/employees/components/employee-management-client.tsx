@@ -42,6 +42,7 @@ export function EmployeeManagementClient() {
         position_id: null as number | null,
         work_status_id: 'all',
         employee_status_id: 'all',
+        supervisor_employee_id: null as number | null,
     });
 
     const debouncedSearch = useDebounce(filters.search, 500);
@@ -54,6 +55,7 @@ export function EmployeeManagementClient() {
         work_position_id: filters.position_id ? Number(filters.position_id) : undefined,
         work_employee_status_id: filters.work_status_id === 'all' ? undefined : filters.work_status_id,
         employee_status_id: filters.employee_status_id === 'all' ? undefined : filters.employee_status_id,
+        supervisor_employee_id: filters.supervisor_employee_id ? Number(filters.supervisor_employee_id) : undefined,
     }), [debouncedSearch, filters]);
 
     // Fetch Employees with all filters
@@ -144,6 +146,11 @@ export function EmployeeManagementClient() {
                     value: filters.department_id ? Number(filters.department_id) : null,
                     onChange: (v) => setFilter('department_id', v),
                     placeholder: "Semua Departemen"
+                }}
+                supervisor={{
+                    value: filters.supervisor_employee_id ? Number(filters.supervisor_employee_id) : null,
+                    onChange: (v) => setFilter('supervisor_employee_id', v),
+                    placeholder: "Semua Supervisor"
                 }}
                 workPosition={{
                     value: filters.position_id ? Number(filters.position_id) : null,

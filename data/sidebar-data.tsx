@@ -435,6 +435,11 @@ export const sidebarData = {
             url: "/configuration/audit-logs",
             icon: <HugeiconsIcon icon={DocumentCodeIcon} strokeWidth={2} />,
           },
+          {
+            title: "Position Hierarchy Matrix",
+            url: "/configuration/position-hierarchy-matrix",
+            icon: <HugeiconsIcon icon={ComponentIcon} strokeWidth={2} />,
+          },
         ],
       },
     ],

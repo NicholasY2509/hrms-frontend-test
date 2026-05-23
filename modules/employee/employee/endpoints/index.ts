@@ -1,5 +1,6 @@
 export const EMPLOYEE_ENDPOINTS = {
   SEARCH: '/v1/employee/portal/management/search',
+  SUPERVISORS_SEARCH: '/v1/employee/portal/management/supervisors-search',
   PORTAL: {
     MANAGEMENT: {
       LIST: '/v1/employee/portal/management/employees',

@@ -2,34 +2,20 @@
 
 import * as React from "react"
 import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  Search01Icon,
-  Download01Icon,
-  Database02Icon,
-} from "@hugeicons/core-free-icons"
+import { Download01Icon, Database02Icon } from "@hugeicons/core-free-icons"
 import { DataTable } from "@/components/data-table/data-table"
 import { PageHeader } from "@/components/layout/page-header"
-import {
-  InputGroup,
-  InputGroupAddon,
-  InputGroupInput,
-} from "@/components/ui/input-group"
 import { useDebounce } from "@/hooks/use-debounce"
 import { useAttendanceList } from "@/modules/attendance/attendances/hooks/use-attendance"
 import { getAttendanceColumns } from "../columns"
 import { AttendanceModel } from "@/modules/attendance/attendances/types"
-import { AttendanceStatusPicker } from "@/modules/attendance/shared/components/attendance-status-picker"
-import { EmployeePicker } from "@/modules/employee/employee/components/employee-picker"
-import { DatePicker } from "@/components/ui/date-picker"
 import { format } from "date-fns"
 import { ManagementFilter } from "@/components/layout/management-filter"
 import { useUrlFilters } from "@/hooks/use-url-filters"
-import { FilterCard, FilterGrid } from "@/components/layout/filter-card"
 import { ExportAttendanceDialog } from "@/modules/attendance/attendances/components/export-attendance-dialog"
 import { Button } from "@/components/ui/button"
 import { CalculateAttendanceDialog } from "@/modules/attendance/attendances/components/calculate-attendance-dialog"
 import { AttendanceDetailDialog } from "@/modules/attendance/attendances/components/attendance-detail-dialog"
-import { DepartmentPicker } from "@/modules/organization/department/components/department-picker"
 import { TeamPicker } from "@/modules/organization/teams/components/team-picker"
 
 import { BatchUpdateAttendanceStatusDialog } from "@/modules/attendance/attendances/components/batch-update-attendance-status-dialog"
@@ -44,6 +30,7 @@ export function AttendanceManagementClient() {
       search: "",
       status_id: null as number | null,
       employee_id: null as number | null,
+      supervisor_id: null as number | null,
       department_id: null as number | null,
       team_id: null as number | null,
       start_date: undefined as string | undefined,
@@ -71,6 +58,7 @@ export function AttendanceManagementClient() {
       : undefined,
     team_id: filters.team_id ? Number(filters.team_id) : undefined,
     employee_id: filters.employee_id ? Number(filters.employee_id) : undefined,
+    supervisor_employee_id: filters.supervisor_id ? Number(filters.supervisor_id) : undefined,
     department_id: filters.department_id
       ? Number(filters.department_id)
       : undefined,
@@ -166,6 +154,10 @@ export function AttendanceManagementClient() {
         employee={{
           value: filters.employee_id ? Number(filters.employee_id) : null,
           onChange: (v) => setFilter("employee_id", v),
+        }}
+        supervisor={{
+          value: filters.supervisor_id ? Number(filters.supervisor_id) : null,
+          onChange: (v) => setFilter("supervisor_id", v),
         }}
         department={{
           value: filters.department_id ? Number(filters.department_id) : null,

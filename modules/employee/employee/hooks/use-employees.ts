@@ -17,6 +17,21 @@ export function useEmployees(params?: Record<string, any>) {
   };
 }
 
+export function useSupervisors(params?: Record<string, any>) {
+  const { data, error, isLoading, refetch } = useQuery({
+    queryKey: [EMPLOYEE_ENDPOINTS.SUPERVISORS_SEARCH, params],
+    queryFn: () => employeeService.getSupervisors(params),
+  });
+
+  return {
+    supervisors: data?.data || [],
+    meta: data?.meta,
+    isLoading,
+    isError: error,
+    mutate: refetch,
+  };
+}
+
 export function useManagementEmployees(params?: {
   search?: string;
   page?: number;

@@ -12,6 +12,7 @@ import { Search01Icon } from "@hugeicons/core-free-icons"
 
 // Pickers
 import { EmployeePicker } from "@/modules/employee/employee/components/employee-picker"
+import { SupervisorPicker } from "@/modules/employee/employee/components/supervisor-picker"
 import { DepartmentPicker } from "@/modules/organization/department/components/department-picker"
 import { AttendanceStatusPicker } from "@/modules/attendance/shared/components/attendance-status-picker"
 import { DatePicker } from "@/components/ui/date-picker"
@@ -38,6 +39,11 @@ export interface ManagementFilterProps {
     placeholder?: string
   }
   employee?: {
+    value: number | null
+    onChange: (v: number | null) => void
+    placeholder?: string
+  }
+  supervisor?: {
     value: number | null
     onChange: (v: number | null) => void
     placeholder?: string
@@ -100,6 +106,7 @@ export function ManagementFilter({
   onPerPageChange,
   search,
   employee,
+  supervisor,
   department,
   team,
   workLocation,
@@ -169,6 +176,14 @@ export function ManagementFilter({
             value={employee.value}
             onChange={withPageReset(employee.onChange)}
             placeholder={employee.placeholder || "Filter Karyawan"}
+          />
+        )}
+
+        {supervisor && (
+          <SupervisorPicker
+            value={supervisor.value}
+            onChange={withPageReset(supervisor.onChange)}
+            placeholder={supervisor.placeholder || "Filter Supervisor"}
           />
         )}
 

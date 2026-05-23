@@ -12,6 +12,14 @@ export const employeeService = {
     return response.data;
   },
 
+  getSupervisors: async (params?: Record<string, any>) => {
+    const response = await apiClient.get<PaginatedResponse<Employee>>(
+      EMPLOYEE_ENDPOINTS.SUPERVISORS_SEARCH,
+      { params }
+    );
+    return response.data;
+  },
+
   generateNik: async (workPositionId: number) => {
     const response = await apiClient.get<{ data: { employee_id_number: string } }>(
       EMPLOYEE_ENDPOINTS.PORTAL.MANAGEMENT.GENERATE_NIK,
