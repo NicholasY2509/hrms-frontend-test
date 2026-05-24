@@ -32,6 +32,11 @@ import {
   MapPinIcon,
   OfficeIcon,
   Sun,
+  History,
+  Clock05Icon,
+  WorkoutRunIcon,
+  DashboardSpeed01Icon,
+  HierarchyIcon,
 } from "@hugeicons/core-free-icons"
 
 export const sidebarData = {
@@ -61,7 +66,7 @@ export const sidebarData = {
       description: "Kontrol Sistem",
       logo: <HugeiconsIcon icon={Settings05Icon} strokeWidth={2} />,
       id: "admin",
-      allowedRoles: ["IT", "Admin HRD"],
+      allowedRoles: ["Admin HRD"],
     },
   ],
 
@@ -120,13 +125,11 @@ export const sidebarData = {
             title: "Dashboard Manajemen",
             url: "/management/dashboard",
             icon: <HugeiconsIcon icon={ComputerTerminalIcon} strokeWidth={2} />,
-            roles: ["manager", "Admin HRD"],
           },
           {
             title: "Permintaan Persetujuan",
             url: "/management/approval-workflow/inbox",
             icon: <HugeiconsIcon icon={Mail01Icon} strokeWidth={2} />,
-            roles: ["manager", "Admin HRD"],
           },
           {
             title: "History Laporan",
@@ -134,7 +137,6 @@ export const sidebarData = {
             icon: (
               <HugeiconsIcon icon={DocumentAttachmentIcon} strokeWidth={2} />
             ),
-            roles: ["manager", "Admin HRD"],
           },
         ],
       },
@@ -147,15 +149,16 @@ export const sidebarData = {
             url: "/management/employees",
             icon: <HugeiconsIcon icon={IdCardLanyardIcon} strokeWidth={2} />,
           },
-          {
-            title: "Data Atasan & SPV",
-            url: "/management/supervisors-and-spv",
-            icon: <HugeiconsIcon icon={TieIcon} strokeWidth={2} />,
-          },
+          // {
+          //   title: "Data Atasan & SPV",
+          //   url: "/management/supervisors-and-spv",
+          //   icon: <HugeiconsIcon icon={TieIcon} strokeWidth={2} />,
+          // },
           {
             title: "Data User",
             url: "/management/users",
             icon: <HugeiconsIcon icon={User03Icon} strokeWidth={2} />,
+            roles: ["Admin HRD"],
           },
           {
             title: "Transisi Karir",
@@ -166,6 +169,16 @@ export const sidebarData = {
             title: "Surat Peringatan",
             url: "/management/warning-letters",
             icon: <HugeiconsIcon icon={Warning} strokeWidth={2} />,
+          },
+          {
+            title: "Pelatihan Pegawai",
+            url: "#",
+            icon: <HugeiconsIcon icon={WorkoutRunIcon} strokeWidth={2} />,
+          },
+          {
+            title: "Performa Pegawai",
+            url: "#",
+            icon: <HugeiconsIcon icon={DashboardSpeed01Icon} strokeWidth={2} />,
           },
           {
             title: "Surat Keterangan Kerja",
@@ -183,33 +196,43 @@ export const sidebarData = {
       },
       {
         label: "Susunan",
-        roles: ["admin", "manager"],
+        roles: ["Admin HRD"],
         items: [
+          {
+            title: "Diagram Perusahaan",
+            url: "/management/organization-chart",
+            icon: <HugeiconsIcon icon={HierarchyIcon} strokeWidth={2} />,
+            roles: ["Admin HRD", "Department Head"],
+          },
           {
             title: "Departemen",
             url: "/management/departments",
             icon: <HugeiconsIcon icon={BuildingIcon} strokeWidth={2} />,
+            roles: ["Admin HRD"],
           },
           {
             title: "Tim",
             url: "/management/teams",
             icon: <HugeiconsIcon icon={UserGroup02Icon} strokeWidth={2} />,
+            roles: ["Admin HRD"],
           },
           {
             title: "Posisi Kerja",
             url: "/management/work-positions",
             icon: <HugeiconsIcon icon={Briefcase01Icon} strokeWidth={2} />,
+            roles: ["Admin HRD"],
           },
           {
             title: "Lokasi Kerja",
             url: "/management/work-locations",
             icon: <HugeiconsIcon icon={MapPinIcon} strokeWidth={2} />,
+            roles: ["Admin HRD"],
           },
         ],
       },
       {
         label: "Lembur",
-        roles: ["admin", "manager"],
+        roles: ["Admin HRD", "Department Head"],
         items: [
           {
             title: "Pengajuan lembur",
@@ -221,31 +244,23 @@ export const sidebarData = {
             url: "/management/overtime-schedules",
             icon: <HugeiconsIcon icon={Clock01Icon} strokeWidth={2} />,
           },
-          {
-            title: "Tipe Lembur DAC",
-            url: "/management/overtime-types",
-            icon: <HugeiconsIcon icon={ComponentIcon} strokeWidth={2} />,
-          },
         ],
       },
       {
         label: "Izin & Cuti",
-        roles: ["admin", "manager"],
+        roles: ["Admin HRD", "Department Head"],
         items: [
           {
             title: "Pengajuan Izin",
             url: "/management/unpaid-leave",
             icon: <HugeiconsIcon icon={Document} strokeWidth={2} />,
           },
-          {
-            title: "Tipe Pengajuan Izin",
-            url: "/management/unpaid-leave-types",
-            icon: <HugeiconsIcon icon={ComponentIcon} strokeWidth={2} />,
-          },
+
           {
             title: "Hari Libur",
             url: "/management/holidays",
             icon: <HugeiconsIcon icon={Sun} strokeWidth={2} />,
+            roles: ["Admin HRD"],
           },
           {
             title: "Hak Cuti Pegawai",
@@ -261,7 +276,7 @@ export const sidebarData = {
       },
       {
         label: "Absensi",
-        roles: ["admin", "manager"],
+        roles: ["Admin HRD", "Department Head"],
         items: [
           {
             title: "Data Absensi Pegawai",
@@ -272,51 +287,43 @@ export const sidebarData = {
             title: "Jam Kerja Karyawan",
             url: "/management/attendance-working-hour",
             icon: <HugeiconsIcon icon={Calendar01Icon} strokeWidth={2} />,
+            roles: ["Admin HRD"],
           },
           {
             title: "Pertukaran Jam Kerja",
             url: "/management/shift-exchange",
             icon: <HugeiconsIcon icon={ArrowLeftRightIcon} strokeWidth={2} />,
           },
-          {
-            title: "Data Jam Kerja",
-            url: "/management/working-hours",
-            icon: <HugeiconsIcon icon={Clock01Icon} strokeWidth={2} />,
-          },
-          {
-            title: "Data Lokasi Absensi",
-            url: "/management/attendance-locations",
-            icon: <HugeiconsIcon icon={LocationIcon} strokeWidth={2} />,
-          },
+
           {
             title: "Data User Absensi",
             url: "/management/attendance-user",
             icon: <HugeiconsIcon icon={User03Icon} strokeWidth={2} />,
+            roles: ["Admin HRD"],
           },
           {
             title: "Data User Mesin Absensi",
             url: "/management/zkteco-users",
             icon: <HugeiconsIcon icon={User03Icon} strokeWidth={2} />,
+            roles: ["Admin HRD"],
           },
           {
             title: "Log Absensi Mesin",
             url: "/management/attendance-machine-log",
             icon: <HugeiconsIcon icon={Clock02Icon} strokeWidth={2} />,
+            roles: ["Admin HRD"],
           },
           {
             title: "Log Absensi Mobile",
             url: "/management/attendance-mobile-log",
             icon: <HugeiconsIcon icon={SmartPhone01Icon} strokeWidth={2} />,
-          },
-          {
-            title: "Data Mesin Absensi",
-            url: "/management/fingerprint-machines",
-            icon: <HugeiconsIcon icon={BiometricDeviceIcon} strokeWidth={2} />,
+            roles: ["Admin HRD"],
           },
         ],
       },
       {
         label: "Payroll",
+        roles: ["Admin HRD", "Department Head"],
         items: [
           {
             title: "Gaji Bulanan Pegawai",
@@ -383,7 +390,7 @@ export const sidebarData = {
           {
             title: "Konfigurasi Alur",
             url: "#",
-            icon: <HugeiconsIcon icon={LayoutBottomIcon} strokeWidth={2} />,
+            icon: <HugeiconsIcon icon={Settings05Icon} strokeWidth={2} />,
             items: [
               {
                 title: "Kebijakan",
@@ -422,7 +429,7 @@ export const sidebarData = {
           {
             title: "Konfigurasi Payroll",
             url: "#",
-            icon: <HugeiconsIcon icon={Banknote} strokeWidth={2} />,
+            icon: <HugeiconsIcon icon={ComponentIcon} strokeWidth={2} />,
             items: [
               {
                 title: "Komponen Gaji",
@@ -430,15 +437,56 @@ export const sidebarData = {
               },
             ],
           },
+
           {
-            title: "Audit Log",
-            url: "/configuration/audit-logs",
-            icon: <HugeiconsIcon icon={DocumentCodeIcon} strokeWidth={2} />,
-          },
-          {
-            title: "Position Hierarchy Matrix",
+            title: "Hirarki Supervisor",
             url: "/configuration/position-hierarchy-matrix",
             icon: <HugeiconsIcon icon={ComponentIcon} strokeWidth={2} />,
+          },
+        ],
+      },
+      {
+        label: "Master Data",
+        items: [
+          {
+            title: "Tipe Lembur DAC",
+            url: "/configuration/overtime-types",
+            icon: <HugeiconsIcon icon={ComponentIcon} strokeWidth={2} />,
+          },
+          {
+            title: "Tipe Pengajuan Izin",
+            url: "/configuration/unpaid-leave-types",
+            icon: <HugeiconsIcon icon={ComponentIcon} strokeWidth={2} />,
+          },
+          {
+            title: "Data Lokasi Absensi",
+            url: "/configuration/attendance-locations",
+            icon: <HugeiconsIcon icon={ComponentIcon} strokeWidth={2} />,
+          },
+          {
+            title: "Data Jam Kerja",
+            url: "/configuration/working-hours",
+            icon: <HugeiconsIcon icon={ComponentIcon} strokeWidth={2} />,
+          },
+          {
+            title: "Data Mesin Absensi",
+            url: "/configuration/fingerprint-machines",
+            icon: <HugeiconsIcon icon={ComponentIcon} strokeWidth={2} />,
+          },
+        ],
+      },
+      {
+        label: "Log",
+        items: [
+          {
+            title: "Activity Log",
+            url: "/configuration/audit-logs",
+            icon: <HugeiconsIcon icon={Clock05Icon} strokeWidth={2} />,
+          },
+          {
+            title: "Background Task Log",
+            url: "/configuration/task-logs",
+            icon: <HugeiconsIcon icon={Clock05Icon} strokeWidth={2} />,
           },
         ],
       },

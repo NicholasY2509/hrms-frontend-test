@@ -1,19 +1,14 @@
 "use client"
 
 import * as React from "react"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { Search01Icon } from "@hugeicons/core-free-icons"
+import { format } from "date-fns"
 import { DataTable } from "@/components/data-table/data-table"
 import { PageHeader } from "@/components/layout/page-header"
-import {
-  InputGroup,
-  InputGroupAddon,
-  InputGroupInput,
-} from "@/components/ui/input-group"
 import { useDebounce } from "@/hooks/use-debounce"
 import { useAnnualLeaveList } from "@/modules/employee/annual-leave/hooks/use-annual-leave"
 import { getColumns } from "../columns"
-import { FilterCard, FilterGrid } from "@/components/layout/filter-card"
+import { ManagementFilter } from "@/components/layout/management-filter"
+import { useUrlFilters } from "@/hooks/use-url-filters"
 import {
   Select,
   SelectContent,
@@ -29,11 +24,14 @@ import {
 } from "@/components/ui/dialog"
 
 export function AnnualLeaveManagementClient() {
-  // Filters State
-  const [search, setSearch] = React.useState("")
-  const [page, setPage] = React.useState(1)
-  const [perPage, setPerPage] = React.useState("15")
-  const [status, setStatus] = React.useState<string>("all")
+  const { filters, setFilter, resetFilters, hasActiveFilters } = useUrlFilters({
+    page: 1,
+    per_page: 15,
+    search: "",
+    status: "all",
+    start_date: undefined as string | undefined,
+    end_date: undefined as string | undefined,
+  })
 
   const [selectedEmployee, setSelectedEmployee] = React.useState<any>(null)
   const [isDialogOpen, setIsDialogOpen] = React.useState(false)
@@ -48,23 +46,17 @@ export function AnnualLeaveManagementClient() {
     [handleEmployeeClick]
   )
 
-  const debouncedSearch = useDebounce(search, 500)
+  const debouncedSearch = useDebounce(filters.search, 500)
 
   // Fetch Annual Leaves with all filters
   const { items, meta, isLoading } = useAnnualLeaveList({
     search: debouncedSearch,
-    page,
-    per_page: Number(perPage),
-    status: status === "all" ? undefined : status,
+    page: filters.page,
+    per_page: Number(filters.per_page),
+    status: filters.status === "all" ? undefined : filters.status,
+    start_date: filters.start_date,
+    end_date: filters.end_date,
   })
-
-  const handleResetFilters = () => {
-    setSearch("")
-    setStatus("all")
-    setPage(1)
-  }
-
-  const hasActiveFilters = search !== "" || status !== "all"
 
   return (
     <div className="w-full min-w-0 space-y-6">
@@ -73,40 +65,45 @@ export function AnnualLeaveManagementClient() {
         description="Pantau dan kelola penggunaan cuti tahunan karyawan."
       />
 
-      <FilterCard
-        onReset={handleResetFilters}
+      <ManagementFilter
+        setPage={(p) => setFilter("page", p)}
+        onReset={resetFilters}
         hasActiveFilters={hasActiveFilters}
-        perPage={perPage}
-        onPerPageChange={setPerPage}
+        perPage={String(filters.per_page)}
+        onPerPageChange={(v) => setFilter("per_page", v)}
+        search={{
+          value: filters.search,
+          onChange: (v) => setFilter("search", v),
+          placeholder: "Cari nama karyawan atau NIK...",
+        }}
+        startDate={{
+          value: filters.start_date ? new Date(filters.start_date) : undefined,
+          onChange: (d) =>
+            setFilter("start_date", d ? format(d, "yyyy-MM-dd") : undefined),
+        }}
+        endDate={{
+          value: filters.end_date ? new Date(filters.end_date) : undefined,
+          onChange: (d) =>
+            setFilter("end_date", d ? format(d, "yyyy-MM-dd") : undefined),
+        }}
       >
-        <FilterGrid cols={4}>
-          <InputGroup className="">
-            <InputGroupAddon>
-              <HugeiconsIcon
-                icon={Search01Icon}
-                className="text-muted-foreground"
-                size={14}
-              />
-            </InputGroupAddon>
-            <InputGroupInput
-              placeholder="Cari nama karyawan atau NIK..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-          </InputGroup>
-
-          <Select value={status} onValueChange={setStatus}>
-            <SelectTrigger className="h-9 border-border/60 bg-background shadow-none">
-              <SelectValue placeholder="Semua Status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Semua Status</SelectItem>
-              <SelectItem value="Potong">Potong</SelectItem>
-              <SelectItem value="Tambah">Tambah</SelectItem>
-            </SelectContent>
-          </Select>
-        </FilterGrid>
-      </FilterCard>
+        <Select
+          value={filters.status}
+          onValueChange={(v) => {
+            setFilter("status", v)
+            setFilter("page", 1)
+          }}
+        >
+          <SelectTrigger className="h-9 border-border/60 bg-background shadow-none">
+            <SelectValue placeholder="Semua Status" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Semua Status</SelectItem>
+            <SelectItem value="Potong">Potong</SelectItem>
+            <SelectItem value="Tambah">Tambah</SelectItem>
+          </SelectContent>
+        </Select>
+      </ManagementFilter>
 
       <DataTable
         columns={tableColumns}
@@ -116,7 +113,7 @@ export function AnnualLeaveManagementClient() {
           meta
             ? {
                 ...meta,
-                onPageChange: (p) => setPage(p),
+                onPageChange: (p) => setFilter("page", p),
               }
             : undefined
         }

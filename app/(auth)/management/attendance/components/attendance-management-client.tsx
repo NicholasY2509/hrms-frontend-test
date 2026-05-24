@@ -58,7 +58,9 @@ export function AttendanceManagementClient() {
       : undefined,
     team_id: filters.team_id ? Number(filters.team_id) : undefined,
     employee_id: filters.employee_id ? Number(filters.employee_id) : undefined,
-    supervisor_employee_id: filters.supervisor_id ? Number(filters.supervisor_id) : undefined,
+    supervisor_employee_id: filters.supervisor_id
+      ? Number(filters.supervisor_id)
+      : undefined,
     department_id: filters.department_id
       ? Number(filters.department_id)
       : undefined,
