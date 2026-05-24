@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/input-group"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Search01Icon } from "@hugeicons/core-free-icons"
+import { useDebounce } from "@/hooks/use-debounce"
 
 // Pickers
 import { EmployeePicker } from "@/modules/employee/employee/components/employee-picker"
@@ -120,18 +121,23 @@ export function ManagementFilter({
 }: ManagementFilterProps) {
   // Local state for search to avoid typing lag with async URL updates
   const [localSearch, setLocalSearch] = React.useState(search?.value || "")
+  const debouncedSearchValue = useDebounce(localSearch, 500)
 
   React.useEffect(() => {
-    setLocalSearch(search?.value || "")
+    if (search?.value !== undefined && search.value !== localSearch) {
+      setLocalSearch(search.value)
+    }
   }, [search?.value])
 
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const val = e.target.value
-    setLocalSearch(val)
-    if (search) {
-      search.onChange(val)
+  React.useEffect(() => {
+    if (search && debouncedSearchValue !== search.value) {
+      search.onChange(debouncedSearchValue)
       if (setPage) setPage(1)
     }
+  }, [debouncedSearchValue])
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setLocalSearch(e.target.value)
   }
 
   // Helper to wrap onChange with setPage(1)
