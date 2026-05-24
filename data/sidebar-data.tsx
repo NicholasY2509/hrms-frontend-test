@@ -484,7 +484,7 @@ export const sidebarData = {
             icon: <HugeiconsIcon icon={Clock05Icon} strokeWidth={2} />,
           },
           {
-            title: "Background Task Log",
+            title: "Task Log",
             url: "/configuration/task-logs",
             icon: <HugeiconsIcon icon={Clock05Icon} strokeWidth={2} />,
           },
