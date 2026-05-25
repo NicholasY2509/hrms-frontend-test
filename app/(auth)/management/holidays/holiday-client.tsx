@@ -1,75 +1,86 @@
-"use client";
+"use client"
 
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { DataTable } from "@/components/data-table/data-table";
-import { DataTableSkeleton } from "@/components/data-table/data-table-skeleton";
-import { PageHeader } from "@/components/layout/page-header";
-import { PageError } from "@/components/layout/page-error";
-import { useHolidayList, useHolidayMutation } from "@/modules/unpaid-leave/hooks/use-holidays";
-import { Holiday } from "@/modules/unpaid-leave/types";
-import { getColumns } from "./columns";
-import { HolidayDialog } from "@/modules/unpaid-leave/components/holiday-dialog";
-import { AutoInsertSundaysDialog } from "@/modules/unpaid-leave/components/auto-insert-sundays-dialog";
-import { ConfirmModal } from "@/components/ui/confirm-modal";
-import { HugeiconsIcon } from "@hugeicons/react";
-import { Plus, Search01Icon, CalendarAdd02Icon } from "@hugeicons/core-free-icons";
-import { FilterCard, FilterGrid } from "@/components/layout/filter-card";
-import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
-import { useDebounce } from "@/hooks/use-debounce";
+import { useState } from "react"
+import { Button } from "@/components/ui/button"
+import { DataTable } from "@/components/data-table/data-table"
+import { DataTableSkeleton } from "@/components/data-table/data-table-skeleton"
+import { PageHeader } from "@/components/layout/page-header"
+import { PageError } from "@/components/layout/page-error"
+import {
+  useHolidayList,
+  useHolidayMutation,
+} from "@/modules/unpaid-leave/hooks/use-holidays"
+import { Holiday } from "@/modules/unpaid-leave/types"
+import { getColumns } from "./columns"
+import { HolidayDialog } from "@/modules/unpaid-leave/components/holiday-dialog"
+import { AutoInsertSundaysDialog } from "@/modules/unpaid-leave/components/auto-insert-sundays-dialog"
+import { ConfirmModal } from "@/components/ui/confirm-modal"
+import { HugeiconsIcon } from "@hugeicons/react"
+import {
+  Plus,
+  Search01Icon,
+  CalendarAdd02Icon,
+} from "@hugeicons/core-free-icons"
+import { FilterCard, FilterGrid } from "@/components/layout/filter-card"
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+} from "@/components/ui/input-group"
+import { useDebounce } from "@/hooks/use-debounce"
 
 export function HolidayClient() {
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [autoInsertOpen, setAutoInsertOpen] = useState(false);
-  const [confirmOpen, setConfirmOpen] = useState(false);
-  const [selectedHoliday, setSelectedHoliday] = useState<Holiday | null>(null);
+  const [dialogOpen, setDialogOpen] = useState(false)
+  const [autoInsertOpen, setAutoInsertOpen] = useState(false)
+  const [confirmOpen, setConfirmOpen] = useState(false)
+  const [selectedHoliday, setSelectedHoliday] = useState<Holiday | null>(null)
 
   // Filters State
-  const [search, setSearch] = useState("");
-  const [page, setPage] = useState(1);
-  const [perPage, setPerPage] = useState("15");
+  const [search, setSearch] = useState("")
+  const [page, setPage] = useState(1)
+  const [perPage, setPerPage] = useState("15")
 
-  const debouncedSearch = useDebounce(search, 500);
+  const debouncedSearch = useDebounce(search, 500)
 
   const { items, meta, isLoading, isError } = useHolidayList({
     search: debouncedSearch,
     page,
     per_page: Number(perPage),
-  });
-  const { deleteHoliday, isDeleting } = useHolidayMutation();
+  })
+  const { deleteHoliday, isDeleting } = useHolidayMutation()
 
   const handleAdd = () => {
-    setSelectedHoliday(null);
-    setDialogOpen(true);
-  };
+    setSelectedHoliday(null)
+    setDialogOpen(true)
+  }
 
   const handleEdit = (holiday: Holiday) => {
-    setSelectedHoliday(holiday);
-    setDialogOpen(true);
-  };
+    setSelectedHoliday(holiday)
+    setDialogOpen(true)
+  }
 
   const handleDelete = (holiday: Holiday) => {
-    setSelectedHoliday(holiday);
-    setConfirmOpen(true);
-  };
+    setSelectedHoliday(holiday)
+    setConfirmOpen(true)
+  }
 
   const onConfirmDelete = async () => {
     if (selectedHoliday) {
-      await deleteHoliday(selectedHoliday.id);
+      await deleteHoliday(selectedHoliday.id)
     }
-  };
+  }
 
   const handleResetFilters = () => {
-    setSearch("");
-    setPage(1);
-  };
+    setSearch("")
+    setPage(1)
+  }
 
   const columns = getColumns({
     onEdit: handleEdit,
     onDelete: handleDelete,
-  });
+  })
 
-  if (isError) return <PageError />;
+  if (isError) return <PageError />
 
   return (
     <div className="flex flex-col gap-6">
@@ -101,7 +112,11 @@ export function HolidayClient() {
         <FilterGrid cols={4}>
           <InputGroup>
             <InputGroupAddon>
-              <HugeiconsIcon icon={Search01Icon} className="text-muted-foreground" size={14} />
+              <HugeiconsIcon
+                icon={Search01Icon}
+                className="text-muted-foreground"
+                size={14}
+              />
             </InputGroupAddon>
             <InputGroupInput
               placeholder="Cari nama hari libur..."
@@ -121,9 +136,9 @@ export function HolidayClient() {
           pagination={
             meta
               ? {
-                ...meta,
-                onPageChange: (p) => setPage(p),
-              }
+                  ...meta,
+                  onPageChange: (p) => setPage(p),
+                }
               : undefined
           }
         />
@@ -150,5 +165,5 @@ export function HolidayClient() {
         isLoading={isDeleting}
       />
     </div>
-  );
+  )
 }
