@@ -1,6 +1,7 @@
 import { useQuery, useSuspenseQuery } from "@tanstack/react-query"
 import { employeeService } from "../services/employee-service"
 import { EMPLOYEE_ENDPOINTS } from "../endpoints"
+import { EmployeeSummary } from "../types"
 
 export function useEmployees(params?: Record<string, any>) {
   const { data, error, isLoading, refetch } = useQuery({
@@ -72,7 +73,7 @@ export function useManagementEmployeeSummary() {
       : Object.values(rawData || {})
 
   return {
-    summary: summaryArray || [],
+    summary: (summaryArray || []) as EmployeeSummary[],
     isLoading: isLoading || isFetching,
     refetch,
   }
@@ -92,7 +93,7 @@ export function useSuspenseManagementEmployeeSummary() {
       : Object.values(rawData || {})
 
   return {
-    summary: summaryArray || [],
+    summary: (summaryArray || []) as EmployeeSummary[],
     refetch,
   }
 }
