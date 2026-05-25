@@ -62,14 +62,25 @@ export function UnpaidLeaveDetailClient() {
 
   if (isLoading) {
     return (
-      <div className="flex flex-col items-center justify-center gap-4 py-32">
-        <HugeiconsIcon
-          icon={Loading03Icon}
-          className="h-10 w-10 animate-spin text-primary"
-        />
-        <p className="animate-pulse font-medium text-muted-foreground">
-          Memuat rincian pengajuan...
-        </p>
+      <div className="animate-in space-y-6 pb-20 duration-500 fade-in">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div className="h-10 w-10 rounded-md bg-muted animate-pulse" />
+            <div>
+              <div className="h-8 w-64 bg-muted animate-pulse rounded-md mb-2" />
+              <div className="h-4 w-32 bg-muted animate-pulse rounded-md" />
+            </div>
+          </div>
+        </div>
+        <div className="grid gap-6 md:grid-cols-3">
+          <div className="space-y-6 md:col-span-2">
+            <div className="h-[400px] w-full rounded-xl bg-muted animate-pulse" />
+          </div>
+          <div className="space-y-6">
+            <div className="h-[200px] w-full rounded-xl bg-muted animate-pulse" />
+            <div className="h-[150px] w-full rounded-xl bg-muted animate-pulse" />
+          </div>
+        </div>
       </div>
     )
   }

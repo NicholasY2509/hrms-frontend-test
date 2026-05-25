@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { useAuditLogList } from "@/modules/audit/hooks/use-audit-log"
 import { DataTable } from "@/components/data-table/data-table"
-import { DataTableSkeleton } from "@/components/data-table/data-table-skeleton"
+
 import { PageHeader } from "@/components/layout/page-header"
 import { PageError } from "@/components/layout/page-error"
 import { getColumns } from "../columns"
@@ -132,22 +132,19 @@ export function AuditLogClient() {
         </FilterGrid>
       </FilterCard>
 
-      {isLoading ? (
-        <DataTableSkeleton columnCount={6} />
-      ) : (
-        <DataTable
-          columns={columns}
-          data={items}
-          pagination={
-            meta
-              ? {
-                  ...meta,
-                  onPageChange: (p) => updateFilter("page", p),
-                }
-              : undefined
-          }
-        />
-      )}
+      <DataTable
+        columns={columns}
+        data={items || []}
+        isLoading={isLoading}
+        pagination={
+          meta
+            ? {
+                ...meta,
+                onPageChange: (p) => updateFilter("page", p),
+              }
+            : undefined
+        }
+      />
 
       <AuditLogDetail
         log={selectedLog}

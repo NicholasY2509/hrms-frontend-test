@@ -59,9 +59,31 @@ export function CertificateOfEmploymentDetailClient() {
 
   if (isLoading) {
     return (
-      <div className="flex flex-col items-center justify-center py-32 gap-4">
-        <HugeiconsIcon icon={Loading03Icon} className="h-10 w-10 animate-spin text-primary" />
-        <p className="text-muted-foreground animate-pulse font-medium">Memuat rincian CoE...</p>
+      <div className="space-y-6 animate-in fade-in duration-500 pb-20">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div className="h-10 w-10 rounded-md bg-muted animate-pulse" />
+            <div>
+              <div className="h-8 w-64 bg-muted animate-pulse rounded-md mb-2" />
+              <div className="h-4 w-32 bg-muted animate-pulse rounded-md" />
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="h-10 w-32 bg-muted animate-pulse rounded-md" />
+          </div>
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2 space-y-6">
+            <div className="h-[200px] w-full rounded-xl bg-muted animate-pulse" />
+            <div className="h-[150px] w-full rounded-xl bg-muted animate-pulse" />
+            <div className="h-[600px] w-full rounded-xl bg-muted animate-pulse" />
+          </div>
+          <div className="space-y-6">
+            <div className="h-[200px] w-full rounded-xl bg-muted animate-pulse" />
+            <div className="h-[100px] w-full rounded-xl bg-muted animate-pulse" />
+            <div className="h-[150px] w-full rounded-xl bg-muted animate-pulse" />
+          </div>
+        </div>
       </div>
     );
   }
