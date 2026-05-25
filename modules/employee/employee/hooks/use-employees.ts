@@ -64,8 +64,15 @@ export function useManagementEmployeeSummary() {
     queryFn: () => employeeService.getSummary(),
   })
 
+  const rawData = data?.data
+  const summaryArray = Array.isArray(rawData)
+    ? rawData
+    : (rawData as any)?.summary
+      ? (rawData as any).summary
+      : Object.values(rawData || {})
+
   return {
-    summary: data?.data || [],
+    summary: summaryArray || [],
     isLoading: isLoading || isFetching,
     refetch,
   }
@@ -77,8 +84,15 @@ export function useSuspenseManagementEmployeeSummary() {
     queryFn: () => employeeService.getSummary(),
   })
 
+  const rawData = data?.data
+  const summaryArray = Array.isArray(rawData)
+    ? rawData
+    : (rawData as any)?.summary
+      ? (rawData as any).summary
+      : Object.values(rawData || {})
+
   return {
-    summary: data?.data || [],
+    summary: summaryArray || [],
     refetch,
   }
 }
