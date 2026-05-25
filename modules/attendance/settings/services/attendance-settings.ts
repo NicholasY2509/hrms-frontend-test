@@ -19,7 +19,7 @@ export const attendanceSettingsService = {
   },
 
   updateSettings: async (data: Record<string, string | number>) => {
-    const response = await apiClient.post<ApiResponse<any>>(
+    const response = await apiClient.put<ApiResponse<any>>(
       ATTENDANCE_SETTINGS_ENDPOINTS.UPDATE,
       data
     )
