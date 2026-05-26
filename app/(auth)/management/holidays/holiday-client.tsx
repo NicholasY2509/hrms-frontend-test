@@ -16,18 +16,10 @@ import { HolidayDialog } from "@/modules/unpaid-leave/components/holiday-dialog"
 import { AutoInsertSundaysDialog } from "@/modules/unpaid-leave/components/auto-insert-sundays-dialog"
 import { ConfirmModal } from "@/components/ui/confirm-modal"
 import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  Plus,
-  Search01Icon,
-  CalendarAdd02Icon,
-} from "@hugeicons/core-free-icons"
-import { FilterCard, FilterGrid } from "@/components/layout/filter-card"
-import {
-  InputGroup,
-  InputGroupAddon,
-  InputGroupInput,
-} from "@/components/ui/input-group"
+import { Plus, CalendarAdd02Icon } from "@hugeicons/core-free-icons"
+import { ManagementFilter } from "@/components/layout/management-filter"
 import { useDebounce } from "@/hooks/use-debounce"
+import { format } from "date-fns"
 
 export function HolidayClient() {
   const [dialogOpen, setDialogOpen] = useState(false)
@@ -37,6 +29,8 @@ export function HolidayClient() {
 
   // Filters State
   const [search, setSearch] = useState("")
+  const [startDate, setStartDate] = useState<Date | undefined>(undefined)
+  const [endDate, setEndDate] = useState<Date | undefined>(undefined)
   const [page, setPage] = useState(1)
   const [perPage, setPerPage] = useState("15")
 
@@ -44,6 +38,8 @@ export function HolidayClient() {
 
   const { items, meta, isLoading, isError } = useHolidayList({
     search: debouncedSearch,
+    start_date: startDate ? format(startDate, "yyyy-MM-dd") : undefined,
+    end_date: endDate ? format(endDate, "yyyy-MM-dd") : undefined,
     page,
     per_page: Number(perPage),
   })
@@ -72,6 +68,8 @@ export function HolidayClient() {
 
   const handleResetFilters = () => {
     setSearch("")
+    setStartDate(undefined)
+    setEndDate(undefined)
     setPage(1)
   }
 
@@ -103,29 +101,27 @@ export function HolidayClient() {
         </div>
       </div>
 
-      <FilterCard
+      <ManagementFilter
         onReset={handleResetFilters}
-        hasActiveFilters={search !== ""}
+        hasActiveFilters={search !== "" || !!startDate || !!endDate}
         perPage={perPage}
         onPerPageChange={setPerPage}
-      >
-        <FilterGrid cols={4}>
-          <InputGroup>
-            <InputGroupAddon>
-              <HugeiconsIcon
-                icon={Search01Icon}
-                className="text-muted-foreground"
-                size={14}
-              />
-            </InputGroupAddon>
-            <InputGroupInput
-              placeholder="Cari nama hari libur..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-          </InputGroup>
-        </FilterGrid>
-      </FilterCard>
+        search={{
+          value: search,
+          onChange: setSearch,
+          placeholder: "Cari nama hari libur...",
+        }}
+        startDate={{
+          value: startDate,
+          onChange: setStartDate,
+          placeholder: "Tanggal Mulai",
+        }}
+        endDate={{
+          value: endDate,
+          onChange: setEndDate,
+          placeholder: "Tanggal Selesai",
+        }}
+      />
 
       {isLoading ? (
         <DataTableSkeleton columnCount={3} />
