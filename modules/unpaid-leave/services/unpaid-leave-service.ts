@@ -1,7 +1,7 @@
 import apiClient from "@/lib/api-client";
 import { UNPAID_LEAVE_ENDPOINTS } from "../endpoints";
 import { UnpaidLeave, UnpaidLeaveType, UnpaidLeaveCalendarData } from "../types";
-import { UnpaidLeaveFormValues } from "../schemas/unpaid-leave-schema";
+import { UnpaidLeaveFormValues, UnpaidLeaveManagementFormValues } from "../schemas/unpaid-leave-schema";
 import { UnpaidLeaveTypeFormValues } from "../schemas/unpaid-leave-type-schema";
 import { format } from "date-fns";
 import { PaginatedResponse, ApiResponse } from "@/types";
@@ -63,6 +63,33 @@ export const unpaidLeaveService = {
       getDetail: async (id: string | number) => {
         const response = await apiClient.get<ApiResponse<UnpaidLeave>>(
           UNPAID_LEAVE_ENDPOINTS.PORTAL.MANAGEMENT.DETAIL(id)
+        );
+        return response.data;
+      },
+      
+      create: async (values: UnpaidLeaveManagementFormValues) => {
+        const formData = new FormData();
+        formData.append("employee_id", values.employee_id.toString());
+        formData.append("unpaid_leave_type_id", values.unpaid_leave_type_id.toString());
+        formData.append("start_date", format(values.start_date, "yyyy-MM-dd"));
+        formData.append("end_date", format(values.end_date, "yyyy-MM-dd"));
+
+        if (values.note) {
+          formData.append("note", values.note);
+        }
+
+        if (values.attachment) {
+          formData.append("attachment", values.attachment);
+        }
+
+        const response = await apiClient.post(
+          UNPAID_LEAVE_ENDPOINTS.PORTAL.MANAGEMENT.CREATE,
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
         );
         return response.data;
       },

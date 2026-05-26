@@ -27,6 +27,7 @@ import { CareerTransitionSheet } from "@/modules/employee/career/components/care
 import { ConfirmModal } from "@/components/ui/confirm-modal"
 import { useCreateCertificateOfEmployment } from "@/modules/employee/certificate-of-employment/hooks/use-certificate"
 import { AdjustAnnualLeaveModal } from "@/modules/employee/annual-leave/components/adjust-annual-leave-modal"
+import { UnpaidLeaveManagementSheet } from "@/modules/unpaid-leave/components/unpaid-leave-management-sheet"
 
 export function EmployeeDetailClient() {
   const params = useParams()
@@ -40,6 +41,7 @@ export function EmployeeDetailClient() {
     React.useState(false)
   const [isCoeConfirmOpen, setIsCoeConfirmOpen] = React.useState(false)
   const [isAdjustLeaveOpen, setIsAdjustLeaveOpen] = React.useState(false)
+  const [isUnpaidLeaveOpen, setIsUnpaidLeaveOpen] = React.useState(false)
 
   const { createCertificate, isLoading: isCreatingCoe } =
     useCreateCertificateOfEmployment({
@@ -105,6 +107,14 @@ export function EmployeeDetailClient() {
             <Button
               variant="ghost"
               className="w-full justify-start"
+              onClick={() => setIsUnpaidLeaveOpen(true)}
+            >
+              <HugeiconsIcon icon={UserGroupIcon} className="" />
+              Buatkan Pengajuan Cuti
+            </Button>
+            <Button
+              variant="ghost"
+              className="w-full justify-start"
               onClick={() => setIsCoeConfirmOpen(true)}
             >
               <HugeiconsIcon icon={Certificate01Icon} className="" />
@@ -144,6 +154,11 @@ export function EmployeeDetailClient() {
             employee={employee}
             isOpen={isAdjustLeaveOpen}
             onClose={() => setIsAdjustLeaveOpen(false)}
+          />
+          <UnpaidLeaveManagementSheet
+            employeeId={employee.id}
+            isOpen={isUnpaidLeaveOpen}
+            onClose={() => setIsUnpaidLeaveOpen(false)}
           />
         </>
       )}

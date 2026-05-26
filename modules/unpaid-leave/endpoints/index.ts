@@ -7,6 +7,7 @@ export const UNPAID_LEAVE_ENDPOINTS = {
     },
     MANAGEMENT: {
       LIST: "/v1/unpaidleave/portal/management/leaves",
+      CREATE: "/v1/unpaidleave/portal/management/leaves",
       CALENDAR: "/v1/unpaidleave/portal/management/leaves/calendar",
       DETAIL: (id: string | number) => `/v1/unpaidleave/portal/management/leaves/${id}`,
       TYPES: "/v1/unpaidleave/portal/management/types",

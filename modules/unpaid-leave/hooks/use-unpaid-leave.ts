@@ -2,8 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { unpaidLeaveService } from "../services/unpaid-leave-service";
 import { UNPAID_LEAVE_ENDPOINTS } from "../endpoints";
 import { toast } from "sonner";
-import { UnpaidLeaveFormValues } from "../schemas/unpaid-leave-schema";
-
+import { UnpaidLeaveFormValues, UnpaidLeaveManagementFormValues } from "../schemas/unpaid-leave-schema";
 /**
  * PORTAL - EMPLOYEE CONTEXT
  */
@@ -125,6 +124,33 @@ export function useCreateUnpaidLeave(options?: { onSuccess?: () => void }) {
 
   return {
     createUnpaidLeave: (values: UnpaidLeaveFormValues) =>
+      mutation.mutateAsync(values),
+    isLoading: mutation.isPending,
+  };
+}
+
+export function useCreateUnpaidLeaveManagement(options?: { onSuccess?: () => void }) {
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationFn: (values: UnpaidLeaveManagementFormValues) =>
+      unpaidLeaveService.portal.management.create(values),
+    onSuccess: () => {
+      toast.success("Pengajuan cuti berhasil dibuat");
+      queryClient.invalidateQueries({
+        queryKey: [UNPAID_LEAVE_ENDPOINTS.PORTAL.MANAGEMENT.LIST],
+      });
+      options?.onSuccess?.();
+    },
+    onError: (error: any) => {
+      const message =
+        error?.response?.data?.message || "Gagal membuat pengajuan cuti";
+      toast.error(message);
+    },
+  });
+
+  return {
+    createUnpaidLeave: (values: UnpaidLeaveManagementFormValues) =>
       mutation.mutateAsync(values),
     isLoading: mutation.isPending,
   };

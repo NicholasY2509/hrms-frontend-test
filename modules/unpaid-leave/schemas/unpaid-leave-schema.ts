@@ -16,3 +16,9 @@ export const unpaidLeaveSchema = z.object({
 });
 
 export type UnpaidLeaveFormValues = z.infer<typeof unpaidLeaveSchema>;
+
+export const unpaidLeaveManagementSchema = unpaidLeaveSchema.extend({
+  employee_id: z.string().or(z.number()),
+});
+
+export type UnpaidLeaveManagementFormValues = z.infer<typeof unpaidLeaveManagementSchema>;
