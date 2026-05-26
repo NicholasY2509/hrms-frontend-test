@@ -46,18 +46,13 @@ export const getAttendanceColumns = (
     accessorKey: "employee.name",
     header: "Karyawan",
     cell: ({ row }) => (
-      <div className="flex items-center gap-3">
-        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary">
-          <HugeiconsIcon icon={UserIcon} size={16} />
-        </div>
-        <div className="flex flex-col">
-          <span className="text-sm font-medium">
-            {row.original.employee.name}
-          </span>
-          <span className="text-xs text-muted-foreground">
-            NIK: {row.original.employee.nik}
-          </span>
-        </div>
+      <div className="flex flex-col">
+        <span className="text-sm font-medium">
+          {row.original.employee.name}
+        </span>
+        <span className="text-xs text-muted-foreground">
+          NIK: {row.original.employee.nik}
+        </span>
       </div>
     ),
   },

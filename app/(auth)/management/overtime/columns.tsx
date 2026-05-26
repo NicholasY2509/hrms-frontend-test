@@ -100,15 +100,20 @@ export const getOvertimeColumns = (
   {
     id: "actions",
     header: "Aksi",
+    meta: {
+      className: "sticky right-0 bg-card z-10 text-center",
+    },
     cell: ({ row }) => (
-      <Button
-        variant="ghost"
-        size="icon"
-        onClick={() => onView(row.original)}
-        className="transition-colors hover:bg-primary/10 hover:text-primary"
-      >
-        <HugeiconsIcon icon={ProfileIcon} size={18} />
-      </Button>
+      <div className="flex justify-center">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => onView(row.original)}
+          className="transition-colors hover:bg-primary/10 hover:text-primary"
+        >
+          <HugeiconsIcon icon={ProfileIcon} size={18} />
+        </Button>
+      </div>
     ),
   },
 ]

@@ -20,6 +20,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { PaginationMeta } from "@/types"
 import { DataTablePagination } from "./data-table-pagination"
 import { RowSelectionState, OnChangeFn } from "@tanstack/react-table"
+import { cn } from "@/lib/utils"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -70,7 +71,10 @@ export function DataTable<TData, TValue>({
                   return (
                     <TableHead
                       key={header.id}
-                      className="h-12 px-4 text-xs font-semibold tracking-wider text-muted-foreground uppercase"
+                      className={cn(
+                        "h-12 px-4 text-xs font-semibold tracking-wider text-muted-foreground uppercase",
+                        (header.column.columnDef.meta as any)?.className
+                      )}
                     >
                       {header.isPlaceholder
                         ? null
@@ -106,7 +110,13 @@ export function DataTable<TData, TValue>({
                   className="group border-b transition-colors last:border-0 hover:bg-muted/50"
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id} className="px-4 py-3 align-middle">
+                    <TableCell 
+                      key={cell.id} 
+                      className={cn(
+                        "px-4 py-3 align-middle",
+                        (cell.column.columnDef.meta as any)?.className
+                      )}
+                    >
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()
