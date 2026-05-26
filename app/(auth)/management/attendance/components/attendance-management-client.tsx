@@ -19,8 +19,21 @@ import { AttendanceDetailDialog } from "@/modules/attendance/attendances/compone
 import { TeamPicker } from "@/modules/organization/teams/components/team-picker"
 
 import { BatchUpdateAttendanceStatusDialog } from "@/modules/attendance/attendances/components/batch-update-attendance-status-dialog"
-import { TaskEdit01Icon } from "@hugeicons/core-free-icons"
+import {
+  TaskEdit01Icon,
+  ArrowDown01Icon,
+  ReloadFreeIcons,
+  ReloadIcon,
+} from "@hugeicons/core-free-icons"
 import { RowSelectionState } from "@tanstack/react-table"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { ZktecoAttendanceSyncDialog } from "@/modules/attendance/zkteco/components/zkteco-attendance-sync-dialog"
+import { ZktecoSyncDialog } from "@/modules/attendance/zkteco/components/zkteco-sync-dialog"
 
 export function AttendanceManagementClient() {
   const { filters, setFilter, setFilters, resetFilters, hasActiveFilters } =
@@ -43,6 +56,9 @@ export function AttendanceManagementClient() {
   const [isDetailDialogOpen, setIsDetailDialogOpen] = React.useState(false)
   const [isBatchUpdateDialogOpen, setIsBatchUpdateDialogOpen] =
     React.useState(false)
+  const [isSyncAttendanceDialogOpen, setIsSyncAttendanceDialogOpen] =
+    React.useState(false)
+  const [isSyncUserDialogOpen, setIsSyncUserDialogOpen] = React.useState(false)
   const [selectedAttendance, setSelectedAttendance] =
     React.useState<AttendanceModel | null>(null)
   const [rowSelection, setRowSelection] = React.useState<RowSelectionState>({})
@@ -112,7 +128,7 @@ export function AttendanceManagementClient() {
         title="Manajemen Kehadiran"
         description="Pantau dan kelola data kehadiran karyawan harian."
       >
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-1">
           {Object.keys(rowSelection).length > 0 && (
             <Button
               variant="secondary"
@@ -139,6 +155,29 @@ export function AttendanceManagementClient() {
             <HugeiconsIcon icon={Download01Icon} size={16} />
             Laporan Kehadiran
           </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="default" className="gap-2">
+                <HugeiconsIcon icon={ReloadFreeIcons} size={16} />
+                Tarik Data
+                <HugeiconsIcon icon={ArrowDown01Icon} size={16} />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-auto">
+              <DropdownMenuItem
+                onClick={() => setIsSyncAttendanceDialogOpen(true)}
+                className="w-auto cursor-pointer gap-2"
+              >
+                Tarik Data Absensi
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => setIsSyncUserDialogOpen(true)}
+                className="w-auto cursor-pointer gap-2"
+              >
+                Tarik Data User
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </PageHeader>
 
@@ -220,6 +259,14 @@ export function AttendanceManagementClient() {
         onOpenChange={setIsBatchUpdateDialogOpen}
         selectedAttendances={selectedAttendances}
         onSuccess={() => setRowSelection({})}
+      />
+      <ZktecoAttendanceSyncDialog
+        open={isSyncAttendanceDialogOpen}
+        onOpenChange={setIsSyncAttendanceDialogOpen}
+      />
+      <ZktecoSyncDialog
+        open={isSyncUserDialogOpen}
+        onOpenChange={setIsSyncUserDialogOpen}
       />
     </div>
   )
