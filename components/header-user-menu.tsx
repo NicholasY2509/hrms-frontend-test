@@ -32,7 +32,10 @@ export function HeaderUserMenu() {
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-9 w-9 rounded-full p-0">
           <Avatar className="h-9 w-9">
-            <AvatarImage src={user.avatar} alt={user.full_name} />
+            <AvatarImage
+              src={user.profileUrl || undefined}
+              alt={user.full_name}
+            />
             <AvatarFallback>
               {user.full_name?.substring(0, 2).toUpperCase()}
             </AvatarFallback>
