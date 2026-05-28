@@ -41,6 +41,22 @@ export const attendanceService = {
     return response.data
   },
 
+  getEmployeeStatus: async (
+    employeeId: number,
+    params: {
+      start_date: string
+      end_date: string
+    }
+  ) => {
+    const response = await apiClient.post<
+      ApiResponse<{ attendance_at: string; status: string }[]>
+    >(
+      ATTENDANCE_RECORD_ENDPOINTS.PORTAL.MANAGEMENT.EMPLOYEE_STATUS(employeeId),
+      params
+    )
+    return response.data
+  },
+
   updateAttendanceStatus: async (data: {
     attendance_status_id: number
     attendance_id: number

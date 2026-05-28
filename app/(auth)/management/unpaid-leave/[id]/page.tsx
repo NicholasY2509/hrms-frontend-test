@@ -1,5 +1,5 @@
-import { Metadata } from 'next'
-import { UnpaidLeaveDetailClient } from './components/unpaid-leave-detail-client'
+import { Metadata } from "next"
+import { UnpaidLeaveDetailClient } from "./components/unpaid-leave-detail-client"
 
 type Props = {
   params: Promise<{ id: string }>

@@ -16,12 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog"
+import { EmployeeLeaveBalanceDialog } from "@/modules/unpaid-leave/components/detail/employee-leave-balance-dialog"
 
 export function AnnualLeaveManagementClient() {
   const { filters, setFilter, resetFilters, hasActiveFilters } = useUrlFilters({
@@ -119,35 +114,13 @@ export function AnnualLeaveManagementClient() {
         }
       />
 
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Sisa Cuti - {selectedEmployee?.name}</DialogTitle>
-          </DialogHeader>
-          {selectedEmployee && (
-            <div className="space-y-4 py-2">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="rounded-xl border bg-muted/20 p-4">
-                  <div className="text-sm font-medium text-muted-foreground">
-                    Cuti Tahun Lalu
-                  </div>
-                  <div className="mt-1.5 text-3xl font-semibold text-foreground">
-                    {selectedEmployee.annual_leave_2 ?? 0}
-                  </div>
-                </div>
-                <div className="rounded-xl border bg-muted/20 p-4">
-                  <div className="text-sm font-medium text-muted-foreground">
-                    Cuti Tahun Ini
-                  </div>
-                  <div className="mt-1.5 text-3xl font-semibold text-foreground">
-                    {selectedEmployee.annual_leave_3 ?? 0}
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
+      <EmployeeLeaveBalanceDialog
+        open={isDialogOpen}
+        onOpenChange={setIsDialogOpen}
+        employeeName={selectedEmployee?.name}
+        annualLeave2={selectedEmployee?.annual_leave_2 ?? 0}
+        annualLeave3={selectedEmployee?.annual_leave_3 ?? 0}
+      />
     </div>
   )
 }

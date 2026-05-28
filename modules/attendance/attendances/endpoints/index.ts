@@ -8,6 +8,8 @@ export const ATTENDANCE_RECORD_ENDPOINTS = {
     },
 
     MANAGEMENT: {
+      EMPLOYEE_STATUS: (employeeId: number) =>
+        `/v1/attendance/portal/management/attendances/employee/${employeeId}/status`,
       UPDATE_STATUS: (id: number) =>
         `/v1/attendance/portal/management/attendances/${id}/status`,
       BATCH_UPDATE_STATUS: "/v1/attendance/portal/management/attendances/status/batch",

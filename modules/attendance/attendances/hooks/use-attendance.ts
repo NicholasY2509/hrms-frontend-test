@@ -110,6 +110,31 @@ export function useEmployeeAttendanceHistory(params: {
   }
 }
 
+export function useEmployeeAttendanceStatus(
+  employeeId: number | null,
+  params: { start_date: string; end_date: string }
+) {
+  const { data, error, isLoading, refetch } = useQuery({
+    queryKey: [
+      employeeId
+        ? ATTENDANCE_RECORD_ENDPOINTS.PORTAL.MANAGEMENT.EMPLOYEE_STATUS(
+            employeeId
+          )
+        : null,
+      params,
+    ],
+    queryFn: () => attendanceService.getEmployeeStatus(employeeId!, params),
+    enabled: !!employeeId && !!params.start_date && !!params.end_date,
+  })
+
+  return {
+    records: data?.data || [],
+    isLoading,
+    isError: error,
+    mutate: refetch,
+  }
+}
+
 export function useUpdateAttendanceStatus(options?: {
   onSuccess?: () => void
 }) {

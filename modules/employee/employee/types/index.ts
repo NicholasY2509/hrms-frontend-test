@@ -32,6 +32,8 @@ export interface Employee {
   work_location_id: number
   team_id: number | null
   supervisor_id: number | null
+  annual_leave_2: number
+  annual_leave_3: number
   supervisor?: {
     id: number
     name: string
