@@ -32,8 +32,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     Cookies.remove("access_token")
     Cookies.remove("refresh_token")
     setUser(null)
-    router.push("/login")
-  }, [router])
+    window.location.href = "/login"
+  }, [])
 
   const setAuthData = useCallback((token: AuthToken, userData: User) => {
     Cookies.set("access_token", token.access_token, {
