@@ -28,7 +28,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true)
   const router = useRouter()
 
-  const logout = useCallback(() => {
+  const logout = useCallback(async () => {
+    const token = Cookies.get("access_token")
+    if (token) {
+      try {
+        await authService.logout(token)
+      } catch (error) {
+        console.error("Failed to logout from server", error)
+      }
+    }
     Cookies.remove("access_token")
     Cookies.remove("refresh_token")
     setUser(null)

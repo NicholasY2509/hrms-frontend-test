@@ -37,6 +37,14 @@ export const authService = {
     return response.data.data
   },
 
+  logout: async (accessToken: string): Promise<void> => {
+    await axios.post(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api"}/v1/system/auth/logout`, {}, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    })
+  },
+
   refreshToken: async (refreshToken: string): Promise<AuthToken> => {
     const response = await axios.post(AUTH_ENDPOINTS.TOKEN, {
       grant_type: "refresh_token",
