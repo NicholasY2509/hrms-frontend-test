@@ -2,9 +2,9 @@
 trigger: always_on
 ---
 
-# Project Architecture Documentation: Aftersales Frontend
+# General Frontend Architecture Documentation
 
-This document outlines the architectural patterns and best practices used in this project. The goal is to provide a clear blueprint that can be replicated in other frontend projects to ensure consistency, scalability, and maintainability.
+This document outlines the standard architectural patterns and best practices for building scalable frontend web applications. The goal is to provide a clear, reusable blueprint that ensures consistency, scalability, and maintainability across various projects.
 
 ## 1. Core Principles
 
@@ -20,13 +20,12 @@ This document outlines the architectural patterns and best practices used in thi
 
 ```text
 ├── app/                  # Next.js App Router (Routing & Page Assembly)
-│   ├── (auth)/           # Authenticated routes group
-│   │   ├── employee/     # Employee self-service routes
-│   │   ├── management/   # Management & HR routes
-│   │   └── configuration/# System configuration routes
+│   ├── (public)/         # Unauthenticated/public routes group
+│   ├── (auth)/           # Authenticated user routes
 │   └── layout.tsx        # Global layout
 ├── modules/              # Feature-based domain logic
-│   └── {feature}/        # e.g., reception, gate-in, auth
+│   └── {feature}/        # e.g., users, products, auth
+│       ├── components/   # Feature-specific UI components
 │       ├── endpoints/    # API endpoint constants
 │       ├── hooks/        # Custom data fetching hooks (TanStack Query)
 │       ├── services/     # API service layer (axios/fetch)
@@ -104,36 +103,10 @@ export function useFeatureList(params?: Record<string, any>) {
     meta: data?.meta,
     isLoading,
     isError: error,
-    mutate: refetch, // Aligned with SWR's naming for consistency
+    mutate: refetch, 
   };
 }
-
-export function useFeatureDetail(id: string | number) {
-  const { data, error, isLoading } = useQuery({
-    queryKey: id ? [FEATURE_ENDPOINTS.DETAIL(id)] : null,
-    queryFn: () => featureService.getDetail(id),
-    enabled: !!id,
-  });
-
-  return {
-    item: data?.data, // ApiResponse has a 'data' object
-    isLoading,
-    isError: error,
-  };
-}
-
-export function useFeatureMutation() {
-  const queryClient = useQueryClient();
-  
-  const mutation = useMutation({
-    mutationFn: (data: FeatureFormValues) => featureService.create(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [FEATURE_ENDPOINTS.LIST] });
-    }
-  });
-  
-  return mutation;
-}
+// ...
 ```
 
 ### 3.5 Components (`components/`)
@@ -174,7 +147,6 @@ Example Client Component (`feature-client.tsx`):
 'use client'
 import { useFeatureList } from '@/modules/feature/hooks/use-feature'
 import { DataTable } from '@/components/data-table/data-table'
-import { columns } from './columns'
 
 export function FeatureClient() {
   const { items, isLoading, isError } = useFeatureList()
@@ -183,7 +155,7 @@ export function FeatureClient() {
   if (isError) return <PageError />
 
   return (
-    <DataTable columns={columns} data={items} />
+    <DataTable data={items} />
   )
 }
 ```
@@ -195,145 +167,79 @@ export function FeatureClient() {
 - **Tailwind CSS**: Use utility classes for all styling.
 - **shadcn/ui**: Use and extend components from `@/components/ui`.
 - **Icons**: Use `lucide-react`.
-- **Data Tables**: Use the custom `<DataTable />` and `<DataTablePagination />` components.
+- **Data Tables**: Use custom `<DataTable />` implementations.
 - **Skeleton Loaders**: Always provide a `<DataTableSkeleton />` or similar for loading states.
 
 ---
 
 ## 6. Best Practices
 
-- **Debouncing**: Always debounce search inputs using the global `useDebounce` hook before passing them to fetching hooks.
-- **Naming Conventions**: Use `kebab-case` for all file and directory names (e.g., `work-order-info-card.tsx`).
+- **Debouncing**: Always debounce search inputs using a global `useDebounce` hook before passing them to fetching hooks.
+- **Naming Conventions**: Use `kebab-case` for all file and directory names (e.g., `user-profile-card.tsx`).
 - **Modal Logic**: Manage modal visibility state in the parent page component to prevent unnecessary re-renders in lists. Always use a standalone button to manage the open/close state of the dialog rather than using `DialogTrigger` directly.
 - **API Response Handling**: Standardize API responses using global wrappers to ensure consistency.
   - **Lists**: Use `PaginatedResponse<T>` which includes `data: T[]`, `meta`, and `links`.
   - **Single Items**: Use `ApiResponse<T>` which includes `data: T` and optional `message`.
-  - Services return the wrapper; Hooks extract the content.
-- **Error Handling**: Use the `<PageError />` component for high-level errors to provide a consistent user experience.
 
 ---
 
 ## 7. Technology Stack
 
+- **Framework**: Next.js App Router
 - **Styling**: Tailwind CSS
 - **UI Components**: shadcn/ui
 - **Data Fetching**: TanStack Query (React Query)
-- **HTTP Client**: Axios (wrapped in `apiClient`)
+- **HTTP Client**: Axios
 - **Icons**: Lucide React
-- **State Management**: React Hooks + TanStack Query Cache
+- **Forms**: React Hook Form + Zod
+
+---
 
 ## 8. Form Field & Submission Pattern
 
-This project uses a standardized approach for forms using **React Hook Form**, **Zod**, and custom UI components.
+Standardized approach for forms using **React Hook Form**, **Zod**, and custom UI components.
 
 ### 8.1 Schema Definition
-Schemas are defined in `@/modules/{feature}/schemas/` using Zod. Always export a `FormValues` type.
+Schemas are defined in `@/modules/{feature}/schemas/` using Zod.
 
 ```typescript
 import * as z from "zod"
 export const featureSchema = z.object({
-  name: z.string().min(1, "Wajib diisi"),
+  name: z.string().min(1, "Required"),
 })
 export type FeatureFormValues = z.infer<typeof featureSchema>
 ```
 
-### 8.2 Field Components
-We use a custom field system in `@/components/ui/field.tsx`:
-- `FieldGroup`: Container for grouping fields.
-- `Field`: Wrapper for a single field (label + input + error).
-- `FieldLabel`: Label with an optional `required` asterisk.
-- `FieldError`: Displays validation errors.
-
-### 8.3 Form Implementation
-Integrate with `react-hook-form` using the `Controller` component.
-
-```tsx
-<Controller
-  name="name"
-  control={control}
-  render={({ field, fieldState }) => (
-    <Field data-invalid={fieldState.invalid}>
-      <FieldLabel htmlFor={field.name} required>Nama</FieldLabel>
-      <Input {...field} id={field.name} aria-invalid={fieldState.invalid} />
-      <FieldError errors={[fieldState.error]} />
-    </Field>
-  )}
-/>
-```
-
-### 8.4 Submission Hooks
-Submissions are handled by custom hooks (built on `useMutation`) that manage loading states and provide feedback via `sonner` toasts.
-
-```typescript
-export function useCreateFeature(options?: { onSuccess?: () => void }) {
-  const queryClient = useQueryClient();
-  
-  const mutation = useMutation({
-    mutationFn: (data: FeatureFormValues) => featureService.create(data),
-    onSuccess: () => {
-      toast.success("Berhasil!");
-      queryClient.invalidateQueries({ queryKey: [FEATURE_ENDPOINTS.LIST] });
-      options?.onSuccess?.();
-    },
-    onError: () => {
-      toast.error("Gagal!");
-    }
-  });
-  
-  return { 
-    createFeature: mutation.mutateAsync, 
-    isLoading: mutation.isPending 
-  };
-}
-```
+### 8.2 Submission Hooks
+Submissions are handled by custom hooks (built on `useMutation`) that manage loading states and provide feedback via toasts.
 
 ---
 
 ## 9. Routing & Backend Tier Pattern
 
-The application follows a structured routing pattern that separates concerns between different user contexts and system configuration.
+Applications should follow a structured routing pattern that separates concerns between different user contexts (e.g., public vs. admin vs. user dashboard).
 
 ### 9.1 URL Structure (Frontend)
-Frontend routes are simplified for readability and do not include the `portal/` prefix in the URL:
-- `/employee/*`: Routes for individual employee self-service (e.g., Dashboard, Leave Requests).
-- `/management/*`: Routes for managers and HR administration (e.g., Approvals, Master Data).
-- `/configuration/*`: Routes for system-wide configuration and IT setup (e.g., Approval Workflows).
+Frontend routes should be grouped logically by domain context:
+- `/dashboard/*`: Routes for standard authenticated user workflows.
+- `/admin/*`: Routes for administrative management and configuration.
 
 ### 9.2 API Endpoint Structure (Backend)
-API endpoints follow a tiered architecture that must match the backend's module structure. These tiers are defined in each module's `endpoints/index.ts`:
-- `/v1/{module}/portal/employee/*`: Endpoints for employee-facing features.
-- `/v1/{module}/portal/management/*`: Endpoints for management-facing features.
-- `/v1/{module}/config/*`: Endpoints for system configuration.
-
-Example `endpoints/index.ts`:
-```typescript
-export const FEATURE_ENDPOINTS = {
-  PORTAL: {
-    EMPLOYEE: {
-      LIST: '/v1/feature/portal/employee/list',
-    },
-    MANAGEMENT: {
-      LIST: '/v1/feature/portal/management/list',
-    }
-  },
-  CONFIG: {
-    LIST: '/v1/feature/config/list',
-  }
-} as const;
-```
+API endpoints should follow a tiered architecture that matches the user context, enhancing security and organization:
+- `/v1/{module}/portal/dashboard/*`: Endpoints for standard user features.
+- `/v1/{module}/portal/admin/*`: Endpoints for admin-facing features.
 
 ---
 
 ## 10. Advanced Architectural Patterns
 
 ### 10.1 Report Generation
-To maintain a modular and reusable approach for reports:
-- **Dedicated Modules**: Create a dedicated module for each domain's reports (e.g., `@/modules/report-dac`).
-- **Export Services**: Use the shared `apiClient` for fetching file blobs (e.g., PDF, Excel), ensuring `responseType: 'blob'` is set correctly.
-- **Reusable Filters**: Implement generic UI filter components (date ranges, multi-selects) that can be plugged into various report pages.
+To maintain a modular and reusable approach for generating files and reports:
+- **Dedicated Modules**: Create a dedicated module for complex report domains (e.g., `@/modules/report-sales`).
+- **Export Services**: Use a shared HTTP client configuration to fetch file blobs (e.g., PDF, Excel), ensuring `responseType: 'blob'` is set correctly.
+- **Reusable Filters**: Implement generic UI filter components (date ranges, multi-selects) that can be easily plugged into various report pages.
 
 ### 10.2 Action Locking (Business Rule Enforcement)
-When a record's state restricts user actions (e.g., a "Settled" work order preventing edits):
-- **Status-Based Rendering**: Conditionally disable or hide action buttons (Edit, Delete, Settle) based on the entity's status.
-- **Derived State in Hooks**: Manage the locking logic (e.g., `isActionLocked` or `canSettle`) directly within custom hooks or page assemblers to keep the base UI components reusable and dumb.
-
+When a record's state restricts user actions (e.g., a "Published" status preventing further edits):
+- **Status-Based Rendering**: Conditionally disable or hide action buttons (Edit, Delete, Submit) based on the entity's status.
+- **Derived State in Hooks**: Manage the locking logic (e.g., `isActionLocked` or `canEdit`) directly within custom hooks or page assemblers to keep the base UI components reusable and dumb.

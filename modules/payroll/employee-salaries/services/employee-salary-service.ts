@@ -11,6 +11,14 @@ export const employeeSalaryService = {
     return response.data;
   },
 
+  getList: async (params?: Record<string, any>) => {
+    const response = await apiClient.get<PaginatedResponse<EmployeeSalary>>(
+      EMPLOYEE_SALARY_ENDPOINTS.LIST,
+      { params }
+    );
+    return response.data;
+  },
+
   getHistory: async (employeeId: number) => {
     const response = await apiClient.get<PaginatedResponse<EmployeeSalary>>(
       EMPLOYEE_SALARY_ENDPOINTS.HISTORY,

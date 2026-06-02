@@ -4,6 +4,7 @@ export const EMPLOYEE_SALARY_ENDPOINTS = {
       MY_SALARY: '/v1/payroll/portal/employee/my-salary'
     }
   },
-  HISTORY: '/v1/payroll/portal/management/employee-salaries',
+  LIST: '/v1/payroll/portal/management/employee-salaries',
+  HISTORY: '/v1/payroll/portal/management/employee-salaries/history',
   STORE: '/v1/payroll/portal/management/employee-salaries',
 } as const;

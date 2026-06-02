@@ -16,7 +16,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { EmployeeLeaveBalanceDialog } from "@/modules/unpaid-leave/components/detail/employee-leave-balance-dialog"
+import { AnnualLeaveDetailDialog } from "./annual-leave-detail-dialog"
+import { AnnualLeave } from "@/modules/employee/annual-leave/types"
 
 export function AnnualLeaveManagementClient() {
   const { filters, setFilter, resetFilters, hasActiveFilters } = useUrlFilters({
@@ -28,22 +29,27 @@ export function AnnualLeaveManagementClient() {
     end_date: undefined as string | undefined,
   })
 
-  const [selectedEmployee, setSelectedEmployee] = React.useState<any>(null)
+  const [selectedLog, setSelectedLog] = React.useState<AnnualLeave | null>(null)
   const [isDialogOpen, setIsDialogOpen] = React.useState(false)
 
   const handleEmployeeClick = React.useCallback((employee: any) => {
-    setSelectedEmployee(employee)
+    // We keep this function if needed, but the user requested not to show the old dialog here
+    // So it does nothing or redirects to employee profile if desired. 
+    // For now, let's just make it a no-op as the dialog is removed.
+  }, [])
+
+  const handleDetailClick = React.useCallback((row: AnnualLeave) => {
+    setSelectedLog(row)
     setIsDialogOpen(true)
   }, [])
 
   const tableColumns = React.useMemo(
-    () => getColumns(handleEmployeeClick),
-    [handleEmployeeClick]
+    () => getColumns(handleEmployeeClick, handleDetailClick),
+    [handleEmployeeClick, handleDetailClick]
   )
 
   const debouncedSearch = useDebounce(filters.search, 500)
 
-  // Fetch Annual Leaves with all filters
   const { items, meta, isLoading } = useAnnualLeaveList({
     search: debouncedSearch,
     page: filters.page,
@@ -107,19 +113,17 @@ export function AnnualLeaveManagementClient() {
         pagination={
           meta
             ? {
-                ...meta,
-                onPageChange: (p) => setFilter("page", p),
-              }
+              ...meta,
+              onPageChange: (p) => setFilter("page", p),
+            }
             : undefined
         }
       />
 
-      <EmployeeLeaveBalanceDialog
+      <AnnualLeaveDetailDialog
         open={isDialogOpen}
         onOpenChange={setIsDialogOpen}
-        employeeName={selectedEmployee?.name}
-        annualLeave2={selectedEmployee?.annual_leave_2 ?? 0}
-        annualLeave3={selectedEmployee?.annual_leave_3 ?? 0}
+        data={selectedLog}
       />
     </div>
   )

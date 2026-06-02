@@ -9,6 +9,8 @@ export interface AnnualLeave {
   status: string;
   description: string;
   deduction_details: DeductionDetail[];
+  balance_before: Record<string, number> | null;
+  balance_after: Record<string, number> | null;
   created_at: string;
   updated_at: string;
 }

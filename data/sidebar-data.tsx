@@ -326,13 +326,13 @@ export const sidebarData = {
         roles: ["Admin HRD", "Department Head"],
         items: [
           {
-            title: "Gaji Bulanan Pegawai",
-            url: "/management/employee-salary",
+            title: "Payroll",
+            url: "/management/payroll",
             icon: <HugeiconsIcon icon={Banknote} strokeWidth={2} />,
           },
           {
             title: "Data Gaji Pegawai",
-            url: "/management/payroll",
+            url: "/management/employee-salary",
             icon: <HugeiconsIcon icon={ComponentIcon} strokeWidth={2} />,
           },
           {

@@ -14,6 +14,9 @@ export function useUpdateEmployeeSalary(options?: { onSuccess?: () => void }) {
       queryClient.invalidateQueries({
         queryKey: [EMPLOYEE_SALARY_ENDPOINTS.HISTORY, variables.employee_id]
       });
+      queryClient.invalidateQueries({
+        queryKey: [EMPLOYEE_SALARY_ENDPOINTS.LIST]
+      });
       options?.onSuccess?.();
     },
     onError: (error: any) => {

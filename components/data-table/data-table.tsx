@@ -79,9 +79,9 @@ export function DataTable<TData, TValue>({
                       {header.isPlaceholder
                         ? null
                         : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
                     </TableHead>
                   )
                 })}
@@ -110,8 +110,8 @@ export function DataTable<TData, TValue>({
                   className="group border-b transition-colors last:border-0 hover:bg-muted/50"
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell 
-                      key={cell.id} 
+                    <TableCell
+                      key={cell.id}
                       className={cn(
                         "px-4 py-3 align-middle",
                         (cell.column.columnDef.meta as any)?.className
