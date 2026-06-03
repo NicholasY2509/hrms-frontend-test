@@ -20,6 +20,13 @@ export const leaveService = {
         )
         return response.data
       },
+      createManualLog: async (data: any) => {
+        const response = await apiClient.post(
+          LEAVE_ENDPOINTS.PORTAL.MANAGEMENT.ANNUAL_LEAVES,
+          data
+        )
+        return response.data
+      },
     },
   },
 }

@@ -19,8 +19,14 @@ import {
 import { AnnualLeaveDetailDialog } from "./annual-leave-detail-dialog"
 import { AnnualLeave } from "@/modules/employee/annual-leave/types"
 import { EmployeeLeaveLedgerSheet } from "@/modules/employee/annual-leave/components/employee-leave-ledger-sheet"
+import { Button } from "@/components/ui/button"
+import { HugeiconsIcon } from "@hugeicons/react"
+import { Plus } from "@hugeicons/core-free-icons"
+import { ManualLogDialog } from "@/modules/employee/annual-leave/components/manual-log-dialog"
+import { usePermission } from "@/hooks/use-permission"
 
 export function AnnualLeaveManagementClient() {
+  const { hasPermission } = usePermission()
   const { filters, setFilter, resetFilters, hasActiveFilters } = useUrlFilters({
     page: 1,
     per_page: 15,
@@ -32,6 +38,7 @@ export function AnnualLeaveManagementClient() {
 
   const [selectedLog, setSelectedLog] = React.useState<AnnualLeave | null>(null)
   const [isDialogOpen, setIsDialogOpen] = React.useState(false)
+  const [isManualLogOpen, setIsManualLogOpen] = React.useState(false)
 
   const [ledgerEmployeeId, setLedgerEmployeeId] = React.useState<number | null>(null)
   const [ledgerEmployeeName, setLedgerEmployeeName] = React.useState<string>("")
@@ -66,10 +73,19 @@ export function AnnualLeaveManagementClient() {
 
   return (
     <div className="w-full min-w-0 space-y-6">
-      <PageHeader
-        title="Daftar Cuti Tahunan"
-        description="Pantau dan kelola penggunaan cuti tahunan karyawan."
-      />
+      <div className="flex justify-between items-center">
+        <PageHeader
+          title="Daftar Cuti Tahunan"
+          description="Pantau dan kelola penggunaan cuti tahunan karyawan."
+        />
+
+        {hasPermission("annual-leaves.add log") && (
+          <Button onClick={() => setIsManualLogOpen(true)}>
+            <HugeiconsIcon icon={Plus} className="mr-2 h-4 w-4" />
+            Tambah Log Manual
+          </Button>
+        )}
+      </div>
 
       <ManagementFilter
         setPage={(p) => setFilter("page", p)}
@@ -129,6 +145,11 @@ export function AnnualLeaveManagementClient() {
         open={isDialogOpen}
         onOpenChange={setIsDialogOpen}
         data={selectedLog}
+      />
+
+      <ManualLogDialog
+        open={isManualLogOpen}
+        onOpenChange={setIsManualLogOpen}
       />
 
       <EmployeeLeaveLedgerSheet
