@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/select"
 import { AnnualLeaveDetailDialog } from "./annual-leave-detail-dialog"
 import { AnnualLeave } from "@/modules/employee/annual-leave/types"
+import { EmployeeLeaveLedgerSheet } from "@/modules/employee/annual-leave/components/employee-leave-ledger-sheet"
 
 export function AnnualLeaveManagementClient() {
   const { filters, setFilter, resetFilters, hasActiveFilters } = useUrlFilters({
@@ -32,10 +33,14 @@ export function AnnualLeaveManagementClient() {
   const [selectedLog, setSelectedLog] = React.useState<AnnualLeave | null>(null)
   const [isDialogOpen, setIsDialogOpen] = React.useState(false)
 
+  const [ledgerEmployeeId, setLedgerEmployeeId] = React.useState<number | null>(null)
+  const [ledgerEmployeeName, setLedgerEmployeeName] = React.useState<string>("")
+  const [isLedgerOpen, setIsLedgerOpen] = React.useState(false)
+
   const handleEmployeeClick = React.useCallback((employee: any) => {
-    // We keep this function if needed, but the user requested not to show the old dialog here
-    // So it does nothing or redirects to employee profile if desired. 
-    // For now, let's just make it a no-op as the dialog is removed.
+    setLedgerEmployeeId(employee.id)
+    setLedgerEmployeeName(employee.name)
+    setIsLedgerOpen(true)
   }, [])
 
   const handleDetailClick = React.useCallback((row: AnnualLeave) => {
@@ -124,6 +129,13 @@ export function AnnualLeaveManagementClient() {
         open={isDialogOpen}
         onOpenChange={setIsDialogOpen}
         data={selectedLog}
+      />
+
+      <EmployeeLeaveLedgerSheet
+        employeeId={ledgerEmployeeId}
+        employeeName={ledgerEmployeeName}
+        open={isLedgerOpen}
+        onOpenChange={setIsLedgerOpen}
       />
     </div>
   )

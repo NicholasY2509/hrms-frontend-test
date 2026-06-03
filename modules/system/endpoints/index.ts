@@ -14,4 +14,9 @@ export const SYSTEM_ENDPOINTS = {
       REPORTS: "/v1/system/reports",
     },
   },
+  CONFIG: {
+    PASSPORT_CLIENTS: "/v1/system/configuration/passport-clients",
+    PASSPORT_ROLES: "/v1/system/configuration/passport-roles",
+    GLOBAL_PASSPORT_ROLES: "/v1/system/configuration/global-passport-roles",
+  }
 } as const;

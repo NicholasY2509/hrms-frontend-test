@@ -18,4 +18,19 @@ export const workPositionService = {
     );
     return response.data;
   },
+
+  getPassportRoles: async (id: string | number) => {
+    const response = await apiClient.get<{ data: any[] }>(
+      WORK_POSITIONS_ENDPOINTS.PASSPORT_ROLES(id)
+    );
+    return response.data;
+  },
+
+  savePassportRoles: async (id: string | number, payload: { roles: any[] }) => {
+    const response = await apiClient.post(
+      WORK_POSITIONS_ENDPOINTS.PASSPORT_ROLES(id),
+      payload
+    );
+    return response.data;
+  },
 };

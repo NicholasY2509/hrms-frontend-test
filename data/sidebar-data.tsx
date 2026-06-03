@@ -37,6 +37,7 @@ import {
   WorkoutRunIcon,
   DashboardSpeed01Icon,
   HierarchyIcon,
+  Settings01Icon,
 } from "@hugeicons/core-free-icons"
 
 export const sidebarData = {
@@ -425,6 +426,11 @@ export const sidebarData = {
                 url: "/configuration/attendance/calculation-settings",
               },
             ],
+          },
+          {
+            title: "Konfigurasi Passport Roles",
+            url: "/configuration/passport-roles",
+            icon: <HugeiconsIcon icon={Settings05Icon} strokeWidth={2} />,
           },
           {
             title: "Konfigurasi Payroll",
