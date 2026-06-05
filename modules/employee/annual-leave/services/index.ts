@@ -13,6 +13,20 @@ export const leaveService = {
         )
         return response.data
       },
+      getSummary: async (params?: Record<string, any>) => {
+        const response = await apiClient.get<PaginatedResponse<any>>(
+          LEAVE_ENDPOINTS.PORTAL.MANAGEMENT.SUMMARY,
+          { params }
+        )
+        return response.data
+      },
+      getEmployeeSummary: async (employeeId: string | number, params?: Record<string, any>) => {
+        const response = await apiClient.get<{data: any}>(
+          `${LEAVE_ENDPOINTS.PORTAL.MANAGEMENT.SUMMARY}/${employeeId}`,
+          { params }
+        )
+        return response.data
+      },
       adjustAnnualLeave: async (employeeId: string | number, data: any) => {
         const response = await apiClient.put(
           `${LEAVE_ENDPOINTS.PORTAL.MANAGEMENT.ANNUAL_LEAVES}/adjust/${employeeId}`,

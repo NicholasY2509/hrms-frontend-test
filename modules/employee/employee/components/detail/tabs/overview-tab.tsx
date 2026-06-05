@@ -46,6 +46,7 @@ import { Employee, EmployeeOverview } from '../../../types';
 import React from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
+import { EmployeeLeaveLedgerSheet } from '@/modules/employee/annual-leave/components/employee-leave-ledger-sheet';
 
 interface OverviewTabProps {
   employee: Employee;
@@ -59,6 +60,7 @@ export function OverviewTab({ employee }: OverviewTabProps) {
   const overview = item as EmployeeOverview;
 
   const [isToggling, setIsToggling] = React.useState(false);
+  const [isLedgerOpen, setIsLedgerOpen] = React.useState(false);
 
   const handleToggleAnnualLeave = async (checked: boolean) => {
     setIsToggling(true);
@@ -349,9 +351,15 @@ export function OverviewTab({ employee }: OverviewTabProps) {
 
         {/* Leave Information Section */}
         <div className="pt-6 border-t space-y-6">
-          <div className="flex items-center gap-2 text-sm font-semibold text-foreground/80">
-            <HugeiconsIcon icon={Calendar01Icon} className="w-4 h-4 text-primary" />
-            Informasi Sisa Cuti
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2 text-sm font-semibold text-foreground/80">
+              <HugeiconsIcon icon={Calendar01Icon} className="w-4 h-4 text-primary" />
+              Informasi Sisa Cuti
+            </div>
+            <Button variant="outline" size="sm" className="gap-2" onClick={() => setIsLedgerOpen(true)}>
+              <HugeiconsIcon icon={Calendar01Icon} className="w-4 h-4" />
+              Detail Mutasi
+            </Button>
           </div>
 
           {/* Toggle Banner */}
@@ -392,6 +400,13 @@ export function OverviewTab({ employee }: OverviewTabProps) {
           </div>
         </div>
       </CardContent>
+
+      <EmployeeLeaveLedgerSheet
+        employeeId={employee.id}
+        employeeName={employee.name}
+        open={isLedgerOpen}
+        onOpenChange={setIsLedgerOpen}
+      />
     </Card>
   );
 }

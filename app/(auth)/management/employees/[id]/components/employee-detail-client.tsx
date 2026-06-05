@@ -28,7 +28,6 @@ import { ConfirmModal } from "@/components/ui/confirm-modal"
 import { useCreateCertificateOfEmployment } from "@/modules/employee/certificate-of-employment/hooks/use-certificate"
 import { AdjustAnnualLeaveModal } from "@/modules/employee/annual-leave/components/adjust-annual-leave-modal"
 import { UnpaidLeaveManagementSheet } from "@/modules/unpaid-leave/components/unpaid-leave-management-sheet"
-import { EmployeeLeaveLedgerSheet } from "@/modules/employee/annual-leave/components/employee-leave-ledger-sheet"
 
 export function EmployeeDetailClient() {
   const params = useParams()
@@ -43,7 +42,6 @@ export function EmployeeDetailClient() {
   const [isCoeConfirmOpen, setIsCoeConfirmOpen] = React.useState(false)
   const [isAdjustLeaveOpen, setIsAdjustLeaveOpen] = React.useState(false)
   const [isUnpaidLeaveOpen, setIsUnpaidLeaveOpen] = React.useState(false)
-  const [isLedgerOpen, setIsLedgerOpen] = React.useState(false)
 
   const { createCertificate, isLoading: isCreatingCoe } =
     useCreateCertificateOfEmployment({
@@ -130,14 +128,6 @@ export function EmployeeDetailClient() {
               <HugeiconsIcon icon={Calendar} className="" />
               Ubah Hak Cuti
             </Button>
-            <Button
-              variant="ghost"
-              className="w-full justify-start"
-              onClick={() => setIsLedgerOpen(true)}
-            >
-              <HugeiconsIcon icon={Calendar} className="" />
-              Mutasi Hak Cuti
-            </Button>
           </PopoverContent>
         </Popover>
       </div>
@@ -169,12 +159,6 @@ export function EmployeeDetailClient() {
             employeeId={employee.id}
             isOpen={isUnpaidLeaveOpen}
             onClose={() => setIsUnpaidLeaveOpen(false)}
-          />
-          <EmployeeLeaveLedgerSheet
-            employeeId={employee.id}
-            employeeName={employee.name}
-            open={isLedgerOpen}
-            onOpenChange={setIsLedgerOpen}
           />
         </>
       )}

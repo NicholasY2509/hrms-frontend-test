@@ -18,6 +18,7 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Loading03Icon } from "@hugeicons/core-free-icons"
+import { AnnualLeaveSummaryCard } from "./annual-leave-summary-card"
 
 interface EmployeeLeaveLedgerSheetProps {
   employeeId: number | null
@@ -184,13 +185,19 @@ export function EmployeeLeaveLedgerSheet({
           </SheetDescription>
         </SheetHeader>
 
-        <div className="flex-1 overflow-hidden px-6 pb-6 pt-2">
+        <div className="flex-1 overflow-hidden px-6 pb-6 pt-2 flex flex-col gap-6">
+          {employeeId && (
+            <div className="shrink-0">
+              <AnnualLeaveSummaryCard employeeId={employeeId} />
+            </div>
+          )}
+
           {isLoading ? (
             <div className="flex items-center justify-center h-40">
               <HugeiconsIcon icon={Loading03Icon} className="w-6 h-6 animate-spin text-muted-foreground" />
             </div>
           ) : (
-            <div className="h-full rounded-md border">
+            <div className="flex-1 rounded-md border min-h-0">
               <ScrollArea className="h-full">
                 <DataTable
                   columns={columns}

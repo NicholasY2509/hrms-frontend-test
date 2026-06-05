@@ -24,6 +24,8 @@ import { HugeiconsIcon } from "@hugeicons/react"
 import { Plus } from "@hugeicons/core-free-icons"
 import { ManualLogDialog } from "@/modules/employee/annual-leave/components/manual-log-dialog"
 import { usePermission } from "@/hooks/use-permission"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { AnnualLeaveSummaryClient } from "./annual-leave-summary-client"
 
 export function AnnualLeaveManagementClient() {
   const { hasPermission } = usePermission()
@@ -73,91 +75,106 @@ export function AnnualLeaveManagementClient() {
 
   return (
     <div className="w-full min-w-0 space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center mb-6">
         <PageHeader
           title="Daftar Cuti Tahunan"
           description="Pantau dan kelola penggunaan cuti tahunan karyawan."
         />
-
-        {hasPermission("annual-leaves.add log") && (
-          <Button onClick={() => setIsManualLogOpen(true)}>
-            <HugeiconsIcon icon={Plus} className="mr-2 h-4 w-4" />
-            Tambah Log Manual
-          </Button>
-        )}
       </div>
 
-      <ManagementFilter
-        setPage={(p) => setFilter("page", p)}
-        onReset={resetFilters}
-        hasActiveFilters={hasActiveFilters}
-        perPage={String(filters.per_page)}
-        onPerPageChange={(v) => setFilter("per_page", v)}
-        search={{
-          value: filters.search,
-          onChange: (v) => setFilter("search", v),
-          placeholder: "Cari nama karyawan atau NIK...",
-        }}
-        startDate={{
-          value: filters.start_date ? new Date(filters.start_date) : undefined,
-          onChange: (d) =>
-            setFilter("start_date", d ? format(d, "yyyy-MM-dd") : undefined),
-        }}
-        endDate={{
-          value: filters.end_date ? new Date(filters.end_date) : undefined,
-          onChange: (d) =>
-            setFilter("end_date", d ? format(d, "yyyy-MM-dd") : undefined),
-        }}
-      >
-        <Select
-          value={filters.status}
-          onValueChange={(v) => {
-            setFilter("status", v)
-            setFilter("page", 1)
-          }}
-        >
-          <SelectTrigger className="h-9 border-border/60 bg-background shadow-none">
-            <SelectValue placeholder="Semua Status" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">Semua Status</SelectItem>
-            <SelectItem value="Potong">Potong</SelectItem>
-            <SelectItem value="Tambah">Tambah</SelectItem>
-          </SelectContent>
-        </Select>
-      </ManagementFilter>
+      <Tabs defaultValue="logs" className="w-full">
+          <div className="flex justify-between items-center mb-6">
+            <TabsList>
+              <TabsTrigger value="logs">Log Mutasi</TabsTrigger>
+              <TabsTrigger value="summary">Laporan Saldo</TabsTrigger>
+            </TabsList>
 
-      <DataTable
-        columns={tableColumns}
-        data={items}
-        isLoading={isLoading}
-        pagination={
-          meta
-            ? {
-              ...meta,
-              onPageChange: (p) => setFilter("page", p),
-            }
-            : undefined
-        }
-      />
+            {hasPermission("annual-leaves.add log") && (
+              <Button onClick={() => setIsManualLogOpen(true)}>
+                <HugeiconsIcon icon={Plus} className="mr-2 h-4 w-4" />
+                Tambah Log Manual
+              </Button>
+            )}
+          </div>
 
-      <AnnualLeaveDetailDialog
-        open={isDialogOpen}
-        onOpenChange={setIsDialogOpen}
-        data={selectedLog}
-      />
+          <TabsContent value="logs" className="space-y-4">
 
-      <ManualLogDialog
-        open={isManualLogOpen}
-        onOpenChange={setIsManualLogOpen}
-      />
+            <ManagementFilter
+              setPage={(p) => setFilter("page", p)}
+              onReset={resetFilters}
+              hasActiveFilters={hasActiveFilters}
+              perPage={String(filters.per_page)}
+              onPerPageChange={(v) => setFilter("per_page", v)}
+              search={{
+                value: filters.search,
+                onChange: (v) => setFilter("search", v),
+                placeholder: "Cari nama karyawan atau NIK...",
+              }}
+              startDate={{
+                value: filters.start_date ? new Date(filters.start_date) : undefined,
+                onChange: (d) =>
+                  setFilter("start_date", d ? format(d, "yyyy-MM-dd") : undefined),
+              }}
+              endDate={{
+                value: filters.end_date ? new Date(filters.end_date) : undefined,
+                onChange: (d) =>
+                  setFilter("end_date", d ? format(d, "yyyy-MM-dd") : undefined),
+              }}
+            >
+              <Select
+                value={filters.status}
+                onValueChange={(v) => {
+                  setFilter("status", v)
+                  setFilter("page", 1)
+                }}
+              >
+                <SelectTrigger className="h-9 border-border/60 bg-background shadow-none">
+                  <SelectValue placeholder="Semua Status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Semua Status</SelectItem>
+                  <SelectItem value="Potong">Potong</SelectItem>
+                  <SelectItem value="Tambah">Tambah</SelectItem>
+                </SelectContent>
+              </Select>
+            </ManagementFilter>
 
-      <EmployeeLeaveLedgerSheet
-        employeeId={ledgerEmployeeId}
-        employeeName={ledgerEmployeeName}
-        open={isLedgerOpen}
-        onOpenChange={setIsLedgerOpen}
-      />
-    </div>
-  )
+            <DataTable
+              columns={tableColumns}
+              data={items}
+              isLoading={isLoading}
+              pagination={
+                meta
+                  ? {
+                    ...meta,
+                    onPageChange: (p) => setFilter("page", p),
+                  }
+                  : undefined
+              }
+            />
+
+            <AnnualLeaveDetailDialog
+              open={isDialogOpen}
+              onOpenChange={setIsDialogOpen}
+              data={selectedLog}
+            />
+          </TabsContent>
+          <TabsContent value="summary" className="space-y-4">
+            <AnnualLeaveSummaryClient />
+          </TabsContent>
+        </Tabs>
+
+        <ManualLogDialog
+          open={isManualLogOpen}
+          onOpenChange={setIsManualLogOpen}
+        />
+
+        <EmployeeLeaveLedgerSheet
+          employeeId={ledgerEmployeeId}
+          employeeName={ledgerEmployeeName}
+          open={isLedgerOpen}
+          onOpenChange={setIsLedgerOpen}
+        />
+      </div>
+      )
 }
