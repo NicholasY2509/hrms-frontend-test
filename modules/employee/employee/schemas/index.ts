@@ -62,12 +62,10 @@ export const employeePersonalSchema = z.object({
 export type EmployeePersonalFormValues = z.infer<typeof employeePersonalSchema>
 
 export const employeeAttachmentSchema = z.object({
-  ktp: z.any().refine((file) => file instanceof File, "Wajib diunggah"),
-  kartu_keluarga: z
-    .any()
-    .refine((file) => file instanceof File, "Wajib diunggah"),
-  ijazah: z.any().refine((file) => file instanceof File, "Wajib diunggah"),
-  file_pendukung: z.array(z.any()).min(1, "Wajib diunggah"),
+  ktp: z.any().optional().nullable(),
+  kartu_keluarga: z.any().optional().nullable(),
+  ijazah: z.any().optional().nullable(),
+  file_pendukung: z.array(z.any()).optional().nullable(),
 })
 
 export type EmployeeAttachmentFormValues = z.infer<

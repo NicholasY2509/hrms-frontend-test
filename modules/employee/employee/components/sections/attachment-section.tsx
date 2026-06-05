@@ -20,7 +20,7 @@ export function AttachmentSection({ control }: AttachmentSectionProps) {
         control={control}
         render={({ field, fieldState }) => (
           <Field>
-            <FieldLabel required>Kartu Tanda Penduduk (KTP)</FieldLabel>
+            <FieldLabel>Kartu Tanda Penduduk (KTP)</FieldLabel>
             <FileUpload
               value={field.value}
               onChange={field.onChange}
@@ -38,7 +38,7 @@ export function AttachmentSection({ control }: AttachmentSectionProps) {
         control={control}
         render={({ field, fieldState }) => (
           <Field>
-            <FieldLabel required>Kartu Keluarga (KK)</FieldLabel>
+            <FieldLabel>Kartu Keluarga (KK)</FieldLabel>
             <FileUpload
               value={field.value}
               onChange={field.onChange}
@@ -56,7 +56,7 @@ export function AttachmentSection({ control }: AttachmentSectionProps) {
         control={control}
         render={({ field, fieldState }) => (
           <Field>
-            <FieldLabel required>Ijazah Terakhir</FieldLabel>
+            <FieldLabel>Ijazah Terakhir</FieldLabel>
             <FileUpload
               value={field.value}
               onChange={field.onChange}
@@ -74,7 +74,7 @@ export function AttachmentSection({ control }: AttachmentSectionProps) {
         control={control}
         render={({ field, fieldState }) => (
           <Field>
-            <FieldLabel required>File Pendukung (CV/Sertifikat)</FieldLabel>
+            <FieldLabel>File Pendukung (CV/Sertifikat)</FieldLabel>
             <FileUpload
               value={field.value}
               onChange={field.onChange}
