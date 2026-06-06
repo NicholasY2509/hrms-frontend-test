@@ -38,16 +38,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return null
   })
 
-  const [isLoading, setIsLoading] = useState(() => {
-    if (typeof window !== "undefined") {
-      const token = Cookies.get("access_token")
-      const storedUser = localStorage.getItem("user_profile")
-      if (!token) return false
-      if (token && storedUser) return false
-      return true
-    }
-    return true
-  })
+  const [isLoading, setIsLoading] = useState(true)
 
   const router = useRouter()
 
@@ -94,10 +85,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const token = Cookies.get("access_token")
-    if (token) {
+    const storedUser = localStorage.getItem("user_profile")
+    
+    if (!token) {
+      setIsLoading(false)
+    } else if (storedUser) {
+      setIsLoading(false)
       fetchUser(token)
     } else {
-      setIsLoading(false)
+      fetchUser(token)
     }
   }, [fetchUser])
 
