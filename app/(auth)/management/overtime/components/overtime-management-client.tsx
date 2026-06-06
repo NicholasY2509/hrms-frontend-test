@@ -14,11 +14,11 @@ import { useRouter, usePathname } from 'next/navigation';
 import { ManagementFilter } from '@/components/layout/management-filter';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useUrlFilters } from '@/hooks/use-url-filters';
-import { DepartmentPicker } from '@/modules/organization/department/components/department-picker';
-import { DatePicker } from '@/components/ui/date-picker';
 import { format, parse } from 'date-fns';
-import { OvertimeExportDialog } from '@/modules/overtime/components/overtime-export-dialog';
 import { Button } from '@/components/ui/button';
+import dynamic from 'next/dynamic';
+
+const OvertimeExportDialog = dynamic(() => import('@/modules/overtime/components/overtime-export-dialog').then(mod => mod.OvertimeExportDialog), { ssr: false });
 
 export function OvertimeManagementClient() {
     const router = useRouter();

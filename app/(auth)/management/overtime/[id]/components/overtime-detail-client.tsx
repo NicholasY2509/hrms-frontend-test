@@ -19,7 +19,9 @@ import { OvertimeNarrativeCard } from "@/modules/overtime/components/detail/over
 import { OvertimeAdditionalInfoCard } from "@/modules/overtime/components/detail/overtime-additional-info-card"
 import { ApprovalHistory } from "@/modules/approval/components/approval-history"
 import { OvertimeDacCategorizationCard } from "@/modules/overtime/components/detail/overtime-dac-categorization-card"
-import { OvertimeSettleDialog } from "@/modules/overtime/components/detail/overtime-settle-dialog"
+import dynamic from "next/dynamic"
+
+const OvertimeSettleDialog = dynamic(() => import("@/modules/overtime/components/detail/overtime-settle-dialog").then(mod => mod.OvertimeSettleDialog), { ssr: false })
 
 export function OvertimeDetailClient() {
   const params = useParams()

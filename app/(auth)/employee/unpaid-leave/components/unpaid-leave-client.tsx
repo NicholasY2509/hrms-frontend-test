@@ -12,9 +12,11 @@ import { useUnpaidLeaveList } from "@/modules/unpaid-leave/hooks/use-unpaid-leav
 import { useDebounce } from "@/hooks/use-debounce";
 import { getColumns } from "../columns";
 import Link from "next/link";
-import { DetailSheet } from "@/modules/unpaid-leave/components/employee-unpaid-leave-detail-sheet";
 import { UnpaidLeaveCard } from "@/modules/unpaid-leave/components/employee-unpaid-leave-card";
 import { UnpaidLeave } from "@/modules/unpaid-leave/types";
+import dynamic from "next/dynamic";
+
+const DetailSheet = dynamic(() => import("@/modules/unpaid-leave/components/employee-unpaid-leave-detail-sheet").then(mod => mod.DetailSheet), { ssr: false });
 
 export function UnpaidLeaveClient() {
   const [search, setSearch] = React.useState("");

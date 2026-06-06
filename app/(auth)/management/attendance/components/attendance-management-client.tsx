@@ -12,13 +12,9 @@ import { AttendanceModel } from "@/modules/attendance/attendances/types"
 import { format } from "date-fns"
 import { ManagementFilter } from "@/components/layout/management-filter"
 import { useUrlFilters } from "@/hooks/use-url-filters"
-import { ExportAttendanceDialog } from "@/modules/attendance/attendances/components/export-attendance-dialog"
 import { Button } from "@/components/ui/button"
-import { CalculateAttendanceDialog } from "@/modules/attendance/attendances/components/calculate-attendance-dialog"
-import { AttendanceDetailDialog } from "@/modules/attendance/attendances/components/attendance-detail-dialog"
 import { TeamPicker } from "@/modules/organization/teams/components/team-picker"
 
-import { BatchUpdateAttendanceStatusDialog } from "@/modules/attendance/attendances/components/batch-update-attendance-status-dialog"
 import {
   TaskEdit01Icon,
   ArrowDown01Icon,
@@ -32,8 +28,14 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { ZktecoAttendanceSyncDialog } from "@/modules/attendance/zkteco/components/zkteco-attendance-sync-dialog"
-import { ZktecoSyncDialog } from "@/modules/attendance/zkteco/components/zkteco-sync-dialog"
+import dynamic from "next/dynamic"
+
+const ExportAttendanceDialog = dynamic(() => import("@/modules/attendance/attendances/components/export-attendance-dialog").then(mod => mod.ExportAttendanceDialog), { ssr: false })
+const CalculateAttendanceDialog = dynamic(() => import("@/modules/attendance/attendances/components/calculate-attendance-dialog").then(mod => mod.CalculateAttendanceDialog), { ssr: false })
+const AttendanceDetailDialog = dynamic(() => import("@/modules/attendance/attendances/components/attendance-detail-dialog").then(mod => mod.AttendanceDetailDialog), { ssr: false })
+const BatchUpdateAttendanceStatusDialog = dynamic(() => import("@/modules/attendance/attendances/components/batch-update-attendance-status-dialog").then(mod => mod.BatchUpdateAttendanceStatusDialog), { ssr: false })
+const ZktecoAttendanceSyncDialog = dynamic(() => import("@/modules/attendance/zkteco/components/zkteco-attendance-sync-dialog").then(mod => mod.ZktecoAttendanceSyncDialog), { ssr: false })
+const ZktecoSyncDialog = dynamic(() => import("@/modules/attendance/zkteco/components/zkteco-sync-dialog").then(mod => mod.ZktecoSyncDialog), { ssr: false })
 
 export function AttendanceManagementClient() {
   const { filters, setFilter, setFilters, resetFilters, hasActiveFilters } =

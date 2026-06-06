@@ -15,9 +15,11 @@ import {
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { EmployeeLeaveBalanceDialog } from "@/modules/unpaid-leave/components/detail/employee-leave-balance-dialog"
-import { EmployeeAttendanceCalendarDialog } from "@/modules/unpaid-leave/components/detail/employee-attendance-calendar-dialog"
 import { useUnpaidLeaveManagementDetail } from "@/modules/unpaid-leave/hooks/use-unpaid-leave"
+import dynamic from "next/dynamic"
+
+const EmployeeLeaveBalanceDialog = dynamic(() => import("@/modules/unpaid-leave/components/detail/employee-leave-balance-dialog").then(mod => mod.EmployeeLeaveBalanceDialog), { ssr: false })
+const EmployeeAttendanceCalendarDialog = dynamic(() => import("@/modules/unpaid-leave/components/detail/employee-attendance-calendar-dialog").then(mod => mod.EmployeeAttendanceCalendarDialog), { ssr: false })
 import { UNPAID_LEAVE_ENDPOINTS } from "@/modules/unpaid-leave/endpoints"
 import { formatDate } from "@/lib/utils"
 import { useAuth } from "@/modules/auth/hooks/use-auth"
