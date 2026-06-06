@@ -9,6 +9,11 @@ import { ColumnDef } from "@tanstack/react-table"
 import { AnnualLeave } from "../types"
 import { Badge } from "@/components/ui/badge"
 import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
+import {
   Sheet,
   SheetContent,
   SheetHeader,
@@ -17,7 +22,7 @@ import {
 } from "@/components/ui/sheet"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { Loading03Icon } from "@hugeicons/core-free-icons"
+import { Loading03Icon, InformationCircleIcon } from "@hugeicons/core-free-icons"
 import { AnnualLeaveSummaryCard } from "./annual-leave-summary-card"
 
 interface EmployeeLeaveLedgerSheetProps {
@@ -77,7 +82,7 @@ export function EmployeeLeaveLedgerSheet({
     },
     {
       accessorKey: "total",
-      header: "Jumlah",
+      header: "Mutasi",
       cell: ({ row }) => {
         const total = row.getValue("total") as number
         const status = row.original.status
@@ -86,61 +91,37 @@ export function EmployeeLeaveLedgerSheet({
         const details = row.original.deduction_details
 
         return (
-          <div className="flex flex-col gap-1 text-xs min-w-[100px]">
-            {details && details.length > 0 ? (
-              details.map((d, i) => (
-                <div key={i} className="flex justify-between items-center gap-2">
-                  <span className="text-muted-foreground">Cuti {d.year}:</span>
-                  <span className={`font-mono ${colorClass}`}>{prefix}{d.amount}</span>
-                </div>
-              ))
-            ) : null}
-            <div className="flex justify-between items-center gap-2 border-t pt-1 mt-1 font-medium">
-              <span>Total:</span>
-              <span className={`font-mono text-sm ${colorClass}`}>{prefix}{total}</span>
-            </div>
-          </div>
-        )
-      },
-    },
-    {
-      id: "balance_before",
-      header: "Saldo Awal",
-      cell: ({ row }) => {
-        const balanceBefore = row.original.balance_before
-        if (!balanceBefore) return <span className="text-muted-foreground">-</span>
-        const totalBalance = Object.values(balanceBefore).reduce((a, b) => a + Number(b), 0)
-        const date = new Date(row.original.annual_leave_at)
-        const currentYear = date.getFullYear()
-
-        return (
-          <div className="flex flex-col gap-1 text-xs min-w-[100px]">
-            {Object.entries(balanceBefore).map(([key, amount]) => {
-              let displayYear = key
-              const numKey = Number(key)
-              // If key is an array index (0, 1, 2, ...) map it to actual years starting from lastYear
-              if (!isNaN(numKey) && numKey < 100) {
-                displayYear = String(currentYear - 1 + numKey)
-              }
-
-              return (
-                <div key={key} className="flex justify-between items-center gap-2">
-                  <span className="text-muted-foreground">Sisa {displayYear}:</span>
-                  <span className="font-mono">{amount}</span>
-                </div>
-              )
-            })}
-            <div className="flex justify-between items-center gap-2 border-t pt-1 mt-1 font-medium">
-              <span>Total:</span>
-              <span className="font-mono text-sm">{totalBalance}</span>
-            </div>
+          <div className="flex items-center gap-2">
+            <span className={`font-mono font-medium ${colorClass}`}>
+              {prefix}{total}
+            </span>
+            {details && details.length > 0 && (
+              <Popover>
+                <PopoverTrigger asChild>
+                  <button className="text-muted-foreground hover:text-foreground">
+                    <HugeiconsIcon icon={InformationCircleIcon} className="w-4 h-4" />
+                  </button>
+                </PopoverTrigger>
+                <PopoverContent className="w-48 p-3" align="center">
+                  <div className="space-y-2">
+                    <p className="text-xs font-semibold text-foreground mb-1">Rincian Mutasi</p>
+                    {details.map((d, i) => (
+                      <div key={i} className="flex justify-between items-center text-xs">
+                        <span className="text-muted-foreground">Cuti {d.year}</span>
+                        <span className={`font-mono ${colorClass}`}>{prefix}{d.amount}</span>
+                      </div>
+                    ))}
+                  </div>
+                </PopoverContent>
+              </Popover>
+            )}
           </div>
         )
       },
     },
     {
       id: "balance_after",
-      header: "Saldo Akhir",
+      header: "Saldo",
       cell: ({ row }) => {
         const balanceAfter = row.original.balance_after
         if (!balanceAfter) return <span className="text-muted-foreground">-</span>
@@ -149,26 +130,37 @@ export function EmployeeLeaveLedgerSheet({
         const currentYear = date.getFullYear()
 
         return (
-          <div className="flex flex-col gap-1 text-xs min-w-[100px]">
-            {Object.entries(balanceAfter).map(([key, amount]) => {
-              let displayYear = key
-              const numKey = Number(key)
-              // If key is an array index (0, 1, 2, ...) map it to actual years starting from lastYear
-              if (!isNaN(numKey) && numKey < 100) {
-                displayYear = String(currentYear - 1 + numKey)
-              }
-
-              return (
-                <div key={key} className="flex justify-between items-center gap-2">
-                  <span className="text-muted-foreground">Sisa {displayYear}:</span>
-                  <span className="font-mono">{amount}</span>
-                </div>
-              )
-            })}
-            <div className="flex justify-between items-center gap-2 border-t pt-1 mt-1 font-bold">
-              <span>Total:</span>
-              <span className="font-mono text-sm">{totalBalance}</span>
-            </div>
+          <div className="flex items-center gap-2">
+            <span className="font-mono font-medium">
+              {totalBalance}
+            </span>
+            {Object.keys(balanceAfter).length > 0 && (
+              <Popover>
+                <PopoverTrigger asChild>
+                  <button className="text-muted-foreground hover:text-foreground">
+                    <HugeiconsIcon icon={InformationCircleIcon} className="w-4 h-4" />
+                  </button>
+                </PopoverTrigger>
+                <PopoverContent className="w-48 p-3" align="center">
+                  <div className="space-y-2">
+                    <p className="text-xs font-semibold text-foreground mb-1">Rincian Saldo</p>
+                    {Object.entries(balanceAfter).map(([key, amount]) => {
+                      let displayYear = key
+                      const numKey = Number(key)
+                      if (!isNaN(numKey) && numKey < 100) {
+                        displayYear = String(currentYear - 1 + numKey)
+                      }
+                      return (
+                        <div key={key} className="flex justify-between items-center text-xs">
+                          <span className="text-muted-foreground">Sisa {displayYear}</span>
+                          <span className="font-mono">{amount}</span>
+                        </div>
+                      )
+                    })}
+                  </div>
+                </PopoverContent>
+              </Popover>
+            )}
           </div>
         )
       },
@@ -177,7 +169,7 @@ export function EmployeeLeaveLedgerSheet({
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent className="!w-[90vw] sm:!max-w-[1200px] p-0 flex flex-col">
+      <SheetContent className="!w-[90vw] sm:!max-w-[800px] p-0 flex flex-col">
         <SheetHeader className="p-6 pb-2">
           <SheetTitle>Mutasi Hak Cuti</SheetTitle>
           <SheetDescription>

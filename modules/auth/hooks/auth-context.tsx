@@ -86,7 +86,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const token = Cookies.get("access_token")
     const storedUser = localStorage.getItem("user_profile")
-    
+
     if (!token) {
       setIsLoading(false)
     } else if (storedUser) {
