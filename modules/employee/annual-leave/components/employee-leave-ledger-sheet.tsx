@@ -120,8 +120,54 @@ export function EmployeeLeaveLedgerSheet({
       },
     },
     {
+      id: "balance_before",
+      header: "Saldo Awal",
+      cell: ({ row }) => {
+        const balanceBefore = row.original.balance_before
+        if (!balanceBefore) return <span className="text-muted-foreground">-</span>
+        const totalBalance = Object.values(balanceBefore).reduce((a, b) => a + Number(b), 0)
+        const date = new Date(row.original.annual_leave_at)
+        const currentYear = date.getFullYear()
+
+        return (
+          <div className="flex items-center gap-2">
+            <span className="font-mono font-medium text-muted-foreground">
+              {totalBalance}
+            </span>
+            {Object.keys(balanceBefore).length > 0 && (
+              <Popover>
+                <PopoverTrigger asChild>
+                  <button className="text-muted-foreground hover:text-foreground">
+                    <HugeiconsIcon icon={InformationCircleIcon} className="w-4 h-4" />
+                  </button>
+                </PopoverTrigger>
+                <PopoverContent className="w-48 p-3" align="center">
+                  <div className="space-y-2">
+                    <p className="text-xs font-semibold text-foreground mb-1">Rincian Saldo Awal</p>
+                    {Object.entries(balanceBefore).map(([key, amount]) => {
+                      let displayYear = key
+                      const numKey = Number(key)
+                      if (!isNaN(numKey) && numKey < 100) {
+                        displayYear = String(currentYear - 1 + numKey)
+                      }
+                      return (
+                        <div key={key} className="flex justify-between items-center text-xs">
+                          <span className="text-muted-foreground">Sisa {displayYear}</span>
+                          <span className="font-mono">{amount}</span>
+                        </div>
+                      )
+                    })}
+                  </div>
+                </PopoverContent>
+              </Popover>
+            )}
+          </div>
+        )
+      },
+    },
+    {
       id: "balance_after",
-      header: "Saldo",
+      header: "Saldo Akhir",
       cell: ({ row }) => {
         const balanceAfter = row.original.balance_after
         if (!balanceAfter) return <span className="text-muted-foreground">-</span>
@@ -143,7 +189,7 @@ export function EmployeeLeaveLedgerSheet({
                 </PopoverTrigger>
                 <PopoverContent className="w-48 p-3" align="center">
                   <div className="space-y-2">
-                    <p className="text-xs font-semibold text-foreground mb-1">Rincian Saldo</p>
+                    <p className="text-xs font-semibold text-foreground mb-1">Rincian Saldo Akhir</p>
                     {Object.entries(balanceAfter).map(([key, amount]) => {
                       let displayYear = key
                       const numKey = Number(key)
