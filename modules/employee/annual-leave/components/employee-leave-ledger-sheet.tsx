@@ -215,7 +215,7 @@ export function EmployeeLeaveLedgerSheet({
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent className="!w-[90vw] sm:!max-w-[800px] p-0 flex flex-col">
+      <SheetContent className="!w-[90vw] sm:!max-w-5xl p-0 flex flex-col">
         <SheetHeader className="p-6 pb-2">
           <SheetTitle>Mutasi Hak Cuti</SheetTitle>
           <SheetDescription>
@@ -223,28 +223,30 @@ export function EmployeeLeaveLedgerSheet({
           </SheetDescription>
         </SheetHeader>
 
-        <div className="flex-1 overflow-hidden px-6 pb-6 pt-2 flex flex-col gap-6">
+        <div className="flex-1 overflow-y-auto lg:overflow-hidden px-6 pb-6 pt-2 flex flex-col lg:flex-row gap-6">
           {employeeId && (
-            <div className="shrink-0">
+            <div className="shrink-0 lg:w-[300px] xl:w-[350px] lg:overflow-y-auto pr-1">
               <AnnualLeaveSummaryCard employeeId={employeeId} />
             </div>
           )}
 
-          {isLoading ? (
-            <div className="flex items-center justify-center h-40">
-              <HugeiconsIcon icon={Loading03Icon} className="w-6 h-6 animate-spin text-muted-foreground" />
-            </div>
-          ) : (
-            <div className="flex-1 rounded-md border min-h-0">
-              <ScrollArea className="h-full">
-                <DataTable
-                  columns={columns}
-                  data={items || []}
-                // Tidak perlu pagination karena per_page 100 dan biasanya cukup untuk ledger 1 orang
-                />
-              </ScrollArea>
-            </div>
-          )}
+          <div className="flex-1 flex flex-col min-h-[400px] lg:min-h-0 min-w-0">
+            {isLoading ? (
+              <div className="flex items-center justify-center h-40">
+                <HugeiconsIcon icon={Loading03Icon} className="w-6 h-6 animate-spin text-muted-foreground" />
+              </div>
+            ) : (
+              <div className="flex-1 rounded-md border min-h-0 flex flex-col">
+                <ScrollArea className="flex-1">
+                  <DataTable
+                    columns={columns}
+                    data={items || []}
+                  // Tidak perlu pagination karena per_page 100 dan biasanya cukup untuk ledger 1 orang
+                  />
+                </ScrollArea>
+              </div>
+            )}
+          </div>
         </div>
       </SheetContent>
     </Sheet>

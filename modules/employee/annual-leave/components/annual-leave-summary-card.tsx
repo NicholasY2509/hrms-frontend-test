@@ -1,5 +1,4 @@
 import * as React from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useAnnualLeaveEmployeeSummary } from "../hooks/use-annual-leave"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -23,9 +22,9 @@ export function AnnualLeaveSummaryCard({ employeeId, year }: AnnualLeaveSummaryC
 
   if (isLoading) {
     return (
-      <Card className="border shadow-sm">
-        <CardHeader className="pb-4 border-b">
-          <CardTitle className="text-base font-semibold flex items-center justify-between">
+      <div className="flex flex-col">
+        <div className="pb-4 border-b mb-6 flex items-center justify-between w-full">
+          <h3 className="text-base font-semibold flex items-center justify-between w-full">
             <span className="flex items-center gap-2">
               <HugeiconsIcon icon={Time02Icon} className="w-5 h-5 text-primary" />
               Ringkasan Saldo Cuti
@@ -41,18 +40,16 @@ export function AnnualLeaveSummaryCard({ employeeId, year }: AnnualLeaveSummaryC
                 })}
               </SelectContent>
             </Select>
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="pt-6">
-          <div className="flex flex-col md:flex-row items-center gap-4">
-            <Skeleton className="h-32 flex-1 w-full rounded-xl" />
-            <HugeiconsIcon icon={ArrowRight01Icon} className="w-5 h-5 text-muted-foreground hidden md:block opacity-50" />
-            <Skeleton className="h-32 flex-1 w-full rounded-xl" />
-            <HugeiconsIcon icon={ArrowRight01Icon} className="w-5 h-5 text-muted-foreground hidden md:block opacity-50" />
-            <Skeleton className="h-32 flex-1 w-full rounded-xl" />
+          </h3>
+        </div>
+        <div className="pt-2">
+          <div className="flex flex-col items-stretch gap-4">
+            <Skeleton className="h-32 w-full rounded-xl" />
+            <Skeleton className="h-32 w-full rounded-xl" />
+            <Skeleton className="h-32 w-full rounded-xl" />
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     )
   }
 
@@ -62,9 +59,9 @@ export function AnnualLeaveSummaryCard({ employeeId, year }: AnnualLeaveSummaryC
   const ba = summary.balance_after
 
   return (
-    <Card className="border shadow-sm">
-      <CardHeader className="pb-4 border-b">
-        <CardTitle className="text-base font-semibold flex items-center justify-between">
+    <div className="flex flex-col">
+      <div className="pb-4 border-b mb-6 flex items-center justify-between w-full">
+        <h3 className="text-base font-semibold flex items-center justify-between w-full">
           <span className="flex items-center gap-2">
             Ringkasan Saldo Cuti
           </span>
@@ -79,13 +76,13 @@ export function AnnualLeaveSummaryCard({ employeeId, year }: AnnualLeaveSummaryC
               })}
             </SelectContent>
           </Select>
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="">
-        <div className="flex flex-col md:flex-row items-stretch gap-4 md:gap-2">
+        </h3>
+      </div>
+      <div className="pt-2">
+        <div className="flex flex-col items-stretch gap-4">
 
           {/* Box 1: Saldo Awal */}
-          <div className="flex-1 w-full bg-muted/20 border rounded-lg p-4">
+          <div className="w-full bg-muted/20 border rounded-lg p-4">
             <h4 className="font-semibold text-sm text-foreground/90 mb-3">Saldo Awal <span className="font-normal text-muted-foreground ml-1">({currentYear})</span></h4>
             {bb ? (
               <div className="space-y-2">
@@ -111,12 +108,8 @@ export function AnnualLeaveSummaryCard({ employeeId, year }: AnnualLeaveSummaryC
             )}
           </div>
 
-          <div className="hidden md:flex items-center justify-center px-1">
-            <HugeiconsIcon icon={ArrowRight01Icon} className="w-4 h-4 text-muted-foreground/50" />
-          </div>
-
           {/* Box 2: Mutasi Berjalan */}
-          <div className="flex-1 w-full bg-muted/20 border rounded-lg p-4">
+          <div className="w-full bg-muted/20 border rounded-lg p-4">
             <h4 className="font-semibold text-sm text-foreground/90 mb-3">Mutasi Berjalan</h4>
             <div className="space-y-2">
               <div className="flex justify-between items-center text-xs">
@@ -136,12 +129,8 @@ export function AnnualLeaveSummaryCard({ employeeId, year }: AnnualLeaveSummaryC
             </div>
           </div>
 
-          <div className="hidden md:flex items-center justify-center px-1">
-            <HugeiconsIcon icon={ArrowRight01Icon} className="w-4 h-4 text-muted-foreground/50" />
-          </div>
-
           {/* Box 3: Saldo Akhir */}
-          <div className="flex-1 w-full bg-primary/5 border border-primary/20 rounded-lg p-4">
+          <div className="w-full bg-primary/5 border border-primary/20 rounded-lg p-4">
             <h4 className="font-semibold text-sm text-foreground/90 mb-3">Saldo Saat Ini</h4>
             <div className="space-y-2">
               <div className="flex justify-between items-center text-xs text-muted-foreground">
@@ -162,7 +151,7 @@ export function AnnualLeaveSummaryCard({ employeeId, year }: AnnualLeaveSummaryC
           </div>
 
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   )
 }
