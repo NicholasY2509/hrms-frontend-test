@@ -24,8 +24,31 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
+  const [user, setUser] = useState<User | null>(() => {
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("user_profile")
+      if (stored) {
+        try {
+          return JSON.parse(stored)
+        } catch (e) {
+          console.error("Failed to parse user profile from localStorage", e)
+        }
+      }
+    }
+    return null
+  })
+
+  const [isLoading, setIsLoading] = useState(() => {
+    if (typeof window !== "undefined") {
+      const token = Cookies.get("access_token")
+      const storedUser = localStorage.getItem("user_profile")
+      if (!token) return false
+      if (token && storedUser) return false
+      return true
+    }
+    return true
+  })
+
   const router = useRouter()
 
   const logout = useCallback(async () => {
@@ -39,6 +62,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
     Cookies.remove("access_token")
     Cookies.remove("refresh_token")
+    localStorage.removeItem("user_profile")
     setUser(null)
     window.location.href = "/login"
   }, [])
@@ -48,6 +72,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       expires: token.expires_in / 86400,
     })
     Cookies.set("refresh_token", token.refresh_token, { expires: 30 }) // 30 days
+    localStorage.setItem("user_profile", JSON.stringify(userData))
     setUser(userData)
   }, [])
 
@@ -55,6 +80,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     async (token: string) => {
       try {
         const userData = await authService.getUserProfile(token)
+        localStorage.setItem("user_profile", JSON.stringify(userData))
         setUser(userData)
       } catch (error) {
         console.error("Failed to fetch user profile", error)
