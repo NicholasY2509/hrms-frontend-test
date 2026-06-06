@@ -1,4 +1,4 @@
-import { useQuery, useSuspenseQuery, keepPreviousData } from "@tanstack/react-query"
+import { useQuery, useSuspenseQuery } from "@tanstack/react-query"
 import { employeeService } from "../services/employee-service"
 import { EMPLOYEE_ENDPOINTS } from "../endpoints"
 import { EmployeeSummary } from "../types"
@@ -47,7 +47,6 @@ export function useManagementEmployees(params?: {
   const { data, error, isLoading, refetch } = useQuery({
     queryKey: [EMPLOYEE_ENDPOINTS.PORTAL.MANAGEMENT.LIST, params],
     queryFn: () => employeeService.getManagementEmployees(params),
-    placeholderData: keepPreviousData,
   })
 
   return {

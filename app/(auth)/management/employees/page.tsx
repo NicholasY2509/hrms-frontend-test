@@ -18,15 +18,16 @@ export default async function EmployeeManagementPage({ searchParams }: PageProps
   const params = await searchParams
 
   const defaultParams = {
+    search: (params.search as string) || undefined,
+    department_id: params.department_id ? Number(params.department_id) : undefined,
+    team_id: params.team_id ? Number(params.team_id) : undefined,
+    work_location_id: params.location_id ? Number(params.location_id) : undefined,
+    work_position_id: params.position_id ? Number(params.position_id) : undefined,
+    work_employee_status_id: params.work_status_id && params.work_status_id !== "all" ? params.work_status_id as string : undefined,
+    employee_status_id: params.employee_status_id && params.employee_status_id !== "all" ? params.employee_status_id as string : undefined,
+    supervisor_employee_id: params.supervisor_employee_id ? Number(params.supervisor_employee_id) : undefined,
     page: Number(params.page) || 1,
     per_page: Number(params.per_page) || 15,
-    search: (params.search as string) || "",
-    department_id: params.department_id ? Number(params.department_id) : null,
-    team_id: params.team_id ? Number(params.team_id) : null,
-    location_id: params.location_id ? Number(params.location_id) : null,
-    position_id: params.position_id ? Number(params.position_id) : null,
-    work_status_id: (params.work_status_id as string) || "all",
-    employee_status_id: (params.employee_status_id as string) || "all",
   }
 
   await queryClient.prefetchQuery({
