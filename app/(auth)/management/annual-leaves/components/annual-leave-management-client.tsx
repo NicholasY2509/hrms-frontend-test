@@ -16,16 +16,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { AnnualLeaveDetailDialog } from "./annual-leave-detail-dialog"
 import { AnnualLeave } from "@/modules/employee/annual-leave/types"
-import { EmployeeLeaveLedgerSheet } from "@/modules/employee/annual-leave/components/employee-leave-ledger-sheet"
 import { Button } from "@/components/ui/button"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Plus } from "@hugeicons/core-free-icons"
-import { ManualLogDialog } from "@/modules/employee/annual-leave/components/manual-log-dialog"
 import { usePermission } from "@/hooks/use-permission"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { AnnualLeaveSummaryClient } from "./annual-leave-summary-client"
+import dynamic from "next/dynamic"
+
+const AnnualLeaveDetailDialog = dynamic(() => import("./annual-leave-detail-dialog").then(mod => mod.AnnualLeaveDetailDialog), { ssr: false })
+const EmployeeLeaveLedgerSheet = dynamic(() => import("@/modules/employee/annual-leave/components/employee-leave-ledger-sheet").then(mod => mod.EmployeeLeaveLedgerSheet), { ssr: false })
+const ManualLogDialog = dynamic(() => import("@/modules/employee/annual-leave/components/manual-log-dialog").then(mod => mod.ManualLogDialog), { ssr: false })
 
 export function AnnualLeaveManagementClient() {
   const { hasPermission } = usePermission()

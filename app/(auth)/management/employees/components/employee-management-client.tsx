@@ -2,21 +2,13 @@
 
 import * as React from "react"
 import { Suspense } from "react"
+import dynamic from "next/dynamic"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { Search01Icon, UserIcon } from "@hugeicons/core-free-icons"
+import { UserIcon } from "@hugeicons/core-free-icons"
 import { DataTable } from "@/components/data-table/data-table"
 import { PageHeader } from "@/components/layout/page-header"
-import {
-  InputGroup,
-  InputGroupAddon,
-  InputGroupInput,
-} from "@/components/ui/input-group"
 import { useDebounce } from "@/hooks/use-debounce"
 import { useManagementEmployees } from "@/modules/employee/employee/hooks/use-employees"
-import { DepartmentPicker } from "@/modules/organization/department/components/department-picker"
-import { TeamPicker } from "@/modules/organization/teams/components/team-picker"
-import { WorkLocationPicker } from "@/modules/organization/work-location/components/work-location-picker"
-import { WorkPositionPicker } from "@/modules/organization/work-position/components/work-position-picker"
 import { getEmployeeColumns } from "../columns"
 import { Employee } from "@/modules/employee/employee/types"
 import { useRouter, useSearchParams, usePathname } from "next/navigation"
@@ -30,8 +22,12 @@ import {
 } from "@/components/ui/select"
 import { useUrlFilters } from "@/hooks/use-url-filters"
 
-import { ExportEmployeeDialog } from "@/modules/employee/employee/components/export-employee-dialog"
 import { Button } from "@/components/ui/button"
+
+const ExportEmployeeDialog = dynamic(
+  () => import("@/modules/employee/employee/components/export-employee-dialog").then((mod) => mod.ExportEmployeeDialog),
+  { ssr: false }
+)
 import {
   EmployeeSummaryCards,
   EmployeeSummaryCardsSkeleton,
@@ -83,7 +79,6 @@ export function EmployeeManagementClient() {
     [debouncedSearch, filters]
   )
 
-  // Fetch Employees with all filters
   const { employees, meta, isLoading } = useManagementEmployees({
     ...activeFilters,
     page: filters.page,
@@ -178,9 +173,9 @@ export function EmployeeManagementClient() {
         pagination={
           meta
             ? {
-                ...meta,
-                onPageChange: (p) => setFilter("page", p),
-              }
+              ...meta,
+              onPageChange: (p) => setFilter("page", p),
+            }
             : undefined
         }
       />

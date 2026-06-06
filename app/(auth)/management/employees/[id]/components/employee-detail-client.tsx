@@ -22,12 +22,14 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
-import { WarningLetterSheet } from "@/modules/employee/warning-letter/components/warning-letter-sheet"
-import { CareerTransitionSheet } from "@/modules/employee/career/components/career-transition-sheet"
-import { ConfirmModal } from "@/components/ui/confirm-modal"
 import { useCreateCertificateOfEmployment } from "@/modules/employee/certificate-of-employment/hooks/use-certificate"
-import { AdjustAnnualLeaveModal } from "@/modules/employee/annual-leave/components/adjust-annual-leave-modal"
-import { UnpaidLeaveManagementSheet } from "@/modules/unpaid-leave/components/unpaid-leave-management-sheet"
+import dynamic from "next/dynamic"
+
+const WarningLetterSheet = dynamic(() => import("@/modules/employee/warning-letter/components/warning-letter-sheet").then(mod => mod.WarningLetterSheet), { ssr: false })
+const CareerTransitionSheet = dynamic(() => import("@/modules/employee/career/components/career-transition-sheet").then(mod => mod.CareerTransitionSheet), { ssr: false })
+const ConfirmModal = dynamic(() => import("@/components/ui/confirm-modal").then(mod => mod.ConfirmModal), { ssr: false })
+const AdjustAnnualLeaveModal = dynamic(() => import("@/modules/employee/annual-leave/components/adjust-annual-leave-modal").then(mod => mod.AdjustAnnualLeaveModal), { ssr: false })
+const UnpaidLeaveManagementSheet = dynamic(() => import("@/modules/unpaid-leave/components/unpaid-leave-management-sheet").then(mod => mod.UnpaidLeaveManagementSheet), { ssr: false })
 
 export function EmployeeDetailClient() {
   const params = useParams()
