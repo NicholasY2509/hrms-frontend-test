@@ -12,13 +12,25 @@ const apiClient = axios.create({
 })
 
 // You can add interceptors here (e.g., for auth tokens)
-apiClient.interceptors.request.use((config) => {
-  const token = Cookies.get("access_token")
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`
+apiClient.interceptors.request.use(async (config) => {
+  let token;
+  if (typeof window !== "undefined") {
+    token = Cookies.get("access_token");
+  } else {
+    try {
+      const { cookies } = await import("next/headers");
+      const cookieStore = await cookies();
+      token = cookieStore.get("access_token")?.value;
+    } catch (e) {
+      console.error("Error accessing cookies in Server Component", e);
+    }
   }
-  return config
-})
+
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
 
 // Response interceptor
 apiClient.interceptors.response.use(
