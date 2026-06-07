@@ -3,10 +3,9 @@
 import * as React from "react"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { UserGroup02Icon, DoorIcon, UserIcon } from "@hugeicons/core-free-icons"
-import { useSuspenseManagementEmployeeSummary } from "@/modules/employee/employee/hooks/use-employees"
+import { EmployeeSummary } from "@/modules/employee/employee/types"
 
-export function EmployeeSummaryCards() {
-  const { summary } = useSuspenseManagementEmployeeSummary()
+export function EmployeeSummaryCards({ summary }: { summary: EmployeeSummary[] }) {
 
   return (
     <>

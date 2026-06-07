@@ -79,7 +79,7 @@ export function EmployeeManagementClient() {
     [debouncedSearch, filters]
   )
 
-  const { employees, meta, isLoading } = useManagementEmployees({
+  const { employees, summary, meta, isLoading } = useManagementEmployees({
     ...activeFilters,
     page: filters.page,
     per_page: Number(filters.per_page),
@@ -107,9 +107,7 @@ export function EmployeeManagementClient() {
       </PageHeader>
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-        <Suspense fallback={<EmployeeSummaryCardsSkeleton />}>
-          <EmployeeSummaryCards />
-        </Suspense>
+        <EmployeeSummaryCards summary={summary} />
       </div>
 
       <ManagementFilter
