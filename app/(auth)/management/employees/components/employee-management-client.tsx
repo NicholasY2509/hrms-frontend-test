@@ -8,10 +8,10 @@ import { UserIcon } from "@hugeicons/core-free-icons"
 import { DataTable } from "@/components/data-table/data-table"
 import { PageHeader } from "@/components/layout/page-header"
 import { useDebounce } from "@/hooks/use-debounce"
-import { useManagementEmployees } from "@/modules/employee/employee/hooks/use-employees"
+import { useManagementEmployees, useManagementEmployeeSummary } from "@/modules/employee/employee/hooks/use-employees"
 import { getEmployeeColumns } from "../columns"
 import { Employee } from "@/modules/employee/employee/types"
-import { useRouter, useSearchParams, usePathname } from "next/navigation"
+import { useRouter } from "next/navigation"
 import { ManagementFilter } from "@/components/layout/management-filter"
 import {
   Select,
@@ -30,13 +30,10 @@ const ExportEmployeeDialog = dynamic(
 )
 import {
   EmployeeSummaryCards,
-  EmployeeSummaryCardsSkeleton,
 } from "./employee-summary-cards"
 
 export function EmployeeManagementClient() {
   const router = useRouter()
-  const pathname = usePathname()
-  const searchParams = useSearchParams()
 
   const { filters, setFilter, resetFilters, hasActiveFilters } = useUrlFilters({
     page: 1,
@@ -79,11 +76,13 @@ export function EmployeeManagementClient() {
     [debouncedSearch, filters]
   )
 
-  const { employees, summary, meta, isLoading } = useManagementEmployees({
+  const { employees, meta, isLoading } = useManagementEmployees({
     ...activeFilters,
     page: filters.page,
     per_page: Number(filters.per_page),
   })
+
+  const { summary } = useManagementEmployeeSummary()
 
   const handleView = (item: Employee) => {
     router.push(`/management/employees/${item.id}`)

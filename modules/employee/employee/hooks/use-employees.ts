@@ -51,7 +51,6 @@ export function useManagementEmployees(params?: {
 
   return {
     employees: data?.data || [],
-    summary: data?.summary || [],
     meta: data?.meta,
     isLoading,
     isError: error,

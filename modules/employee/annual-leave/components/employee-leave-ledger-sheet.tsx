@@ -215,7 +215,7 @@ export function EmployeeLeaveLedgerSheet({
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent className="!w-[90vw] sm:!max-w-5xl p-0 flex flex-col">
+      <SheetContent className="w-[90vw]! sm:max-w-5xl! p-0 flex flex-col">
         <SheetHeader className="p-6 pb-2">
           <SheetTitle>Mutasi Hak Cuti</SheetTitle>
           <SheetDescription>

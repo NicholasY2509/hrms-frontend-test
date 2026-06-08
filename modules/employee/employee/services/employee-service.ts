@@ -37,9 +37,9 @@ export const employeeService = {
   },
 
   getManagementEmployees: async (params?: Record<string, any>) => {
-    const response = await apiClient.get<
-      PaginatedResponse<Employee> & { summary: EmployeeSummary[] }
-    >(EMPLOYEE_ENDPOINTS.PORTAL.MANAGEMENT.LIST, { params })
+    const response = await apiClient.get<PaginatedResponse<Employee>>(
+      EMPLOYEE_ENDPOINTS.PORTAL.MANAGEMENT.LIST, { params }
+    )
     return response.data
   },
 
