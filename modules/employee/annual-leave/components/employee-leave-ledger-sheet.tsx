@@ -20,7 +20,6 @@ import {
   SheetTitle,
   SheetDescription,
 } from "@/components/ui/sheet"
-import { ScrollArea } from "@/components/ui/scroll-area"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Loading03Icon, InformationCircleIcon } from "@hugeicons/core-free-icons"
 import { AnnualLeaveSummaryCard } from "./annual-leave-summary-card"
@@ -38,7 +37,6 @@ export function EmployeeLeaveLedgerSheet({
   open,
   onOpenChange,
 }: EmployeeLeaveLedgerSheetProps) {
-  // Hanya fetch data jika sheet terbuka dan ada employeeId
   const { items, isLoading } = useAnnualLeaveList(
     open && employeeId ? { employee_id: employeeId, per_page: 100 } : undefined
   )
@@ -236,14 +234,12 @@ export function EmployeeLeaveLedgerSheet({
                 <HugeiconsIcon icon={Loading03Icon} className="w-6 h-6 animate-spin text-muted-foreground" />
               </div>
             ) : (
-              <div className="flex-1 rounded-md border min-h-0 flex flex-col">
-                <ScrollArea className="flex-1">
-                  <DataTable
-                    columns={columns}
-                    data={items || []}
-                  // Tidak perlu pagination karena per_page 100 dan biasanya cukup untuk ledger 1 orang
-                  />
-                </ScrollArea>
+              <div className="flex-1 min-h-0 overflow-y-auto px-1 pb-4">
+                <DataTable
+                  columns={columns}
+                  data={items || []}
+                // Tidak perlu pagination karena per_page 100 dan biasanya cukup untuk ledger 1 orang
+                />
               </div>
             )}
           </div>

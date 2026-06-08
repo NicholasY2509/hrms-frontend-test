@@ -30,6 +30,7 @@ const ExportEmployeeDialog = dynamic(
 )
 import {
   EmployeeSummaryCards,
+  EmployeeSummaryCardsSkeleton,
 } from "./employee-summary-cards"
 
 export function EmployeeManagementClient() {
@@ -82,7 +83,7 @@ export function EmployeeManagementClient() {
     per_page: Number(filters.per_page),
   })
 
-  const { summary } = useManagementEmployeeSummary()
+  const { summary, isLoading: isSummaryLoading } = useManagementEmployeeSummary()
 
   const handleView = (item: Employee) => {
     router.push(`/management/employees/${item.id}`)
@@ -106,7 +107,11 @@ export function EmployeeManagementClient() {
       </PageHeader>
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-        <EmployeeSummaryCards summary={summary} />
+        {isSummaryLoading ? (
+          <EmployeeSummaryCardsSkeleton />
+        ) : (
+          <EmployeeSummaryCards summary={summary} />
+        )}
       </div>
 
       <ManagementFilter
