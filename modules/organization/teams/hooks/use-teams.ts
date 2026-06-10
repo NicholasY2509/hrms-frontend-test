@@ -8,6 +8,7 @@ export function useTeams({ params = {}, enabled = true } = {}) {
     queryKey: [TEAMS_ENDPOINTS.LIST, params],
     queryFn: () => teamService.getTeams(params),
     enabled,
+    staleTime: 1000 * 60 * 60 * 24, // 24 hours
   });
 
   return {

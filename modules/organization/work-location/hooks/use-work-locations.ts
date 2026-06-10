@@ -7,6 +7,7 @@ export function useWorkLocations({ params = {}, enabled = true } = {}) {
     queryKey: [WORK_LOCATION_ENDPOINTS.LIST, params],
     queryFn: () => workLocationService.getList(params),
     enabled,
+    staleTime: 1000 * 60 * 60 * 24, // 24 hours
   });
 
   return {

@@ -7,6 +7,7 @@ export function useEmployees(params?: Record<string, any>) {
   const { data, error, isLoading, refetch } = useQuery({
     queryKey: [EMPLOYEE_ENDPOINTS.SEARCH, params],
     queryFn: () => employeeService.getEmployees(params),
+    staleTime: 1000 * 60 * 60 * 24, // 24 hours
   })
 
   return {
@@ -22,6 +23,7 @@ export function useSupervisors(params?: Record<string, any>) {
   const { data, error, isLoading, refetch } = useQuery({
     queryKey: [EMPLOYEE_ENDPOINTS.SUPERVISORS_SEARCH, params],
     queryFn: () => employeeService.getSupervisors(params),
+    staleTime: 1000 * 60 * 60 * 24, // 24 hours
   })
 
   return {
@@ -102,6 +104,7 @@ export function useEmployeeStatuses({ params = {}, enabled = true } = {}) {
     queryKey: [EMPLOYEE_ENDPOINTS.CONFIG.EMPLOYEE_STATUSES.LIST, params],
     queryFn: () => employeeService.getStatuses(),
     enabled,
+    staleTime: 1000 * 60 * 60 * 24, // 24 hours
   })
 
   return {

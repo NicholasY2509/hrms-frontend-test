@@ -14,15 +14,15 @@ export function EmployeeSummaryCards({ summary }: { summary: EmployeeSummary[] }
         let colorClass = "text-muted-foreground"
         let bgClass = "bg-muted/10"
 
-        if (item.name.toLowerCase().includes("active")) {
+        if (item?.name?.toLowerCase()?.includes("active")) {
           icon = UserGroup02Icon
           colorClass = "text-white"
           bgClass = "bg-primary"
-        } else if (item.name.toLowerCase().includes("resign")) {
+        } else if (item?.name?.toLowerCase()?.includes("resign")) {
           icon = DoorIcon
           colorClass = "text-primary"
           bgClass = "bg-primary/10"
-        } else if (item.name.toLowerCase().includes("nonaktif")) {
+        } else if (item?.name?.toLowerCase()?.includes("nonaktif")) {
           icon = UserIcon
           colorClass = "text-rose-600"
           bgClass = "bg-rose-500/10"

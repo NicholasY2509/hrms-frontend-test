@@ -10,6 +10,7 @@ export function useWorkPositions({ params = {}, enabled = true } = {}) {
     queryKey: [WORK_POSITIONS_ENDPOINTS.LIST, params],
     queryFn: () => workPositionService.getWorkPositions(params),
     enabled,
+    staleTime: 1000 * 60 * 60 * 24, // 24 hours
   });
 
   return {

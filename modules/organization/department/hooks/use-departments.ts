@@ -10,6 +10,7 @@ export function useDepartments({ params = {}, enabled = true } = {}) {
     queryKey: [DEPARTMENT_ENDPOINTS.LIST, params],
     queryFn: () => departmentService.getDepartments(params),
     enabled,
+    staleTime: 1000 * 60 * 60 * 24, // 24 hours
   });
 
   return {

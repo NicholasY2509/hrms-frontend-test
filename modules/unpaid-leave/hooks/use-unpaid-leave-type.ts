@@ -8,6 +8,7 @@ export function useUnpaidLeaveTypeList() {
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: [UNPAID_LEAVE_ENDPOINTS.PORTAL.MANAGEMENT.TYPES],
     queryFn: () => unpaidLeaveService.portal.management.getTypes(),
+    staleTime: 1000 * 60 * 60 * 24, // 24 hours
   });
 
   return {
