@@ -27,12 +27,14 @@ import { formatDate, formatDateTime } from '@/lib/utils';
 import { useSettleCareer, useExportCareer } from '@/modules/employee/career/hooks/use-career-mutation';
 import { ConfirmModal } from '@/components/ui/confirm-modal';
 import { CheckmarkCircle01Icon } from '@hugeicons/core-free-icons';
+import { usePermission } from '@/hooks/use-permission';
 
 export function CareerDetailClient() {
   const params = useParams();
   const router = useRouter();
   const queryClient = useQueryClient();
   const { user } = useAuth();
+  const { hasPermission } = usePermission();
   const { item, isLoading, isError, mutate } = useCareerDetail(params.id as string);
 
   const [isSettleModalOpen, setIsSettleModalOpen] = React.useState(false);
@@ -106,7 +108,7 @@ export function CareerDetailClient() {
         </div>
 
         <div className="flex items-center gap-3">
-          {(canSettle || isSettled) && (
+          {hasPermission('career.settle') && (canSettle || isSettled) && (
             <Button
               onClick={() => setIsSettleModalOpen(true)}
               disabled={isSettled || isSettling}

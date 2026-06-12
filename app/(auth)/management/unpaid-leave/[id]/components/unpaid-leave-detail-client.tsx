@@ -26,6 +26,7 @@ import { useAuth } from "@/modules/auth/hooks/use-auth"
 import { ApprovalHistory } from "@/modules/approval/components/approval-history"
 import { UnpaidLeaveNarrativeCard } from "@/modules/unpaid-leave/components/detail/unpaid-leave-narrative-card"
 import { Calendar } from "@/components/ui/calendar"
+import { usePermission } from "@/hooks/use-permission"
 
 export function UnpaidLeaveDetailClient() {
   const params = useParams()

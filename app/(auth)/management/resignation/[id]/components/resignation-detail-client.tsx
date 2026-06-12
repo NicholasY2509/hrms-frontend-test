@@ -25,10 +25,12 @@ import { ApprovalHistory } from '@/modules/approval/components/approval-history'
 import { useAuth } from '@/modules/auth/hooks/use-auth';
 import { RESIGNATION_ENDPOINTS } from '@/modules/employee/resignation/endpoints';
 import { formatDate, formatDateTime } from '@/lib/utils';
+import { usePermission } from '@/hooks/use-permission';
 
 export function ResignationDetailClient() {
   const params = useParams();
   const router = useRouter();
+  const { hasPermission } = usePermission();
   const queryClient = useQueryClient();
   const { user } = useAuth();
   const { item, isLoading, isError, mutate } = useResignationDetail(params.id as string);
@@ -97,7 +99,7 @@ export function ResignationDetailClient() {
         </div>
 
         <div className="flex items-center gap-3">
-          {(canSettle || isSettled) && (
+          {hasPermission('resignation.settle') && (canSettle || isSettled) && (
             <Button
               onClick={() => setIsSettleModalOpen(true)}
               disabled={isSettled}

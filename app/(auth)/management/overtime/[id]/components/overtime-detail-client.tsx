@@ -20,12 +20,14 @@ import { OvertimeAdditionalInfoCard } from "@/modules/overtime/components/detail
 import { ApprovalHistory } from "@/modules/approval/components/approval-history"
 import { OvertimeDacCategorizationCard } from "@/modules/overtime/components/detail/overtime-dac-categorization-card"
 import dynamic from "next/dynamic"
+import { usePermission } from "@/hooks/use-permission"
 
 const OvertimeSettleDialog = dynamic(() => import("@/modules/overtime/components/detail/overtime-settle-dialog").then(mod => mod.OvertimeSettleDialog), { ssr: false })
 
 export function OvertimeDetailClient() {
   const params = useParams()
   const router = useRouter()
+  const { hasPermission } = usePermission();
   const queryClient = useQueryClient()
   const overtimeId = params.id as string
 
@@ -133,7 +135,7 @@ export function OvertimeDetailClient() {
             </p>
           </div>
         </div>
-        {(item.status === "Approved" || item.status === "Settled") && (
+        {hasPermission('overtime.settle') && (item.status === "Approved" || item.status === "Settled") && (
           <OvertimeSettleDialog
             item={item}
             trigger={
@@ -150,6 +152,7 @@ export function OvertimeDetailClient() {
             }
           />
         )}
+
       </div>
 
       <div className="grid gap-6 md:grid-cols-3">

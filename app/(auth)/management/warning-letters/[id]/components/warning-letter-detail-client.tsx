@@ -26,6 +26,7 @@ import { WARNING_LETTER_ENDPOINTS } from '@/modules/employee/warning-letter/endp
 import { formatDate, formatDateTime } from '@/lib/utils';
 import { useSettleWarningLetter, useExportWarningLetter } from '@/modules/employee/warning-letter/hooks/use-warning-letter-mutation';
 import { ConfirmModal } from '@/components/ui/confirm-modal';
+import { usePermission } from '@/hooks/use-permission';
 
 export function WarningLetterDetailClient() {
   const params = useParams();
@@ -33,6 +34,7 @@ export function WarningLetterDetailClient() {
   const queryClient = useQueryClient();
   const { user } = useAuth();
   const { item, isLoading, isError, mutate } = useWarningLetterDetail(params.id as string);
+  const { hasPermission } = usePermission();
 
   const [isSettleModalOpen, setIsSettleModalOpen] = React.useState(false);
   const { settleWarningLetter, isLoading: isSettling } = useSettleWarningLetter(params.id as string, {
@@ -120,7 +122,7 @@ export function WarningLetterDetailClient() {
         </div>
 
         <div className="flex items-center gap-3">
-          {(canSettle || isSettled) && (
+          {hasPermission('warning-letter.settle') && (canSettle || isSettled) && (
             <Button
               onClick={() => setIsSettleModalOpen(true)}
               disabled={isSettled || isSettling}
