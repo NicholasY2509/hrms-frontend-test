@@ -22,16 +22,19 @@ export const employeeOverviewSchema = z.object({
 
 export type EmployeeOverviewFormValues = z.infer<typeof employeeOverviewSchema>
 
-export const employeeUserSchema = z
-  .object({
-    email: z.string().email("Email Tidak Valid").toLowerCase(),
-    password: z.string().min(8, "Minimal 8 karakter"),
-    password_confirmation: z.string().min(1, "Wajib diisi"),
-  })
-  .refine((data) => data.password === data.password_confirmation, {
+export const employeeUserBaseSchema = z.object({
+  email: z.string().email("Email Tidak Valid").toLowerCase(),
+  password: z.string().min(8, "Minimal 8 karakter"),
+  password_confirmation: z.string().min(1, "Wajib diisi"),
+})
+
+export const employeeUserSchema = employeeUserBaseSchema.refine(
+  (data) => data.password === data.password_confirmation,
+  {
     message: "Konfirmasi password tidak cocok",
     path: ["password_confirmation"],
-  })
+  }
+)
 
 export type EmployeeUserFormValues = z.infer<typeof employeeUserSchema>
 
@@ -87,8 +90,12 @@ export type FamilyFormValues = z.infer<typeof familySchema>
 
 export const createEmployeeSchema = employeeOverviewSchema
   .merge(employeePersonalSchema)
-  .merge(employeeUserSchema)
+  .merge(employeeUserBaseSchema)
   .merge(employeeAttachmentSchema)
+  .refine((data) => data.password === data.password_confirmation, {
+    message: "Konfirmasi password tidak cocok",
+    path: ["password_confirmation"],
+  })
 
 export type CreateEmployeeFormValues = z.infer<typeof createEmployeeSchema>
 
