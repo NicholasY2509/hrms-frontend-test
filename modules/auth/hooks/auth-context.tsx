@@ -11,6 +11,7 @@ import Cookies from "js-cookie"
 import { User, AuthToken } from "../types"
 import { authService } from "../services/auth-service"
 import { useRouter } from "next/navigation"
+import { jwtDecode } from "jwt-decode"
 
 interface AuthContextType {
   user: User | null
@@ -19,6 +20,8 @@ interface AuthContextType {
   login: () => void
   logout: () => void
   setAuthData: (token: AuthToken, user: User) => void
+  roles: string[]
+  permissions: string[]
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -39,6 +42,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   })
 
   const [isLoading, setIsLoading] = useState(true)
+  const [roles, setRoles] = useState<string[]>([])
+  const [permissions, setPermissions] = useState<string[]>([])
 
   const router = useRouter()
 
@@ -55,6 +60,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     Cookies.remove("refresh_token")
     localStorage.removeItem("user_profile")
     setUser(null)
+    setRoles([])
+    setPermissions([])
     window.location.href = "/login"
   }, [])
 
@@ -63,6 +70,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       expires: token.expires_in / 86400,
     })
     Cookies.set("refresh_token", token.refresh_token, { expires: 30 }) // 30 days
+    
+    try {
+      const decoded: any = jwtDecode(token.access_token)
+      setRoles(decoded.roles || [])
+      setPermissions(decoded.permissions || [])
+      userData.roles = decoded.roles || []
+      userData.permissions = decoded.permissions || []
+    } catch (e) {
+      console.error("Failed to decode token", e)
+    }
+
     localStorage.setItem("user_profile", JSON.stringify(userData))
     setUser(userData)
   }, [])
@@ -87,6 +105,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const token = Cookies.get("access_token")
     const storedUser = localStorage.getItem("user_profile")
 
+    if (token) {
+      try {
+        const decoded: any = jwtDecode(token)
+        setRoles(decoded.roles || [])
+        setPermissions(decoded.permissions || [])
+        
+        // Also patch user state if it's already loaded from localStorage
+        if (user) {
+          setUser(prev => prev ? { ...prev, roles: decoded.roles || [], permissions: decoded.permissions || [] } : null)
+        }
+      } catch (e) {
+        console.error("Failed to decode token on load", e)
+      }
+    }
+
     if (!token) {
       setIsLoading(false)
     } else if (storedUser) {
@@ -110,6 +143,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         login,
         logout,
         setAuthData,
+        roles,
+        permissions,
       }}
     >
       {children}

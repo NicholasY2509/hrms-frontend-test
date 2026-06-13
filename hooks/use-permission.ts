@@ -11,10 +11,7 @@ import { useAuth } from '@/modules/auth/hooks/auth-context';
  *   if (hasAnyRole('admin', 'hr-manager')) { ... }
  */
 export function usePermission() {
-  const { user } = useAuth();
-  const roles = user?.roles ?? [];
-
-  const permissions = user?.permissions ?? [];
+  const { user, roles, permissions } = useAuth();
   const isIT = roles.includes('IT');
 
   const hasRole = (role: string): boolean => isIT || roles.includes(role);
