@@ -29,6 +29,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import dynamic from "next/dynamic"
+import { usePermission } from "@/hooks/use-permission"
 
 const ExportAttendanceDialog = dynamic(() => import("@/modules/attendance/attendances/components/export-attendance-dialog").then(mod => mod.ExportAttendanceDialog), { ssr: false })
 const CalculateAttendanceDialog = dynamic(() => import("@/modules/attendance/attendances/components/calculate-attendance-dialog").then(mod => mod.CalculateAttendanceDialog), { ssr: false })
@@ -64,6 +65,7 @@ export function AttendanceManagementClient() {
   const [selectedAttendance, setSelectedAttendance] =
     React.useState<AttendanceModel | null>(null)
   const [rowSelection, setRowSelection] = React.useState<RowSelectionState>({})
+  const { hasPermission } = usePermission();
 
   const debouncedSearch = useDebounce(filters.search, 500)
 
@@ -131,7 +133,7 @@ export function AttendanceManagementClient() {
         description="Pantau dan kelola data kehadiran karyawan harian."
       >
         <div className="flex items-center gap-1">
-          {Object.keys(rowSelection).length > 0 && (
+          {Object.keys(rowSelection).length > 0 && hasPermission("attendance.update_status") && (
             <Button
               variant="secondary"
               className="gap-2"
@@ -237,9 +239,9 @@ export function AttendanceManagementClient() {
         pagination={
           meta
             ? {
-                ...meta,
-                onPageChange: (p) => setFilter("page", p),
-              }
+              ...meta,
+              onPageChange: (p) => setFilter("page", p),
+            }
             : undefined
         }
       />
@@ -256,12 +258,14 @@ export function AttendanceManagementClient() {
         onOpenChange={setIsDetailDialogOpen}
         attendance={selectedAttendance}
       />
-      <BatchUpdateAttendanceStatusDialog
-        open={isBatchUpdateDialogOpen}
-        onOpenChange={setIsBatchUpdateDialogOpen}
-        selectedAttendances={selectedAttendances}
-        onSuccess={() => setRowSelection({})}
-      />
+      {hasPermission("attendance.update_status") && (
+        <BatchUpdateAttendanceStatusDialog
+          open={isBatchUpdateDialogOpen}
+          onOpenChange={setIsBatchUpdateDialogOpen}
+          selectedAttendances={selectedAttendances}
+          onSuccess={() => setRowSelection({})}
+        />
+      )}
       <ZktecoAttendanceSyncDialog
         open={isSyncAttendanceDialogOpen}
         onOpenChange={setIsSyncAttendanceDialogOpen}

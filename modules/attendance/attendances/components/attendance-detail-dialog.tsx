@@ -28,6 +28,7 @@ import { AttendanceModel } from "../types"
 import { AttendanceStatusPicker } from "../../shared/components/attendance-status-picker"
 import { useUpdateAttendanceStatus } from "../hooks/use-attendance"
 import { Button } from "@/components/ui/button"
+import { usePermission } from "@/hooks/use-permission"
 
 interface AttendanceDetailDialogProps {
   attendance: AttendanceModel | null
@@ -44,6 +45,7 @@ export function AttendanceDetailDialog({
   const [attendanceStatusId, setAttendanceStatusId] = React.useState<
     number | null
   >(attendance.attendance_status_id)
+  const { hasPermission } = usePermission();
 
   const { updateAttendanceStatus, isLoading: isUpdating } =
     useUpdateAttendanceStatus({
@@ -112,29 +114,31 @@ export function AttendanceDetailDialog({
           </div>
         </DialogHeader>
 
-        <div className="mt-4 flex w-full flex-row items-center gap-3 border-b border-border px-6 pb-4">
-          <div className="flex-1">
-            <AttendanceStatusPicker
-              value={attendanceStatusId}
-              onChange={(val) => setAttendanceStatusId(val)}
+        {hasPermission("attendance.update_status") && (
+          <div className="mt-4 flex w-full flex-row items-center gap-3 border-b border-border px-6 pb-4">
+            <div className="flex-1">
+              <AttendanceStatusPicker
+                value={attendanceStatusId}
+                onChange={(val) => setAttendanceStatusId(val)}
+                disabled={isUpdating}
+              />
+            </div>
+            <Button
+              onClick={() =>
+                updateAttendanceStatus({
+                  attendance_id: attendance.id,
+                  attendance_status_id: attendanceStatusId!,
+                })
+              }
               disabled={isUpdating}
-            />
+              className="w-auto shrink-0"
+            >
+              {isUpdating ? "Menyimpan..." : "Simpan"}
+            </Button>
           </div>
-          <Button
-            onClick={() =>
-              updateAttendanceStatus({
-                attendance_id: attendance.id,
-                attendance_status_id: attendanceStatusId!,
-              })
-            }
-            disabled={isUpdating}
-            className="w-auto shrink-0"
-          >
-            {isUpdating ? "Menyimpan..." : "Simpan"}
-          </Button>
-        </div>
+        )}
 
-        <ScrollArea className="max-h-[80vh]">
+        <ScrollArea className="max-h-[75vh]">
           <div className="space-y-8 p-6">
             {/* Overview Section */}
             <section className="space-y-4">

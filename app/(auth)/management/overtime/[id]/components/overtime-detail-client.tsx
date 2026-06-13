@@ -11,6 +11,7 @@ import {
 } from "@hugeicons/core-free-icons"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import { Skeleton } from "@/components/ui/skeleton"
 import { useQueryClient } from "@tanstack/react-query"
 import { useOvertimeManagementDetail } from "@/modules/overtime/hooks/use-overtime"
 import { OVERTIME_ENDPOINTS } from "@/modules/overtime/endpoints"
@@ -69,14 +70,31 @@ export function OvertimeDetailClient() {
 
   if (isLoading) {
     return (
-      <div className="flex flex-col items-center justify-center gap-4 py-32">
-        <HugeiconsIcon
-          icon={Loading03Icon}
-          className="h-10 w-10 animate-spin text-primary"
-        />
-        <p className="animate-pulse font-medium text-muted-foreground">
-          Memuat rincian pengajuan...
-        </p>
+      <div className="space-y-6 pb-20">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <Skeleton className="h-10 w-10 rounded-md" />
+            <div>
+              <div className="flex items-center gap-3">
+                <Skeleton className="h-8 w-64" />
+                <Skeleton className="h-6 w-24 rounded-full" />
+              </div>
+              <Skeleton className="mt-2 h-4 w-48" />
+            </div>
+          </div>
+        </div>
+
+        <div className="grid gap-6 md:grid-cols-3">
+          <div className="space-y-6 md:col-span-2">
+            <Skeleton className="h-[400px] w-full rounded-xl" />
+          </div>
+
+          <div className="space-y-6">
+            <Skeleton className="h-[300px] w-full rounded-xl" />
+            <Skeleton className="h-[200px] w-full rounded-xl" />
+            <Skeleton className="h-[200px] w-full rounded-xl" />
+          </div>
+        </div>
       </div>
     )
   }
