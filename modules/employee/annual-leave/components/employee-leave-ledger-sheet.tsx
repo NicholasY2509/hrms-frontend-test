@@ -128,36 +128,26 @@ export function EmployeeLeaveLedgerSheet({
         const currentYear = date.getFullYear()
 
         return (
-          <div className="flex items-center gap-2">
-            <span className="font-mono font-medium text-muted-foreground">
-              {totalBalance}
-            </span>
+          <div className="flex flex-col gap-1">
+            <div className="font-mono font-medium text-muted-foreground">
+              Total: {totalBalance}
+            </div>
             {Object.keys(balanceBefore).length > 0 && (
-              <Popover>
-                <PopoverTrigger asChild>
-                  <button className="text-muted-foreground hover:text-foreground">
-                    <HugeiconsIcon icon={InformationCircleIcon} className="w-4 h-4" />
-                  </button>
-                </PopoverTrigger>
-                <PopoverContent className="w-48 p-3" align="center">
-                  <div className="space-y-2">
-                    <p className="text-xs font-semibold text-foreground mb-1">Rincian Saldo Awal</p>
-                    {Object.entries(balanceBefore).map(([key, amount]) => {
-                      let displayYear = key
-                      const numKey = Number(key)
-                      if (!isNaN(numKey) && numKey < 100) {
-                        displayYear = String(currentYear - 1 + numKey)
-                      }
-                      return (
-                        <div key={key} className="flex justify-between items-center text-xs">
-                          <span className="text-muted-foreground">Sisa {displayYear}</span>
-                          <span className="font-mono">{amount}</span>
-                        </div>
-                      )
-                    })}
-                  </div>
-                </PopoverContent>
-              </Popover>
+              <div className="flex flex-col gap-0.5 mt-1 border-t pt-1">
+                {Object.entries(balanceBefore).map(([key, amount]) => {
+                  let displayYear = key
+                  const numKey = Number(key)
+                  if (!isNaN(numKey) && numKey < 100) {
+                    displayYear = String(currentYear - 1 + numKey)
+                  }
+                  return (
+                    <div key={key} className="flex justify-between items-center gap-4 text-xs">
+                      <span className="text-muted-foreground">Sisa {displayYear}</span>
+                      <span className="font-mono">{amount}</span>
+                    </div>
+                  )
+                })}
+              </div>
             )}
           </div>
         )
@@ -174,36 +164,26 @@ export function EmployeeLeaveLedgerSheet({
         const currentYear = date.getFullYear()
 
         return (
-          <div className="flex items-center gap-2">
-            <span className="font-mono font-medium">
-              {totalBalance}
-            </span>
+          <div className="flex flex-col gap-1">
+            <div className="font-mono font-medium">
+              Total: {totalBalance}
+            </div>
             {Object.keys(balanceAfter).length > 0 && (
-              <Popover>
-                <PopoverTrigger asChild>
-                  <button className="text-muted-foreground hover:text-foreground">
-                    <HugeiconsIcon icon={InformationCircleIcon} className="w-4 h-4" />
-                  </button>
-                </PopoverTrigger>
-                <PopoverContent className="w-48 p-3" align="center">
-                  <div className="space-y-2">
-                    <p className="text-xs font-semibold text-foreground mb-1">Rincian Saldo Akhir</p>
-                    {Object.entries(balanceAfter).map(([key, amount]) => {
-                      let displayYear = key
-                      const numKey = Number(key)
-                      if (!isNaN(numKey) && numKey < 100) {
-                        displayYear = String(currentYear - 1 + numKey)
-                      }
-                      return (
-                        <div key={key} className="flex justify-between items-center text-xs">
-                          <span className="text-muted-foreground">Sisa {displayYear}</span>
-                          <span className="font-mono">{amount}</span>
-                        </div>
-                      )
-                    })}
-                  </div>
-                </PopoverContent>
-              </Popover>
+              <div className="flex flex-col gap-0.5 mt-1 border-t pt-1">
+                {Object.entries(balanceAfter).map(([key, amount]) => {
+                  let displayYear = key
+                  const numKey = Number(key)
+                  if (!isNaN(numKey) && numKey < 100) {
+                    displayYear = String(currentYear - 1 + numKey)
+                  }
+                  return (
+                    <div key={key} className="flex justify-between items-center gap-4 text-xs">
+                      <span className="text-muted-foreground">Sisa {displayYear}</span>
+                      <span className="font-mono">{amount}</span>
+                    </div>
+                  )
+                })}
+              </div>
             )}
           </div>
         )
@@ -213,7 +193,7 @@ export function EmployeeLeaveLedgerSheet({
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent className="w-[90vw]! sm:max-w-5xl! p-0 flex flex-col">
+      <SheetContent className="w-full sm:max-w-full! h-full p-0 flex flex-col">
         <SheetHeader className="p-6 pb-2">
           <SheetTitle>Mutasi Hak Cuti</SheetTitle>
           <SheetDescription>
