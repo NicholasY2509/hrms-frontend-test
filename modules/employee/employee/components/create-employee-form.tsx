@@ -203,15 +203,19 @@ export function CreateEmployeeForm() {
     Object.entries(data).forEach(([key, value]) => {
       if (value !== null && value !== undefined) {
         if (key === 'file_pendukung' && Array.isArray(value)) {
-          value.forEach((file) => {
-            if (file instanceof File) {
-              formData.append('file_pendukung[]', file);
+          value.forEach((fileOrPath) => {
+            if (fileOrPath instanceof File) {
+              formData.append('file_pendukung[]', fileOrPath);
+            } else if (typeof fileOrPath === 'string') {
+              formData.append('file_pendukung[]', fileOrPath);
             }
           });
         } else if (value instanceof File) {
           formData.append(key, value);
         } else if (typeof value === 'object' && !Array.isArray(value)) {
           formData.append(key, String(value));
+        } else if (typeof value === 'string') {
+          formData.append(key, value);
         } else {
           formData.append(key, String(value));
         }

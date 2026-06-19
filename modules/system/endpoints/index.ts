@@ -18,5 +18,8 @@ export const SYSTEM_ENDPOINTS = {
     PASSPORT_CLIENTS: "/v1/system/configuration/passport-clients",
     PASSPORT_ROLES: "/v1/system/configuration/passport-roles",
     GLOBAL_PASSPORT_ROLES: "/v1/system/configuration/global-passport-roles",
+  },
+  MEDIA: {
+    GENERATE_UPLOAD_URL: "/v1/system/media/generate-upload-url",
   }
 } as const;
