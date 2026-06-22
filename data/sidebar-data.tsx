@@ -60,7 +60,7 @@ export const sidebarData = {
       description: "Manajemen",
       logo: <HugeiconsIcon icon={OfficeIcon} strokeWidth={2} />,
       id: "manager",
-      allowedRoles: ["Department Head", "Admin HRD"],
+      allowedRoles: ["Department Head", "Admin HRD", "Supervisor"],
     },
     {
       name: "Administrator",
